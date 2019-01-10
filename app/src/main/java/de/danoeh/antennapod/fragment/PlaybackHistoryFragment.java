@@ -30,10 +30,10 @@ import de.danoeh.antennapod.core.storage.DBWriter;
 import de.danoeh.antennapod.core.util.FeedItemUtil;
 import de.danoeh.antennapod.core.util.LongList;
 import de.greenrobot.event.EventBus;
-import io.reactivex.Observable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
+import rx.Observable;
+import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 public class PlaybackHistoryFragment extends ListFragment {
 
@@ -50,7 +50,7 @@ public class PlaybackHistoryFragment extends ListFragment {
 
     private List<Downloader> downloaderList;
 
-    private Disposable disposable;
+    private Subscription subscription;
 
     @Override
     public void onAttach(Context context) {
@@ -107,16 +107,16 @@ public class PlaybackHistoryFragment extends ListFragment {
     public void onStop() {
         super.onStop();
         EventDistributor.getInstance().unregister(contentUpdate);
-        if(disposable != null) {
-            disposable.dispose();
+        if(subscription != null) {
+            subscription.unsubscribe();
         }
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        if(disposable != null) {
-            disposable.dispose();
+        if(subscription != null) {
+            subscription.unsubscribe();
         }
     }
 
@@ -269,11 +269,11 @@ public class PlaybackHistoryFragment extends ListFragment {
     };
 
     private void loadItems() {
-        if(disposable != null) {
-            disposable.dispose();
+        if(subscription != null) {
+            subscription.unsubscribe();
         }
-        disposable = Observable.fromCallable(this::loadData)
-                .subscribeOn(Schedulers.io())
+        subscription = Observable.fromCallable(this::loadData)
+                .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(result -> {
                     if (result != null) {

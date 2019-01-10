@@ -28,7 +28,6 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 
-import com.bumptech.glide.request.RequestOptions;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -66,10 +65,10 @@ import de.danoeh.antennapod.core.util.syndication.FeedDiscoverer;
 import de.danoeh.antennapod.core.util.syndication.HtmlToPlainText;
 import de.danoeh.antennapod.dialog.AuthenticationDialog;
 import de.greenrobot.event.EventBus;
-import io.reactivex.Observable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
+import rx.Observable;
+import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 /**
  * Downloads a feed from a feed URL and parses it. Subclasses can display the
@@ -98,15 +97,15 @@ public class OnlineFeedViewActivity extends AppCompatActivity {
 
     private Button subscribeButton;
 
-    private Disposable download;
-    private Disposable parser;
-    private Disposable updater;
+    private Subscription download;
+    private Subscription parser;
+    private Subscription updater;
     private final EventDistributor.EventListener listener = new EventDistributor.EventListener() {
         @Override
         public void update(EventDistributor eventDistributor, Integer arg) {
             if ((arg & EventDistributor.FEED_LIST_UPDATE) != 0) {
                 updater = Observable.fromCallable(DBReader::getFeedList)
-                        .subscribeOn(Schedulers.io())
+                        .subscribeOn(Schedulers.newThread())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(
                                 feeds -> {
@@ -145,7 +144,7 @@ public class OnlineFeedViewActivity extends AppCompatActivity {
             feedUrl = getIntent().getStringExtra(ARG_FEEDURL);
         } else if (TextUtils.equals(getIntent().getAction(), Intent.ACTION_SEND)
                 || TextUtils.equals(getIntent().getAction(), Intent.ACTION_VIEW)) {
-            feedUrl = TextUtils.equals(getIntent().getAction(), Intent.ACTION_SEND)
+            feedUrl = (TextUtils.equals(getIntent().getAction(), Intent.ACTION_SEND))
                     ? getIntent().getStringExtra(Intent.EXTRA_TEXT) : getIntent().getDataString();
             if (actionBar != null) {
                 actionBar.setTitle(R.string.add_feed_label);
@@ -213,13 +212,13 @@ public class OnlineFeedViewActivity extends AppCompatActivity {
     public void onDestroy() {
         super.onDestroy();
         if(updater != null) {
-            updater.dispose();
+            updater.unsubscribe();
         }
         if(download != null) {
-            download.dispose();
+            download.unsubscribe();
         }
         if(parser != null) {
-            parser.dispose();
+            parser.unsubscribe();
         }
     }
 
@@ -274,7 +273,7 @@ public class OnlineFeedViewActivity extends AppCompatActivity {
                     downloader.call();
                     return downloader.getResult();
                 })
-                .subscribeOn(Schedulers.io())
+                .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(this::checkDownloadResult,
                         error -> Log.e(TAG, Log.getStackTraceString(error)));
@@ -307,7 +306,7 @@ public class OnlineFeedViewActivity extends AppCompatActivity {
     }
 
     private void parseFeed() {
-        if (feed == null || (feed.getFile_url() == null && feed.isDownloaded())) {
+        if (feed == null || feed.getFile_url() == null && feed.isDownloaded()) {
             throw new IllegalStateException("feed must be non-null and downloaded when parseFeed is called");
         }
         Log.d(TAG, "Parsing feed");
@@ -332,7 +331,7 @@ public class OnlineFeedViewActivity extends AppCompatActivity {
                         Log.d(TAG, "Deleted feed source file. Result: " + rc);
                     }
                 })
-                .subscribeOn(Schedulers.computation())
+                .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(result -> {
                     if(result != null) {
@@ -380,30 +379,29 @@ public class OnlineFeedViewActivity extends AppCompatActivity {
         this.feed = feed;
         this.selectedDownloadUrl = feed.getDownload_url();
         EventDistributor.getInstance().register(listener);
-        ListView listView = findViewById(R.id.listview);
+        ListView listView = (ListView) findViewById(R.id.listview);
         LayoutInflater inflater = LayoutInflater.from(this);
         View header = inflater.inflate(R.layout.onlinefeedview_header, listView, false);
         listView.addHeaderView(header);
 
         listView.setAdapter(new FeedItemlistDescriptionAdapter(this, 0, feed.getItems()));
 
-        ImageView cover = header.findViewById(R.id.imgvCover);
-        TextView title = header.findViewById(R.id.txtvTitle);
-        TextView author = header.findViewById(R.id.txtvAuthor);
-        TextView description = header.findViewById(R.id.txtvDescription);
-        Spinner spAlternateUrls = header.findViewById(R.id.spinnerAlternateUrls);
+        ImageView cover = (ImageView) header.findViewById(R.id.imgvCover);
+        TextView title = (TextView) header.findViewById(R.id.txtvTitle);
+        TextView author = (TextView) header.findViewById(R.id.txtvAuthor);
+        TextView description = (TextView) header.findViewById(R.id.txtvDescription);
+        Spinner spAlternateUrls = (Spinner) header.findViewById(R.id.spinnerAlternateUrls);
 
-        subscribeButton = header.findViewById(R.id.butSubscribe);
+        subscribeButton = (Button) header.findViewById(R.id.butSubscribe);
 
         if (StringUtils.isNotBlank(feed.getImageUrl())) {
             Glide.with(this)
                     .load(feed.getImageUrl())
-                    .apply(new RequestOptions()
-                        .placeholder(R.color.light_gray)
-                        .error(R.color.light_gray)
-                        .diskCacheStrategy(ApGlideSettings.AP_DISK_CACHE_STRATEGY)
-                        .fitCenter()
-                        .dontAnimate())
+                    .placeholder(R.color.light_gray)
+                    .error(R.color.light_gray)
+                    .diskCacheStrategy(ApGlideSettings.AP_DISK_CACHE_STRATEGY)
+                    .fitCenter()
+                    .dontAnimate()
                     .into(cover);
         }
 

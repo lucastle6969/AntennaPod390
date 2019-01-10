@@ -17,7 +17,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.RequestOptions;
 import com.joanzapata.iconify.Iconify;
 import com.joanzapata.iconify.widget.IconTextView;
 
@@ -213,7 +212,7 @@ public class NavListAdapter extends BaseAdapter
             v = getFeedView(position, convertView, parent);
         }
         if (v != null && viewType != VIEW_TYPE_SECTION_DIVIDER) {
-            TextView txtvTitle = v.findViewById(R.id.txtvTitle);
+            TextView txtvTitle = (TextView) v.findViewById(R.id.txtvTitle);
             if (position == itemAccess.getSelectedItemIndex()) {
                 txtvTitle.setTypeface(null, Typeface.BOLD);
             } else {
@@ -236,9 +235,9 @@ public class NavListAdapter extends BaseAdapter
 
             convertView = inflater.inflate(R.layout.nav_listitem, parent, false);
 
-            holder.image = convertView.findViewById(R.id.imgvCover);
-            holder.title = convertView.findViewById(R.id.txtvTitle);
-            holder.count = convertView.findViewById(R.id.txtvCount);
+            holder.image = (ImageView) convertView.findViewById(R.id.imgvCover);
+            holder.title = (TextView) convertView.findViewById(R.id.txtvTitle);
+            holder.count = (TextView) convertView.findViewById(R.id.txtvCount);
             convertView.setTag(holder);
         } else {
             holder = (NavHolder) convertView.getTag();
@@ -326,10 +325,10 @@ public class NavListAdapter extends BaseAdapter
 
             convertView = inflater.inflate(R.layout.nav_feedlistitem, parent, false);
 
-            holder.image = convertView.findViewById(R.id.imgvCover);
-            holder.title = convertView.findViewById(R.id.txtvTitle);
-            holder.failure = convertView.findViewById(R.id.itxtvFailure);
-            holder.count = convertView.findViewById(R.id.txtvCount);
+            holder.image = (ImageView) convertView.findViewById(R.id.imgvCover);
+            holder.title = (TextView) convertView.findViewById(R.id.txtvTitle);
+            holder.failure = (IconTextView) convertView.findViewById(R.id.itxtvFailure);
+            holder.count = (TextView) convertView.findViewById(R.id.txtvCount);
             convertView.setTag(holder);
         } else {
             holder = (FeedHolder) convertView.getTag();
@@ -337,12 +336,11 @@ public class NavListAdapter extends BaseAdapter
 
         Glide.with(context)
                 .load(feed.getImageLocation())
-                .apply(new RequestOptions()
-                    .placeholder(R.color.light_gray)
-                    .error(R.color.light_gray)
-                    .diskCacheStrategy(ApGlideSettings.AP_DISK_CACHE_STRATEGY)
-                    .fitCenter()
-                    .dontAnimate())
+                .placeholder(R.color.light_gray)
+                .error(R.color.light_gray)
+                .diskCacheStrategy(ApGlideSettings.AP_DISK_CACHE_STRATEGY)
+                .fitCenter()
+                .dontAnimate()
                 .into(holder.image);
 
         holder.title.setText(feed.getTitle());

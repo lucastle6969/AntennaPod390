@@ -1,12 +1,13 @@
 package de.danoeh.antennapod.adapter;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
 import android.content.Intent;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 
+import de.danoeh.antennapod.core.util.IntentUtils;
+import de.danoeh.antennapod.core.util.playback.PlaybackServiceStarter;
 import org.apache.commons.lang3.Validate;
 
 import de.danoeh.antennapod.R;
@@ -20,10 +21,8 @@ import de.danoeh.antennapod.core.storage.DBTasks;
 import de.danoeh.antennapod.core.storage.DBWriter;
 import de.danoeh.antennapod.core.storage.DownloadRequestException;
 import de.danoeh.antennapod.core.storage.DownloadRequester;
-import de.danoeh.antennapod.core.util.IntentUtils;
 import de.danoeh.antennapod.core.util.LongList;
 import de.danoeh.antennapod.core.util.NetworkUtils;
-import de.danoeh.antennapod.core.util.playback.PlaybackServiceStarter;
 
 /**
  * Default implementation of an ActionButtonCallback

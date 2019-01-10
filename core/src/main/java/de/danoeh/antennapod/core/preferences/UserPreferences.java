@@ -8,7 +8,14 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.NotificationCompat;
 import android.text.TextUtils;
 import android.util.Log;
-
+import de.danoeh.antennapod.core.R;
+import de.danoeh.antennapod.core.service.download.ProxyConfig;
+import de.danoeh.antennapod.core.storage.APCleanupAlgorithm;
+import de.danoeh.antennapod.core.storage.APNullCleanupAlgorithm;
+import de.danoeh.antennapod.core.storage.APQueueCleanupAlgorithm;
+import de.danoeh.antennapod.core.storage.EpisodeCleanupAlgorithm;
+import de.danoeh.antennapod.core.util.Converter;
+import de.danoeh.antennapod.core.util.download.AutoUpdateManager;
 import org.json.JSONArray;
 import org.json.JSONException;
 
@@ -19,15 +26,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-
-import de.danoeh.antennapod.core.R;
-import de.danoeh.antennapod.core.service.download.ProxyConfig;
-import de.danoeh.antennapod.core.storage.APCleanupAlgorithm;
-import de.danoeh.antennapod.core.storage.APNullCleanupAlgorithm;
-import de.danoeh.antennapod.core.storage.APQueueCleanupAlgorithm;
-import de.danoeh.antennapod.core.storage.EpisodeCleanupAlgorithm;
-import de.danoeh.antennapod.core.util.Converter;
-import de.danoeh.antennapod.core.util.download.AutoUpdateManager;
 
 /**
  * Provides access to preferences set by the user in the settings screen. A
@@ -52,8 +50,6 @@ public class UserPreferences {
     public static final String PREF_COMPACT_NOTIFICATION_BUTTONS = "prefCompactNotificationButtons";
     public static final String PREF_LOCKSCREEN_BACKGROUND = "prefLockscreenBackground";
     private static final String PREF_SHOW_DOWNLOAD_REPORT = "prefShowDownloadReport";
-    public static final String PREF_BACK_BUTTON_BEHAVIOR = "prefBackButtonBehavior";
-    private static final String PREF_BACK_BUTTON_GO_TO_PAGE = "prefBackButtonGoToPage";
 
     // Queue
     private static final String PREF_QUEUE_ADD_TO_FRONT = "prefQueueAddToFront";
@@ -810,30 +806,5 @@ public class UserPreferences {
 
     public enum VideoBackgroundBehavior {
         STOP, PICTURE_IN_PICTURE, CONTINUE_PLAYING
-    }
-
-    public enum BackButtonBehavior {
-        DEFAULT, OPEN_DRAWER, DOUBLE_TAP, SHOW_PROMPT, GO_TO_PAGE
-    }
-
-    public static BackButtonBehavior getBackButtonBehavior() {
-        switch (prefs.getString(PREF_BACK_BUTTON_BEHAVIOR, "default")) {
-            case "default": return BackButtonBehavior.DEFAULT;
-            case "drawer": return BackButtonBehavior.OPEN_DRAWER;
-            case "doubletap": return BackButtonBehavior.DOUBLE_TAP;
-            case "prompt": return BackButtonBehavior.SHOW_PROMPT;
-            case "page": return BackButtonBehavior.GO_TO_PAGE;
-            default: return BackButtonBehavior.DEFAULT;
-        }
-    }
-
-    public static String getBackButtonGoToPage() {
-        return prefs.getString(PREF_BACK_BUTTON_GO_TO_PAGE, "QueueFragment");
-    }
-
-    public static void setBackButtonGoToPage(String tag) {
-        prefs.edit()
-                .putString(PREF_BACK_BUTTON_GO_TO_PAGE, tag)
-                .apply();
     }
 }

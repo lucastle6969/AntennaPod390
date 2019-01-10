@@ -21,10 +21,10 @@ import java.nio.charset.Charset;
 
 import de.danoeh.antennapod.R;
 import de.danoeh.antennapod.core.preferences.UserPreferences;
-import io.reactivex.Single;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
+import rx.Single;
+import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 /**
  * Displays the 'about' screen
@@ -35,7 +35,7 @@ public class AboutActivity extends AppCompatActivity {
 
     private WebView webView;
     private LinearLayout webViewContainer;
-    private Disposable disposable;
+    private Subscription subscription;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,8 +43,8 @@ public class AboutActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         setContentView(R.layout.about);
-        webViewContainer = findViewById(R.id.webViewContainer);
-        webView = findViewById(R.id.webViewAbout);
+        webViewContainer = (LinearLayout) findViewById(R.id.webViewContainer);
+        webView = (WebView) findViewById(R.id.webViewAbout);
         webView.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
         if (UserPreferences.getTheme() == R.style.Theme_AntennaPod_Dark) {
             if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
@@ -69,7 +69,7 @@ public class AboutActivity extends AppCompatActivity {
     }
 
     private void loadAsset(String filename) {
-        disposable = Single.create(subscriber -> {
+        subscription = Single.create(subscriber -> {
             InputStream input = null;
             try {
                 TypedArray res = AboutActivity.this.getTheme().obtainStyledAttributes(
@@ -115,7 +115,7 @@ public class AboutActivity extends AppCompatActivity {
                 IOUtils.closeQuietly(input);
             }
         })
-                .subscribeOn(Schedulers.io())
+                .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         webViewData ->
@@ -146,8 +146,8 @@ public class AboutActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (disposable != null) {
-            disposable.dispose();
+        if(subscription != null) {
+            subscription.unsubscribe();
         }
         if (webViewContainer != null && webView != null) {
             webViewContainer.removeAllViews();

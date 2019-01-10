@@ -3,7 +3,6 @@ package de.danoeh.antennapod.core.service.playback;
 import android.content.Context;
 import android.net.Uri;
 import android.view.SurfaceHolder;
-
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
@@ -23,10 +22,8 @@ import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
-
-import org.antennapod.audio.MediaPlayer;
-
 import de.danoeh.antennapod.core.util.playback.IPlayer;
+import org.antennapod.audio.MediaPlayer;
 
 
 public class ExoPlayerWrapper implements IPlayer {

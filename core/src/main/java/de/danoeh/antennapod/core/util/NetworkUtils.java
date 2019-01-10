@@ -18,13 +18,13 @@ import de.danoeh.antennapod.core.feed.FeedMedia;
 import de.danoeh.antennapod.core.preferences.UserPreferences;
 import de.danoeh.antennapod.core.service.download.AntennapodHttpClient;
 import de.danoeh.antennapod.core.storage.DBWriter;
-import io.reactivex.Single;
-import io.reactivex.SingleOnSubscribe;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.schedulers.Schedulers;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import rx.Observable;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 public class NetworkUtils {
     private NetworkUtils(){}
@@ -112,10 +112,11 @@ public class NetworkUtils {
         return null;
     }
 
-	public static Single<Long> getFeedMediaSizeObservable(FeedMedia media) {
-        return Single.create((SingleOnSubscribe<Long>) emitter -> {
+	public static Observable<Long> getFeedMediaSizeObservable(FeedMedia media) {
+        return Observable.create((Observable.OnSubscribe<Long>) subscriber -> {
             if (!NetworkUtils.isDownloadAllowed()) {
-                emitter.onSuccess(0L);
+                subscriber.onNext(0L);
+                subscriber.onCompleted();
                 return;
             }
             long size = Integer.MIN_VALUE;
@@ -129,7 +130,8 @@ public class NetworkUtils {
 
                 String url = media.getDownload_url();
                 if(TextUtils.isEmpty(url)) {
-                    emitter.onSuccess(0L);
+                    subscriber.onNext(0L);
+                    subscriber.onCompleted();
                     return;
                 }
 
@@ -149,7 +151,8 @@ public class NetworkUtils {
                         }
                     }
                 } catch (IOException e) {
-                    emitter.onSuccess(0L);
+                    subscriber.onNext(0L);
+                    subscriber.onCompleted();
                     Log.e(TAG, Log.getStackTraceString(e));
                     return; // better luck next time
                 }
@@ -161,10 +164,11 @@ public class NetworkUtils {
             } else {
                 media.setSize(size);
             }
-            emitter.onSuccess(size);
+            subscriber.onNext(size);
+            subscriber.onCompleted();
             DBWriter.setFeedMedia(media);
         })
-                .subscribeOn(Schedulers.io())
+                .subscribeOn(Schedulers.newThread())
 				.observeOn(AndroidSchedulers.mainThread());
     }
 

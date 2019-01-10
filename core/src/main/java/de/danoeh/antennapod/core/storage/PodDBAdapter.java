@@ -1,6 +1,5 @@
 package de.danoeh.antennapod.core.storage;
 
-import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -13,21 +12,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.media.MediaMetadataRetriever;
-import android.os.Build;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
-
-import org.apache.commons.io.FileUtils;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-
 import de.danoeh.antennapod.core.R;
 import de.danoeh.antennapod.core.event.ProgressEvent;
 import de.danoeh.antennapod.core.feed.Chapter;
@@ -40,6 +26,14 @@ import de.danoeh.antennapod.core.service.download.DownloadStatus;
 import de.danoeh.antennapod.core.util.LongIntMap;
 import de.danoeh.antennapod.core.util.flattr.FlattrStatus;
 import de.greenrobot.event.EventBus;
+import org.apache.commons.io.FileUtils;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 
 // TODO Remove media column from feeditem table
 
@@ -303,6 +297,7 @@ public class PodDBAdapter {
     private static Context context;
 
     private static volatile SQLiteDatabase db;
+    private static int counter = 0;
 
     public static void init(Context context) {
         PodDBAdapter.context = context.getApplicationContext();
@@ -322,20 +317,20 @@ public class PodDBAdapter {
     }
 
     public synchronized PodDBAdapter open() {
+        counter++;
+        Log.v(TAG, "Opening DB #" + counter);
+
         if (db == null || !db.isOpen() || db.isReadOnly()) {
             db = openDb();
         }
         return this;
     }
 
-    @SuppressLint("NewApi")
     private SQLiteDatabase openDb() {
         SQLiteDatabase newDb;
         try {
             newDb = SingletonHolder.dbHelper.getWritableDatabase();
-            if (Build.VERSION.SDK_INT >= 16) {
-                newDb.disableWriteAheadLogging();
-            }
+            newDb.enableWriteAheadLogging();
         } catch (SQLException ex) {
             Log.e(TAG, Log.getStackTraceString(ex));
             newDb = SingletonHolder.dbHelper.getReadableDatabase();
@@ -344,7 +339,14 @@ public class PodDBAdapter {
     }
 
     public synchronized void close() {
-        // do nothing
+        counter--;
+        Log.v(TAG, "Closing DB #" + counter);
+
+        if (counter == 0) {
+            Log.v(TAG, "Closing DB, really");
+            db.close();
+            db = null;
+        }
     }
 
     public static boolean deleteDatabase() {

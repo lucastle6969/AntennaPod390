@@ -50,10 +50,10 @@ import de.danoeh.antennapod.core.util.LongList;
 import de.danoeh.antennapod.menuhandler.FeedItemMenuHandler;
 import de.danoeh.antennapod.menuhandler.MenuItemUtils;
 import de.greenrobot.event.EventBus;
-import io.reactivex.Observable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
+import rx.Observable;
+import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 /**
  * Shows unread or recently published episodes
@@ -84,7 +84,7 @@ public class AllEpisodesFragment extends Fragment {
     private boolean isUpdatingFeeds;
     boolean isMenuInvalidationAllowed = false;
 
-    Disposable disposable;
+    Subscription subscription;
     private LinearLayoutManager layoutManager;
 
     boolean showOnlyNewEpisodes() { return false; }
@@ -125,8 +125,8 @@ public class AllEpisodesFragment extends Fragment {
     public void onStop() {
         super.onStop();
         EventDistributor.getInstance().unregister(contentUpdate);
-        if (disposable != null) {
-            disposable.dispose();
+        if(subscription != null) {
+            subscription.unsubscribe();
         }
     }
 
@@ -275,10 +275,14 @@ public class AllEpisodesFragment extends Fragment {
         if(item.getItemId() == R.id.share_item) {
             return true; // avoids that the position is reset when we need it in the submenu
         }
+        int pos = listAdapter.getPosition();
+        if(pos < 0) {
+            return false;
+        }
+        FeedItem selectedItem = itemAccess.getItem(pos);
 
-        FeedItem selectedItem = listAdapter.getSelectedItem();
         if (selectedItem == null) {
-            Log.i(TAG, "Selected item was null, ignoring selection");
+            Log.i(TAG, "Selected item at position " + pos + " was null, ignoring selection");
             return super.onContextItemSelected(item);
         }
 
@@ -309,7 +313,7 @@ public class AllEpisodesFragment extends Fragment {
 
         View root = inflater.inflate(fragmentResource, container, false);
 
-        recyclerView = root.findViewById(android.R.id.list);
+        recyclerView = (RecyclerView) root.findViewById(android.R.id.list);
         RecyclerView.ItemAnimator animator = recyclerView.getItemAnimator();
         if (animator instanceof SimpleItemAnimator) {
             ((SimpleItemAnimator) animator).setSupportsChangeAnimations(false);
@@ -319,7 +323,7 @@ public class AllEpisodesFragment extends Fragment {
         recyclerView.setHasFixedSize(true);
         recyclerView.addItemDecoration(new HorizontalDividerItemDecoration.Builder(getActivity()).build());
 
-        progLoading = root.findViewById(R.id.progLoading);
+        progLoading = (ProgressBar) root.findViewById(R.id.progLoading);
 
         if (!itemsLoaded) {
             progLoading.setVisibility(View.VISIBLE);
@@ -462,15 +466,15 @@ public class AllEpisodesFragment extends Fragment {
     }
 
     void loadItems() {
-        if (disposable != null) {
-            disposable.dispose();
+        if(subscription != null) {
+            subscription.unsubscribe();
         }
         if (viewsCreated && !itemsLoaded) {
             recyclerView.setVisibility(View.GONE);
             progLoading.setVisibility(View.VISIBLE);
         }
-        disposable = Observable.fromCallable(this::loadData)
-                .subscribeOn(Schedulers.io())
+        subscription = Observable.fromCallable(this::loadData)
+                .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(data -> {
                     recyclerView.setVisibility(View.VISIBLE);
@@ -495,8 +499,8 @@ public class AllEpisodesFragment extends Fragment {
         }
 
         Log.d(TAG, "markItemAsSeenWithUndo(" + item.getId() + ")");
-        if (disposable != null) {
-            disposable.dispose();
+        if (subscription != null) {
+            subscription.unsubscribe();
         }
         // we're marking it as unplayed since the user didn't actually play it
         // but they don't want it considered 'NEW' anymore

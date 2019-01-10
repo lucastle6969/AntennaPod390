@@ -1,6 +1,8 @@
 package de.danoeh.antennapod.fragment;
 
 import android.content.Context;
+import android.content.res.TypedArray;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.util.Log;
@@ -10,6 +12,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
 
+import com.joanzapata.iconify.IconDrawable;
+import com.joanzapata.iconify.fonts.FontAwesomeIcons;
+
 import java.util.List;
 
 import de.danoeh.antennapod.R;
@@ -17,14 +22,15 @@ import de.danoeh.antennapod.activity.MainActivity;
 import de.danoeh.antennapod.adapter.DownloadedEpisodesListAdapter;
 import de.danoeh.antennapod.core.feed.EventDistributor;
 import de.danoeh.antennapod.core.feed.FeedItem;
+import de.danoeh.antennapod.core.preferences.UserPreferences;
 import de.danoeh.antennapod.core.storage.DBReader;
 import de.danoeh.antennapod.core.storage.DBWriter;
 import de.danoeh.antennapod.core.util.FeedItemUtil;
 import de.danoeh.antennapod.dialog.EpisodesApplyActionFragment;
-import io.reactivex.Observable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
+import rx.Observable;
+import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 /**
  * Displays all running downloads and provides a button to delete them
@@ -42,7 +48,7 @@ public class CompletedDownloadsFragment extends ListFragment {
 
     private boolean viewCreated = false;
 
-    private Disposable disposable;
+    private Subscription subscription;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -61,16 +67,16 @@ public class CompletedDownloadsFragment extends ListFragment {
     public void onStop() {
         super.onStop();
         EventDistributor.getInstance().unregister(contentUpdate);
-        if (disposable != null) {
-            disposable.dispose();
+        if(subscription != null) {
+            subscription.unsubscribe();
         }
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        if (disposable != null) {
-            disposable.dispose();
+        if(subscription != null) {
+            subscription.unsubscribe();
         }
     }
 
@@ -79,8 +85,8 @@ public class CompletedDownloadsFragment extends ListFragment {
         super.onDestroyView();
         listAdapter = null;
         viewCreated = false;
-        if (disposable != null) {
-            disposable.dispose();
+        if(subscription != null) {
+            subscription.unsubscribe();
         }
     }
 
@@ -182,19 +188,21 @@ public class CompletedDownloadsFragment extends ListFragment {
     };
 
     private void loadItems() {
-        if (disposable != null) {
-            disposable.dispose();
+        if(subscription != null) {
+            subscription.unsubscribe();
         }
         if (items == null && viewCreated) {
             setListShown(false);
         }
-        disposable = Observable.fromCallable(DBReader::getDownloadedItems)
-                .subscribeOn(Schedulers.io())
+        subscription = Observable.fromCallable(DBReader::getDownloadedItems)
+                .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(result -> {
-                    items = result;
-                    if (viewCreated && getActivity() != null) {
-                        onFragmentLoaded();
+                    if (result != null) {
+                        items = result;
+                        if (viewCreated && getActivity() != null) {
+                            onFragmentLoaded();
+                        }
                     }
                 }, error ->  Log.e(TAG, Log.getStackTraceString(error)));
     }

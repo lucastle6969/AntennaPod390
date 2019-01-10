@@ -90,24 +90,24 @@ public class FeedItemlistAdapter extends BaseAdapter {
             LayoutInflater inflater = (LayoutInflater) context
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView = inflater.inflate(R.layout.feeditemlist_item, parent, false);
-            holder.container = convertView
+            holder.container = (LinearLayout) convertView
                     .findViewById(R.id.container);
-            holder.title = convertView.findViewById(R.id.txtvItemname);
+            holder.title = (TextView) convertView.findViewById(R.id.txtvItemname);
             if(Build.VERSION.SDK_INT >= 23) {
                 holder.title.setHyphenationFrequency(Layout.HYPHENATION_FREQUENCY_FULL);
             }
-            holder.lenSize = convertView
+            holder.lenSize = (TextView) convertView
                     .findViewById(R.id.txtvLenSize);
-            holder.butAction = convertView
+            holder.butAction = (ImageButton) convertView
                     .findViewById(R.id.butSecondaryAction);
-            holder.published = convertView
+            holder.published = (TextView) convertView
                     .findViewById(R.id.txtvPublished);
-            holder.inPlaylist = convertView
+            holder.inPlaylist = (ImageView) convertView
                     .findViewById(R.id.imgvInPlaylist);
-            holder.type = convertView.findViewById(R.id.imgvType);
+            holder.type = (ImageView) convertView.findViewById(R.id.imgvType);
             holder.statusUnread = convertView
                     .findViewById(R.id.statusUnread);
-            holder.episodeProgress = convertView
+            holder.episodeProgress = (ProgressBar) convertView
                     .findViewById(R.id.pbar_episode_progress);
 
             convertView.setTag(holder);

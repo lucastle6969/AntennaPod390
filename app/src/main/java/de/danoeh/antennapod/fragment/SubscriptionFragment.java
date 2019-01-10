@@ -1,6 +1,7 @@
 package de.danoeh.antennapod.fragment;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -15,6 +16,7 @@ import android.widget.GridView;
 
 import de.danoeh.antennapod.R;
 import de.danoeh.antennapod.activity.MainActivity;
+import de.danoeh.antennapod.activity.MediaplayerInfoActivity;
 import de.danoeh.antennapod.adapter.SubscriptionsAdapter;
 import de.danoeh.antennapod.core.asynctask.FeedRemover;
 import de.danoeh.antennapod.core.dialog.ConfirmationDialog;
@@ -27,10 +29,10 @@ import de.danoeh.antennapod.core.storage.DBWriter;
 import de.danoeh.antennapod.core.util.FeedItemUtil;
 import de.danoeh.antennapod.core.util.IntentUtils;
 import de.danoeh.antennapod.dialog.RenameFeedDialog;
-import io.reactivex.Observable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
+import rx.Observable;
+import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 /**
  * Fragment for displaying feed subscriptions
@@ -48,7 +50,7 @@ public class SubscriptionFragment extends Fragment {
 
     private int mPosition = -1;
 
-    private Disposable disposable;
+    private Subscription subscription;
 
     public SubscriptionFragment() {
     }
@@ -68,7 +70,7 @@ public class SubscriptionFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_subscriptions, container, false);
-        subscriptionGridLayout = root.findViewById(R.id.subscriptions_grid);
+        subscriptionGridLayout = (GridView) root.findViewById(R.id.subscriptions_grid);
         registerForContextMenu(subscriptionGridLayout);
         return root;
     }
@@ -94,17 +96,17 @@ public class SubscriptionFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if(disposable != null) {
-            disposable.dispose();
+        if(subscription != null) {
+            subscription.unsubscribe();
         }
     }
 
     private void loadSubscriptions() {
-        if(disposable != null) {
-            disposable.dispose();
+        if(subscription != null) {
+            subscription.unsubscribe();
         }
-        disposable = Observable.fromCallable(DBReader::getNavDrawerData)
-                .subscribeOn(Schedulers.io())
+        subscription = Observable.fromCallable(DBReader::getNavDrawerData)
+                .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(result -> {
                     navDrawerData = result;
@@ -161,7 +163,7 @@ public class SubscriptionFragment extends Fragment {
                         dialog.dismiss();
 
                         Observable.fromCallable(() -> DBWriter.markFeedSeen(feed.getId()))
-                                .subscribeOn(Schedulers.io())
+                                .subscribeOn(Schedulers.newThread())
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe(result -> loadSubscriptions(),
                                         error -> Log.e(TAG, Log.getStackTraceString(error)));
@@ -178,7 +180,7 @@ public class SubscriptionFragment extends Fragment {
                     public void onConfirmButtonPressed(DialogInterface dialog) {
                         dialog.dismiss();
                         Observable.fromCallable(() -> DBWriter.markFeedRead(feed.getId()))
-                                .subscribeOn(Schedulers.io())
+                                .subscribeOn(Schedulers.newThread())
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe(result -> loadSubscriptions(),
                                         error -> Log.e(TAG, Log.getStackTraceString(error)));

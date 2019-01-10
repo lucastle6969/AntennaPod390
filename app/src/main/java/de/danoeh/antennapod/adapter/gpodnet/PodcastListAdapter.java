@@ -10,7 +10,6 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 
-import com.bumptech.glide.request.RequestOptions;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
@@ -41,10 +40,10 @@ public class PodcastListAdapter extends ArrayAdapter<GpodnetPodcast> {
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
             convertView = inflater.inflate(R.layout.gpodnet_podcast_listitem, parent, false);
-            holder.image = convertView.findViewById(R.id.imgvCover);
-            holder.title = convertView.findViewById(R.id.txtvTitle);
-            holder.subscribers = convertView.findViewById(R.id.txtvSubscribers);
-            holder.url = convertView.findViewById(R.id.txtvUrl);
+            holder.image = (ImageView) convertView.findViewById(R.id.imgvCover);
+            holder.title = (TextView) convertView.findViewById(R.id.txtvTitle);
+            holder.subscribers = (TextView) convertView.findViewById(R.id.txtvSubscribers);
+            holder.url = (TextView) convertView.findViewById(R.id.txtvUrl);
             convertView.setTag(holder);
         } else {
             holder = (Holder) convertView.getTag();
@@ -53,12 +52,11 @@ public class PodcastListAdapter extends ArrayAdapter<GpodnetPodcast> {
         if (StringUtils.isNotBlank(podcast.getLogoUrl())) {
             Glide.with(convertView.getContext())
                     .load(podcast.getLogoUrl())
-                    .apply(new RequestOptions()
-                        .placeholder(R.color.light_gray)
-                        .error(R.color.light_gray)
-                        .diskCacheStrategy(ApGlideSettings.AP_DISK_CACHE_STRATEGY)
-                        .fitCenter()
-                        .dontAnimate())
+                    .placeholder(R.color.light_gray)
+                    .error(R.color.light_gray)
+                    .diskCacheStrategy(ApGlideSettings.AP_DISK_CACHE_STRATEGY)
+                    .fitCenter()
+                    .dontAnimate()
                     .into(holder.image);
         }
 

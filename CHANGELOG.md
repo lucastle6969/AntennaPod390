@@ -1,12 +1,6 @@
 Change Log
 ==========
 
-
-Version 1.7.1
--------------
-
-* Fix for database corruption
-
 Version 1.7.0
 -------------
 

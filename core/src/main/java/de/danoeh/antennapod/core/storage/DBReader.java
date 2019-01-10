@@ -1,7 +1,6 @@
 package de.danoeh.antennapod.core.storage;
 
 import android.database.Cursor;
-import android.support.annotation.Nullable;
 import android.support.v4.util.ArrayMap;
 import android.text.TextUtils;
 import android.util.Log;
@@ -76,7 +75,7 @@ public final class DBReader {
             cursor = adapter.getAllFeedsCursor();
             List<Feed> feeds = new ArrayList<>(cursor.getCount());
             while (cursor.moveToNext()) {
-                Feed feed = extractFeedFromCursorRow(cursor);
+                Feed feed = extractFeedFromCursorRow(adapter, cursor);
                 feeds.add(feed);
             }
             return feeds;
@@ -244,7 +243,7 @@ public final class DBReader {
         return result;
     }
 
-    private static Feed extractFeedFromCursorRow(Cursor cursor) {
+    private static Feed extractFeedFromCursorRow(PodDBAdapter adapter, Cursor cursor) {
         Feed feed = Feed.fromCursor(cursor);
         FeedPreferences preferences = FeedPreferences.fromCursor(cursor);
         feed.setPreferences(preferences);
@@ -575,14 +574,13 @@ public final class DBReader {
         }
     }
 
-    @Nullable
     static Feed getFeed(final long feedId, PodDBAdapter adapter) {
         Feed feed = null;
         Cursor cursor = null;
         try {
             cursor = adapter.getFeedCursor(feedId);
             if (cursor.moveToNext()) {
-                feed = extractFeedFromCursorRow(cursor);
+                feed = extractFeedFromCursorRow(adapter, cursor);
                 feed.setItems(getFeedItemList(feed));
             } else {
                 Log.e(TAG, "getFeed could not find feed with id " + feedId);
@@ -1009,7 +1007,7 @@ public final class DBReader {
         Cursor feedCursor = adapter.getFeedsInFlattrQueueCursor();
         if (feedCursor.moveToFirst()) {
             do {
-                result.add(extractFeedFromCursorRow(feedCursor));
+                result.add(extractFeedFromCursorRow(adapter, feedCursor));
             } while (feedCursor.moveToNext());
         }
         feedCursor.close();

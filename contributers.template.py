@@ -6,15 +6,7 @@ TRANSIFEX_USER = ""
 TRANSIFEX_PW = ""
 
 print('DEVELOPERS\n==========\n')
-p = subprocess.Popen("git log --format='%aN' --no-merges "
-    +"| grep -v '@' " # No email adresses
-    +"| grep -v 'no.reply' " # no.reply
-    +"| sed -e 's/^\(Daniel\|daniel oeh\|danieloeh\)$/Daniel Oeh/I'" # Duplicate name
-    +"| sed -e 's/^keunes$/Koen Glotzbach/'" # Duplicate name
-    +"| sed -e 's/^H. Lehmann$/ByteHamster/'" # Duplicate name
-    +"| sed -e 's/^domingos86$/Domingos Lopes/'" # Duplicate name
-    +"| sed -e 's/^orionlee$/Sam Lee/'" # Duplicate name
-    +"| sort -fu", shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+p = subprocess.Popen("git log --format='%aN' | sort -fu", shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 for line in p.stdout.readlines():
     output = line.decode()
     print(output, end='')
@@ -25,7 +17,6 @@ language_codes = {
     "af": "Afrikaans",
     "ak_GH": "Akan (Ghana)",
     "ak": "Akan",
-    "ast_ES": "Asturian (Spain)",
     "sq_AL": "Albanian (Albania)",
     "sq": "Albanian",
     "am_ET": "Amharic (Ethiopia)",

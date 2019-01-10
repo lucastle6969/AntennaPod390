@@ -42,15 +42,15 @@ project.ext {
     minSdkVersion = 14
     targetSdkVersion = 26
 
-    supportVersion = "27.1.1"
+    supportVersion = "26.1.0"
     awaitilityVersion = "3.1.2"
     commonsioVersion = "2.5"
     commonslangVersion = "3.6"
     commonstextVersion = "1.3"
     eventbusVersion = "2.4.0"
     flattr4jVersion = "2.14"
-    glideVersion = "4.8.0"
-    glideOkhttpIntegrationVersion = "4.8.0"
+    glideVersion = "3.8.0"
+    glideOkhttpIntegrationVersion = "1.5.0"
     iconifyVersion = "2.2.2"
     jsoupVersion = "1.11.2"
     materialDialogsVersion = "0.9.0.2"
@@ -58,8 +58,8 @@ project.ext {
     okioVersion = "1.14.0"
     recyclerviewFlexibledividerVersion = "1.4.0"
     robotiumSoloVersion = "5.6.3"
-    rxAndroidVersion = "2.1.0"
-    rxJavaVersion = "2.2.2"
+    rxAndroidVersion = "1.2.1"
+    rxJavaVersion = "1.3.8"
     rxJavaRulesVersion = "1.3.3.0"
     triangleLabelViewVersion = "1.1.2"
 

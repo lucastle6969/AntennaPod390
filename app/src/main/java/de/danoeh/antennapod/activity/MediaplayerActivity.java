@@ -47,11 +47,9 @@ import de.danoeh.antennapod.core.service.playback.PlaybackService;
 import de.danoeh.antennapod.core.storage.DBReader;
 import de.danoeh.antennapod.core.storage.DBTasks;
 import de.danoeh.antennapod.core.storage.DBWriter;
-import de.danoeh.antennapod.core.util.Consumer;
 import de.danoeh.antennapod.core.util.Converter;
 import de.danoeh.antennapod.core.util.FeedItemUtil;
 import de.danoeh.antennapod.core.util.Flavors;
-import de.danoeh.antennapod.core.util.Function;
 import de.danoeh.antennapod.core.util.IntentUtils;
 import de.danoeh.antennapod.core.util.ShareUtils;
 import de.danoeh.antennapod.core.util.StorageUtils;
@@ -64,10 +62,11 @@ import de.danoeh.antennapod.core.util.playback.PlaybackController;
 import de.danoeh.antennapod.core.util.playback.PlaybackServiceStarter;
 import de.danoeh.antennapod.dialog.SleepTimerDialog;
 import de.danoeh.antennapod.dialog.VariableSpeedDialog;
-import io.reactivex.Observable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.functions.Func1;
+import rx.schedulers.Schedulers;
 
 
 /**
@@ -95,8 +94,6 @@ public abstract class MediaplayerActivity extends CastEnabledActivity implements
     private boolean showTimeLeft = false;
 
     private boolean isFavorite = false;
-
-    private Disposable disposable;
 
     private PlaybackController newPlaybackController() {
         return new PlaybackController(this, false) {
@@ -234,6 +231,7 @@ public abstract class MediaplayerActivity extends CastEnabledActivity implements
         Log.d(TAG, "onCreate()");
         StorageUtils.checkStorageAvailability(this);
 
+        orientation = getResources().getConfiguration().orientation;
         getWindow().setFormat(PixelFormat.TRANSPARENT);
     }
 
@@ -267,9 +265,14 @@ public abstract class MediaplayerActivity extends CastEnabledActivity implements
 
     private void onBufferUpdate(float progress) {
         if (sbPosition != null) {
-            sbPosition.setSecondaryProgress((int) (progress * sbPosition.getMax()));
+            sbPosition.setSecondaryProgress((int) progress * sbPosition.getMax());
         }
     }
+
+    /**
+     * Current screen orientation.
+     */
+    private int orientation;
 
     @Override
     protected void onStart() {
@@ -289,9 +292,6 @@ public abstract class MediaplayerActivity extends CastEnabledActivity implements
         if (controller != null) {
             controller.release();
             controller = null; // prevent leak
-        }
-        if (disposable != null) {
-            disposable.dispose();
         }
         super.onStop();
     }
@@ -644,6 +644,7 @@ public abstract class MediaplayerActivity extends CastEnabledActivity implements
             if (controller != null) {
                 controller.init();
             }
+
         }
     }
 
@@ -729,8 +730,8 @@ public abstract class MediaplayerActivity extends CastEnabledActivity implements
                 R.string.pref_rewind);
 
         private final Supplier<Integer> getPrefSecsFn;
-        private final Function<MediaplayerActivity, TextView> getTextViewFn;
-        private final Consumer<Integer> setPrefSecsFn;
+        private final Func1<MediaplayerActivity, TextView> getTextViewFn;
+        private final Action1<Integer> setPrefSecsFn;
         private final int titleResourceID;
 
         /**
@@ -742,7 +743,7 @@ public abstract class MediaplayerActivity extends CastEnabledActivity implements
          * @param setPrefSecsFn Handle to function that sets the preference (setting) for the skip delta value (and optionally updates the button label with the current values)
          * @param titleResourceID ID of the resource string with the title for a view
          */
-        SkipDirection(Supplier<Integer> getPrefSecsFn, Function<MediaplayerActivity, TextView> getTextViewFn, Consumer<Integer> setPrefSecsFn, int titleResourceID) {
+        SkipDirection(Supplier<Integer> getPrefSecsFn, Func1<MediaplayerActivity, TextView> getTextViewFn, Action1<Integer> setPrefSecsFn, int titleResourceID) {
             this.getPrefSecsFn = getPrefSecsFn;
             this.getTextViewFn = getTextViewFn;
             this.setPrefSecsFn = setPrefSecsFn;
@@ -761,10 +762,10 @@ public abstract class MediaplayerActivity extends CastEnabledActivity implements
          * @param activity MediaplyerActivity that contains textview to update the display of the skip delta setting (or null if nothing to update)
          */
         public void setPrefSkipSeconds(int seconds, @Nullable Activity activity) {
-            setPrefSecsFn.accept(seconds);
+            setPrefSecsFn.call(seconds);
 
             if (activity != null && activity instanceof  MediaplayerActivity)  {
-                TextView tv = getTextViewFn.apply((MediaplayerActivity)activity);
+                TextView tv = getTextViewFn.call((MediaplayerActivity)activity);
                 if (tv != null) tv.setText(String.valueOf(seconds));
             }
         }
@@ -802,13 +803,13 @@ public abstract class MediaplayerActivity extends CastEnabledActivity implements
 
     void setupGUI() {
         setContentView(getContentViewResourceId());
-        sbPosition = findViewById(R.id.sbPosition);
-        txtvPosition = findViewById(R.id.txtvPosition);
+        sbPosition = (SeekBar) findViewById(R.id.sbPosition);
+        txtvPosition = (TextView) findViewById(R.id.txtvPosition);
 
         SharedPreferences prefs = getSharedPreferences(PREFS, MODE_PRIVATE);
         showTimeLeft = prefs.getBoolean(PREF_SHOW_TIME_LEFT, false);
         Log.d("timeleft", showTimeLeft ? "true" : "false");
-        txtvLength = findViewById(R.id.txtvLength);
+        txtvLength = (TextView) findViewById(R.id.txtvLength);
         if (txtvLength != null) {
             txtvLength.setOnClickListener(v -> {
                 showTimeLeft = !showTimeLeft;
@@ -832,18 +833,18 @@ public abstract class MediaplayerActivity extends CastEnabledActivity implements
             });
         }
 
-        butRev = findViewById(R.id.butRev);
-        txtvRev = findViewById(R.id.txtvRev);
+        butRev = (ImageButton) findViewById(R.id.butRev);
+        txtvRev = (TextView) findViewById(R.id.txtvRev);
         if (txtvRev != null) {
             txtvRev.setText(String.valueOf(UserPreferences.getRewindSecs()));
         }
-        butPlay = findViewById(R.id.butPlay);
-        butFF = findViewById(R.id.butFF);
-        txtvFF = findViewById(R.id.txtvFF);
+        butPlay = (ImageButton) findViewById(R.id.butPlay);
+        butFF = (ImageButton) findViewById(R.id.butFF);
+        txtvFF = (TextView) findViewById(R.id.txtvFF);
         if (txtvFF != null) {
             txtvFF.setText(String.valueOf(UserPreferences.getFastForwardSecs()));
         }
-        butSkip = findViewById(R.id.butSkip);
+        butSkip = (ImageButton) findViewById(R.id.butSkip);
 
         // SEEKBAR SETUP
 
@@ -945,27 +946,22 @@ public abstract class MediaplayerActivity extends CastEnabledActivity implements
 
     private void checkFavorite() {
         Playable playable = controller.getMedia();
-        if (!(playable instanceof FeedMedia)) {
-            return;
+        if (playable != null && playable instanceof FeedMedia) {
+            FeedItem feedItem = ((FeedMedia) playable).getItem();
+            if (feedItem != null) {
+                Observable.fromCallable(() -> DBReader.getFeedItem(feedItem.getId()))
+                    .subscribeOn(Schedulers.newThread())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(
+                        item -> {
+                            boolean isFav = item.isTagged(FeedItem.TAG_FAVORITE);
+                            if (isFavorite != isFav) {
+                                isFavorite = isFav;
+                                invalidateOptionsMenu();
+                            }
+                        }, error -> Log.e(TAG, Log.getStackTraceString(error)));
+            }
         }
-        FeedItem feedItem = ((FeedMedia) playable).getItem();
-        if (feedItem == null) {
-            return;
-        }
-        if (disposable != null) {
-            disposable.dispose();
-        }
-        disposable = Observable.fromCallable(() -> DBReader.getFeedItem(feedItem.getId()))
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(
-                item -> {
-                    boolean isFav = item.isTagged(FeedItem.TAG_FAVORITE);
-                    if (isFavorite != isFav) {
-                        isFavorite = isFav;
-                        invalidateOptionsMenu();
-                    }
-                }, error -> Log.e(TAG, Log.getStackTraceString(error)));
     }
 
     void playExternalMedia(Intent intent, MediaType type) {
@@ -996,7 +992,7 @@ public abstract class MediaplayerActivity extends CastEnabledActivity implements
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         if (requestCode == REQUEST_CODE_STORAGE) {
             if (grantResults.length <= 0 || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
                 Toast.makeText(this, R.string.needs_storage_permission, Toast.LENGTH_LONG).show();

@@ -1,7 +1,6 @@
 package de.danoeh.antennapod.adapter;
 
 import android.os.Build;
-import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
@@ -20,6 +19,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.joanzapata.iconify.Iconify;
 
 import java.lang.ref.WeakReference;
@@ -28,6 +28,7 @@ import de.danoeh.antennapod.R;
 import de.danoeh.antennapod.activity.MainActivity;
 import de.danoeh.antennapod.core.feed.FeedItem;
 import de.danoeh.antennapod.core.feed.FeedMedia;
+import de.danoeh.antennapod.core.glide.ApGlideSettings;
 import de.danoeh.antennapod.core.storage.DownloadRequester;
 import de.danoeh.antennapod.core.util.Converter;
 import de.danoeh.antennapod.core.util.DateUtils;
@@ -50,7 +51,7 @@ public class AllEpisodesRecycleAdapter extends RecyclerView.Adapter<AllEpisodesR
     private final ActionButtonUtils actionButtonUtils;
     private final boolean showOnlyNewEpisodes;
 
-    private FeedItem selectedItem;
+    private int position = -1;
 
     private final int playingBackGroundColor;
     private final int normalBackGroundColor;
@@ -75,24 +76,24 @@ public class AllEpisodesRecycleAdapter extends RecyclerView.Adapter<AllEpisodesR
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.new_episodes_listitem, parent, false);
         Holder holder = new Holder(view);
-        holder.container = view.findViewById(R.id.container);
-        holder.content = view.findViewById(R.id.content);
-        holder.placeholder = view.findViewById(R.id.txtvPlaceholder);
-        holder.title = view.findViewById(R.id.txtvTitle);
+        holder.container = (FrameLayout) view.findViewById(R.id.container);
+        holder.content = (LinearLayout) view.findViewById(R.id.content);
+        holder.placeholder = (TextView) view.findViewById(R.id.txtvPlaceholder);
+        holder.title = (TextView) view.findViewById(R.id.txtvTitle);
         if(Build.VERSION.SDK_INT >= 23) {
             holder.title.setHyphenationFrequency(Layout.HYPHENATION_FREQUENCY_FULL);
         }
-        holder.pubDate = view
+        holder.pubDate = (TextView) view
                 .findViewById(R.id.txtvPublished);
         holder.statusUnread = view.findViewById(R.id.statusUnread);
-        holder.butSecondary = view
+        holder.butSecondary = (ImageButton) view
                 .findViewById(R.id.butSecondaryAction);
-        holder.queueStatus = view
+        holder.queueStatus = (ImageView) view
                 .findViewById(R.id.imgvInPlaylist);
-        holder.progress = view
+        holder.progress = (ProgressBar) view
                 .findViewById(R.id.pbar_progress);
-        holder.cover = view.findViewById(R.id.imgvCover);
-        holder.txtvDuration = view.findViewById(R.id.txtvDuration);
+        holder.cover = (ImageView) view.findViewById(R.id.imgvCover);
+        holder.txtvDuration = (TextView) view.findViewById(R.id.txtvDuration);
         holder.item = null;
         holder.mainActivityRef = mainActivityRef;
         // so we can grab this later
@@ -106,7 +107,7 @@ public class AllEpisodesRecycleAdapter extends RecyclerView.Adapter<AllEpisodesR
         final FeedItem item = itemAccess.getItem(position);
         if (item == null) return;
         holder.itemView.setOnLongClickListener(v -> {
-            this.selectedItem = item;
+            this.position = holder.getAdapterPosition();
             return false;
         });
         holder.item = item;
@@ -191,17 +192,12 @@ public class AllEpisodesRecycleAdapter extends RecyclerView.Adapter<AllEpisodesR
         holder.butSecondary.setTag(item);
         holder.butSecondary.setOnClickListener(secondaryActionListener);
 
-        new CoverLoader(mainActivityRef.get())
-                .withUri(item.getImageLocation())
-                .withFallbackUri(item.getFeed().getImageLocation())
-                .withPlaceholderView(holder.placeholder)
-                .withCoverView(holder.cover)
-                .load();
-    }
-
-    @Nullable
-    public FeedItem getSelectedItem() {
-        return selectedItem;
+        Glide.with(mainActivityRef.get())
+                .load(item.getImageLocation())
+                .diskCacheStrategy(ApGlideSettings.AP_DISK_CACHE_STRATEGY)
+                .fitCenter()
+                .dontAnimate()
+                .into(new CoverTarget(item.getFeed().getImageLocation(), holder.placeholder, holder.cover, mainActivityRef.get()));
     }
 
     @Override
@@ -213,6 +209,16 @@ public class AllEpisodesRecycleAdapter extends RecyclerView.Adapter<AllEpisodesR
     @Override
     public int getItemCount() {
         return itemAccess.getCount();
+    }
+
+    public FeedItem getItem(int position) {
+        return itemAccess.getItem(position);
+    }
+
+    public int getPosition() {
+        int pos = position;
+        position = -1; // reset
+        return pos;
     }
 
     private final View.OnClickListener secondaryActionListener = new View.OnClickListener() {

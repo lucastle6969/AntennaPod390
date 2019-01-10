@@ -1,6 +1,8 @@
 package de.danoeh.antennapod.core.util.flattr;
 
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;

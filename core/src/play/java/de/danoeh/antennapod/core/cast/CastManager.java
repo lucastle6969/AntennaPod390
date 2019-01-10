@@ -1440,6 +1440,12 @@ public class CastManager extends BaseCastManager implements OnFailedListener {
         return idleReason;
     }
 
+    private void onMessageSendFailed(int errorCode) {
+        for (CastConsumer consumer : castConsumers) {
+            consumer.onDataMessageSendFailed(errorCode);
+        }
+    }
+
     /*
      * This is called by onStatusUpdated() of the RemoteMediaPlayer
      */

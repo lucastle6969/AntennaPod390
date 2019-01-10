@@ -9,12 +9,11 @@ import android.support.annotation.Nullable;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.ProgressBar;
-
 import de.danoeh.antennapod.R;
 import de.danoeh.antennapod.core.storage.PodDBAdapter;
-import io.reactivex.Completable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.schedulers.Schedulers;
+import rx.Completable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 /**
  * Shows the AntennaPod logo while waiting for the main activity to start
@@ -38,9 +37,9 @@ public class SplashActivity extends AppCompatActivity {
             // Trigger schema updates
             PodDBAdapter.getInstance().open();
             PodDBAdapter.getInstance().close();
-            subscriber.onComplete();
+            subscriber.onCompleted();
         })
-            .subscribeOn(Schedulers.io())
+            .subscribeOn(Schedulers.newThread())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(() -> {
                 Intent intent = new Intent(SplashActivity.this, MainActivity.class);

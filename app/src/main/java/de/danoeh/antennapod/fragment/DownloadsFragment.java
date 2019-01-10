@@ -38,12 +38,12 @@ public class DownloadsFragment extends Fragment {
         super.onCreateView(inflater, container, savedInstanceState);
         View root = inflater.inflate(R.layout.pager_fragment, container, false);
 
-        viewPager = root.findViewById(R.id.viewpager);
+        viewPager = (ViewPager)root.findViewById(R.id.viewpager);
         DownloadsPagerAdapter pagerAdapter = new DownloadsPagerAdapter(getChildFragmentManager(), getResources());
         viewPager.setAdapter(pagerAdapter);
 
         // Give the TabLayout the ViewPager
-        tabLayout = root.findViewById(R.id.sliding_tabs);
+        tabLayout = (TabLayout) root.findViewById(R.id.sliding_tabs);
         tabLayout.setupWithViewPager(viewPager);
 
         return root;

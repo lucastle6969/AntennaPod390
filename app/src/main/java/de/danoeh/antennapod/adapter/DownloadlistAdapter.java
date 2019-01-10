@@ -59,14 +59,14 @@ public class DownloadlistAdapter extends BaseAdapter {
             LayoutInflater inflater = (LayoutInflater) context
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView = inflater.inflate(R.layout.downloadlist_item, parent, false);
-            holder.title = convertView.findViewById(R.id.txtvTitle);
-            holder.downloaded = convertView
+            holder.title = (TextView) convertView.findViewById(R.id.txtvTitle);
+            holder.downloaded = (TextView) convertView
                     .findViewById(R.id.txtvDownloaded);
-            holder.percent = convertView
+            holder.percent = (TextView) convertView
                     .findViewById(R.id.txtvPercent);
-            holder.progbar = convertView
+            holder.progbar = (ProgressBar) convertView
                     .findViewById(R.id.progProgress);
-            holder.butSecondary = convertView
+            holder.butSecondary = (ImageButton) convertView
                     .findViewById(R.id.butSecondaryAction);
 
             convertView.setTag(holder);
