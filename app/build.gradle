@@ -1,0 +1,236 @@
+import org.apache.tools.ant.filters.ReplaceTokens
+
+apply plugin: "com.android.application"
+apply plugin: 'com.github.triplet.play'
+apply plugin: 'com.getkeepsafe.dexcount'
+
+repositories {
+    maven { url "https://jitpack.io" }
+    mavenCentral()
+}
+
+buildscript {
+    repositories {
+       jcenter()
+    }
+    dependencies {
+        classpath 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.8.2'
+    }
+}
+
+def getMyVersionName() {
+    def parsedManifestXml = (new XmlSlurper())
+            .parse("${projectDir}/src/main/AndroidManifest.xml")
+            .declareNamespace(android: "http://schemas.android.com/apk/res/android")
+    return parsedManifestXml."@android:versionName"
+}
+
+def getMyVersionCode() {
+    def parsedManifestXml = (new XmlSlurper())
+            .parse("${projectDir}/src/main/AndroidManifest.xml")
+            .declareNamespace(android: "http://schemas.android.com/apk/res/android")
+    return parsedManifestXml."@android:versionCode".toInteger()
+}
+
+android {
+    compileSdkVersion rootProject.ext.compileSdkVersion
+    buildToolsVersion rootProject.ext.buildToolsVersion
+
+    defaultConfig {
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
+        multiDexEnabled true
+        versionCode getMyVersionCode()
+        versionName "${getMyVersionName()}"
+        testApplicationId "de.test.antennapod"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        generatedDensities = []
+    }
+
+    signingConfigs {
+        releaseConfig {
+            if (project.hasProperty("releaseStoreFile")) {
+                storeFile file(releaseStoreFile)
+            } else {
+                storeFile file("keystore")
+            }
+            if (project.hasProperty("releaseStorePassword")) {
+                storePassword releaseStorePassword
+            } else {
+                storePassword "password"
+            }
+            if (project.hasProperty("releaseKeyAlias")) {
+                keyAlias releaseKeyAlias
+            } else {
+                keyAlias "alias"
+            }
+            if (project.hasProperty("releaseKeyPassword")) {
+                keyPassword releaseKeyPassword
+            } else {
+                keyPassword "password"
+            }
+        }
+    }
+
+    buildTypes {
+        def STRING = "String"
+        def FLATTR_APP_KEY = "FLATTR_APP_KEY"
+        def FLATTR_APP_SECRET = "FLATTR_APP_SECRET"
+        def mFlattrAppKey = (project.hasProperty("flattrAppKey")) ? flattrAppKey : "\"\""
+        def mFlattrAppSecret = (project.hasProperty("flattrAppSecret")) ? flattrAppSecret : "\"\""
+
+        debug {
+            applicationIdSuffix ".debug"
+            resValue "string", "provider_authority", "de.danoeh.antennapod.debug.provider"
+            buildConfigField STRING, FLATTR_APP_KEY, mFlattrAppKey
+            buildConfigField STRING, FLATTR_APP_SECRET, mFlattrAppSecret            
+            dexcount {
+                if (project.hasProperty("enableDexcountInDebug")) {
+                    runOnEachPackage enableDexcountInDebug.toBoolean()
+                } else { // default to not running dexcount
+                    runOnEachPackage false                 
+                }
+            }
+        }
+        release {
+            resValue "string", "provider_authority", "de.danoeh.antennapod.provider"
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), "proguard.cfg"
+            signingConfig signingConfigs.releaseConfig
+            buildConfigField STRING, FLATTR_APP_KEY, mFlattrAppKey
+            buildConfigField STRING, FLATTR_APP_SECRET, mFlattrAppSecret
+        }
+    }
+
+    packagingOptions {
+        exclude "META-INF/LICENSE.txt"
+        exclude "META-INF/NOTICE.txt"
+    }
+
+    lintOptions {
+        abortOnError false
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    aaptOptions {
+        additionalParameters "--no-version-vectors"
+    }
+
+    testOptions {
+        animationsDisabled = true
+    }
+
+    flavorDimensions "market"
+    productFlavors {
+        free {
+            dimension "market"
+        }
+        play {
+            dimension "market"
+        }
+    }
+
+    dexOptions {
+        jumboMode true
+    }
+}
+
+dependencies {
+    freeImplementation project(":core")
+    // free build hack: skip some dependencies
+    if (!doFreeBuild()) {
+        playImplementation project(":core")
+    } else {
+        System.out.println("app: free build hack, skipping some dependencies")
+    }
+    implementation "com.android.support:support-v4:$supportVersion"
+    implementation "com.android.support:appcompat-v7:$supportVersion"
+    implementation "com.android.support:design:$supportVersion"
+    implementation "com.android.support:preference-v14:$supportVersion"
+    implementation "com.android.support:gridlayout-v7:$supportVersion"
+    implementation "com.android.support:percent:$supportVersion"
+    implementation "com.android.support:recyclerview-v7:$supportVersion"
+    compileOnly 'com.google.android.wearable:wearable:2.2.0'
+    implementation "org.apache.commons:commons-lang3:$commonslangVersion"
+    implementation("org.shredzone.flattr4j:flattr4j-core:$flattr4jVersion") {
+        exclude group: "org.json", module: "json"
+    }
+    implementation "commons-io:commons-io:$commonsioVersion"
+    implementation "org.jsoup:jsoup:$jsoupVersion"
+    implementation "com.github.bumptech.glide:glide:$glideVersion"
+    annotationProcessor "com.github.bumptech.glide:compiler:$glideVersion"
+    implementation "com.squareup.okhttp3:okhttp:$okhttpVersion"
+    implementation "com.squareup.okhttp3:okhttp-urlconnection:$okhttpVersion"
+    implementation "com.squareup.okio:okio:$okioVersion"
+    implementation "de.greenrobot:eventbus:$eventbusVersion"
+    implementation "io.reactivex.rxjava2:rxandroid:$rxAndroidVersion"
+    implementation "io.reactivex.rxjava2:rxjava:$rxJavaVersion"
+
+    implementation "com.joanzapata.iconify:android-iconify-fontawesome:$iconifyVersion"
+    implementation "com.joanzapata.iconify:android-iconify-material:$iconifyVersion"
+    implementation("com.afollestad.material-dialogs:commons:$materialDialogsVersion") {
+        transitive = true
+    }
+    implementation "com.yqritc:recyclerview-flexibledivider:$recyclerviewFlexibledividerVersion"
+    implementation("com.githang:viewpagerindicator:2.5.1@aar") {
+        exclude module: "support-v4"
+    }
+
+    implementation "com.github.shts:TriangleLabelView:$triangleLabelViewVersion"
+
+    implementation "com.github.AntennaPod:AntennaPod-AudioPlayer:$audioPlayerVersion"
+
+    implementation 'com.github.mfietz:fyydlin:v0.4.1'
+    implementation 'com.github.ByteHamster:SearchPreference:v1.0.8'
+
+    androidTestImplementation "com.jayway.android.robotium:robotium-solo:$robotiumSoloVersion"
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-contrib:3.0.2'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-intents:3.0.2'
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation 'com.android.support.test:rules:1.0.2'
+}
+
+play {
+    serviceAccountEmail = '522080222319-compute@developer.gserviceaccount.com'
+    pk12File = file('../serviceaccount-c3d7d0f61387.p12')
+}
+
+// about.html is templatized so that we can automatically insert
+// our version string in to it at build time.
+task filterAbout {
+    inputs.files files(["src/main/templates/about.html",
+                        "src/main/AndroidManifest.xml"])
+    outputs.file "src/main/assets/about.html"
+} doLast {
+    copy {
+        from "src/main/templates/about.html"
+        into "src/main/assets"
+        filter(ReplaceTokens, tokens: [versionname: android.defaultConfig.versionName,
+                                       commit     : "git rev-parse --short HEAD".execute().text,
+                                       year       : new Date().format('yyyy')])
+    }
+}
+
+task copyTextFiles(type: Copy) {
+    from "../CONTRIBUTORS"
+    from "../LICENSE"
+    into "src/main/assets/"
+    rename { String fileName ->
+        fileName + ".txt"
+    }
+}
+
+preBuild.dependsOn filterAbout, copyTextFiles
+
+allprojects {
+    gradle.projectsEvaluated {
+        tasks.withType(JavaCompile) {
+            options.compilerArgs << "-Xlint" << "-Xlint:-deprecation" << "-Xlint:-serial"
+        }
+    }
+}
