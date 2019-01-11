@@ -48,28 +48,35 @@ android {
     }
 
     signingConfigs {
-        releaseConfig {
-            if (project.hasProperty("releaseStoreFile")) {
-                storeFile file(releaseStoreFile)
-            } else {
-                storeFile file("keystore")
-            }
-            if (project.hasProperty("releaseStorePassword")) {
-                storePassword releaseStorePassword
-            } else {
-                storePassword "password"
-            }
-            if (project.hasProperty("releaseKeyAlias")) {
-                keyAlias releaseKeyAlias
-            } else {
-                keyAlias "alias"
-            }
-            if (project.hasProperty("releaseKeyPassword")) {
-                keyPassword releaseKeyPassword
-            } else {
-                keyPassword "password"
-            }
+        release {
+            storeFile file("key.keystore")
+            storePassword "****"
+            keyAlias "myKey"
+            keyPassword "****"
         }
+
+//        releaseConfig {
+//            if (project.hasProperty("releaseStoreFile")) {
+//                storeFile file(releaseStoreFile)
+//            } else {
+//                storeFile file("keystore")
+//            }
+//            if (project.hasProperty("releaseStorePassword")) {
+//                storePassword releaseStorePassword
+//            } else {
+//                storePassword "password"
+//            }
+//            if (project.hasProperty("releaseKeyAlias")) {
+//                keyAlias releaseKeyAlias
+//            } else {
+//                keyAlias "alias"
+//            }
+//            if (project.hasProperty("releaseKeyPassword")) {
+//                keyPassword releaseKeyPassword
+//            } else {
+//                keyPassword "password"
+//            }
+//        }
     }
 
     buildTypes {
@@ -96,7 +103,8 @@ android {
             resValue "string", "provider_authority", "de.danoeh.antennapod.provider"
             minifyEnabled true
             proguardFile "proguard.cfg"
-            signingConfig signingConfigs.releaseConfig
+            signingConfig signingConfigs.release
+            // signingConfig signingConfigs.releaseConfig
             buildConfigField STRING, FLATTR_APP_KEY, mFlattrAppKey
             buildConfigField STRING, FLATTR_APP_SECRET, mFlattrAppSecret
         }
