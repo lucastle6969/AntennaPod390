@@ -19,6 +19,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import de.danoeh.antennapod.R;
 import de.danoeh.antennapod.activity.OnlineFeedViewActivity;
@@ -52,10 +53,13 @@ public class FyydSearchFragment extends Fragment {
     private final FyydClient client = new FyydClient(AntennapodHttpClient.getHttpClient());
 
     /**
-     * List of podcasts retreived from the search
+     * List of podcasts retrieved from the search
      */
     private List<Podcast> searchResults;
     private Subscription subscription;
+
+    private String [] PodcastCategory = {"Arts", "Business", "Comedy", "Education", "Games", "Government","Health","Kids","Music","News","Religion","Science", "Society"};
+    Random randomNumGen = new Random();
 
     /**
      * Constructor
@@ -91,6 +95,8 @@ public class FyydSearchFragment extends Fragment {
         txtvError = (TextView) root.findViewById(R.id.txtvError);
         butRetry = (Button) root.findViewById(R.id.butRetry);
         txtvEmpty = (TextView) root.findViewById(android.R.id.empty);
+
+        loadSomePodcast();
 
         return root;
     }
@@ -139,6 +145,43 @@ public class FyydSearchFragment extends Fragment {
         });
         MenuItemCompat.expandActionView(searchItem);
     }
+
+    /**
+     * Replace adapter data with provided search results from SearchTask.
+     * @param result List of Podcast objects containing search results
+     */
+    private void updateData(List<Podcast> result) {
+        this.searchResults = result;
+        adapter.clear();
+        if (result != null && result.size() > 0) {
+            gridView.setVisibility(View.VISIBLE);
+            txtvEmpty.setVisibility(View.GONE);
+            for (Podcast p : result) {
+                adapter.add(p);
+            }
+            adapter.notifyDataSetInvalidated();
+        } else {
+            gridView.setVisibility(View.GONE);
+            txtvEmpty.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private void loadSomePodcast() {
+        if (subscription != null) {
+            subscription.unsubscribe();
+        }
+        gridView.setVisibility(View.GONE);
+        txtvError.setVisibility(View.GONE);
+        butRetry.setVisibility(View.GONE);
+        txtvEmpty.setVisibility(View.GONE);
+        progressBar.setVisibility(View.VISIBLE);
+
+        String query = PodcastCategory[randomNumGen.nextInt(12)];
+        search(query);
+        updateData(searchResults);
+
+    }
+
 
     private void search(String query) {
         if (subscription != null) {
