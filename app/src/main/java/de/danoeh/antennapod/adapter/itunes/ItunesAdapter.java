@@ -70,7 +70,11 @@ public class ItunesAdapter extends ArrayAdapter<ItunesAdapter.Podcast> {
 
         //Set the title
         viewHolder.titleView.setText(podcast.title);
-        if(podcast.feedUrl != null && !podcast.feedUrl.contains("itunes.apple.com")) {
+        if (podcast.description != null){
+            viewHolder.urlView.setText(podcast.description);
+            viewHolder.urlView.setVisibility(View.VISIBLE);
+        }
+        else if(podcast.feedUrl != null) {
             viewHolder.urlView.setText(podcast.feedUrl);
             viewHolder.urlView.setVisibility(View.VISIBLE);
         } else {
@@ -111,11 +115,21 @@ public class ItunesAdapter extends ArrayAdapter<ItunesAdapter.Podcast> {
         @Nullable
         public final String feedUrl;
 
+        @Nullable
+        public final String description;
 
         private Podcast(String title, @Nullable String imageUrl, @Nullable String feedUrl) {
             this.title = title;
             this.imageUrl = imageUrl;
             this.feedUrl = feedUrl;
+            this.description = "";
+        }
+
+        private Podcast(String title, @Nullable String imageUrl, @Nullable String feedUrl, @Nullable String description) {
+            this.title = title;
+            this.imageUrl = imageUrl;
+            this.feedUrl = feedUrl;
+            this.description = description;
         }
 
         /**
@@ -128,11 +142,12 @@ public class ItunesAdapter extends ArrayAdapter<ItunesAdapter.Podcast> {
             String title = json.optString("collectionName", "");
             String imageUrl = json.optString("artworkUrl100", null);
             String feedUrl = json.optString("feedUrl", null);
-            return new Podcast(title, imageUrl, feedUrl);
+            String description = json.optString("description", null);
+            return new Podcast(title, imageUrl, feedUrl, description);
         }
 
         public static Podcast fromSearch(SearchHit searchHit) {
-            return new Podcast(searchHit.getTitle(), searchHit.getImageUrl(), searchHit.getXmlUrl());
+            return new Podcast(searchHit.getTitle(), searchHit.getImageUrl(), searchHit.getXmlUrl(), searchHit.getDescription());
         }
 
         /**
@@ -154,7 +169,8 @@ public class ItunesAdapter extends ArrayAdapter<ItunesAdapter.Podcast> {
             }
             String feedUrl = "https://itunes.apple.com/lookup?id=" +
                     json.getJSONObject("id").getJSONObject("attributes").getString("im:id");
-            return new Podcast(title, imageUrl, feedUrl);
+            String description = json.getJSONObject("summary").getString("label");
+            return new Podcast(title, imageUrl, feedUrl, description);
         }
 
     }

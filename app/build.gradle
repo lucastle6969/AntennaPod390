@@ -11,7 +11,7 @@ repositories {
 
 buildscript {
     repositories {
-       jcenter()
+        jcenter()
     }
     dependencies {
         classpath 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.8.2'
@@ -83,12 +83,12 @@ android {
             applicationIdSuffix ".debug"
             resValue "string", "provider_authority", "de.danoeh.antennapod.debug.provider"
             buildConfigField STRING, FLATTR_APP_KEY, mFlattrAppKey
-            buildConfigField STRING, FLATTR_APP_SECRET, mFlattrAppSecret            
+            buildConfigField STRING, FLATTR_APP_SECRET, mFlattrAppSecret
             dexcount {
                 if (project.hasProperty("enableDexcountInDebug")) {
                     runOnEachPackage enableDexcountInDebug.toBoolean()
                 } else { // default to not running dexcount
-                    runOnEachPackage false                 
+                    runOnEachPackage false
                 }
             }
         }
@@ -184,6 +184,10 @@ dependencies {
     implementation 'com.github.ByteHamster:SearchPreference:v1.0.8'
 
     androidTestImplementation "com.jayway.android.robotium:robotium-solo:$robotiumSoloVersion"
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    }
+    androidTestImplementation 'com.android.support.test:rules:1.0.2'
 }
 
 play {
