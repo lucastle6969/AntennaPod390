@@ -3,6 +3,7 @@ package de.danoeh.antennapod.adapter.itunes;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -81,6 +82,8 @@ public class ItunesAdapter extends ArrayAdapter<ItunesAdapter.Podcast> {
             viewHolder.urlView.setVisibility(View.GONE);
         }
 
+        viewHolder.episodesView.setText(String.format("%s", podcast.numOfEpisodes));
+
         //Update the empty imageView with the image from the feed
         Glide.with(context)
                 .load(podcast.imageUrl)
@@ -115,21 +118,23 @@ public class ItunesAdapter extends ArrayAdapter<ItunesAdapter.Podcast> {
         @Nullable
         public final String feedUrl;
 
+        /**
+         * The description of a podcast
+         */
         @Nullable
         public final String description;
 
-        private Podcast(String title, @Nullable String imageUrl, @Nullable String feedUrl) {
-            this.title = title;
-            this.imageUrl = imageUrl;
-            this.feedUrl = feedUrl;
-            this.description = "";
-        }
+        /**
+         *  The number of episodes of a podcast
+         */
+        public final int numOfEpisodes;
 
-        private Podcast(String title, @Nullable String imageUrl, @Nullable String feedUrl, @Nullable String description) {
+        private Podcast(String title, @Nullable String imageUrl, @Nullable String feedUrl, @Nullable String description, int numOfEpisodes) {
             this.title = title;
             this.imageUrl = imageUrl;
             this.feedUrl = feedUrl;
             this.description = description;
+            this.numOfEpisodes = numOfEpisodes;
         }
 
         /**
@@ -142,12 +147,18 @@ public class ItunesAdapter extends ArrayAdapter<ItunesAdapter.Podcast> {
             String title = json.optString("collectionName", "");
             String imageUrl = json.optString("artworkUrl100", null);
             String feedUrl = json.optString("feedUrl", null);
-            String description = json.optString("description", null);
-            return new Podcast(title, imageUrl, feedUrl, description);
+            String description = null;
+            int numOfEpisodes = json.optInt("trackCount", 0);
+            return new Podcast(title, imageUrl, feedUrl, description, numOfEpisodes);
         }
 
+        /**
+         * Constructs a Podcast instance from a fyyd search result
+         * @param searchHit
+         * @return
+         */
         public static Podcast fromSearch(SearchHit searchHit) {
-            return new Podcast(searchHit.getTitle(), searchHit.getImageUrl(), searchHit.getXmlUrl(), searchHit.getDescription());
+            return new Podcast(searchHit.getTitle(), searchHit.getImageUrl(), searchHit.getXmlUrl(), searchHit.getDescription(), searchHit.getCountEpisodes());
         }
 
         /**
@@ -170,7 +181,10 @@ public class ItunesAdapter extends ArrayAdapter<ItunesAdapter.Podcast> {
             String feedUrl = "https://itunes.apple.com/lookup?id=" +
                     json.getJSONObject("id").getJSONObject("attributes").getString("im:id");
             String description = json.getJSONObject("summary").getString("label");
-            return new Podcast(title, imageUrl, feedUrl, description);
+
+            int numOfEpisodes = 0;
+
+            return new Podcast(title, imageUrl, feedUrl, description, numOfEpisodes);
         }
 
     }
@@ -190,8 +204,15 @@ public class ItunesAdapter extends ArrayAdapter<ItunesAdapter.Podcast> {
          */
         final TextView titleView;
 
+        /**
+         * TextView for holding Podcast url
+         */
         final TextView urlView;
 
+        /**
+         * TextView for holding Podcast epidode number
+         */
+        final TextView episodesView;
 
         /**
          * Constructor
@@ -201,6 +222,7 @@ public class ItunesAdapter extends ArrayAdapter<ItunesAdapter.Podcast> {
             coverView = (ImageView) view.findViewById(R.id.imgvCover);
             titleView = (TextView) view.findViewById(R.id.txtvTitle);
             urlView = (TextView) view.findViewById(R.id.txtvUrl);
+            episodesView = (TextView) view.findViewById(R.id.txtvEpisodes);
         }
     }
 }

@@ -17,6 +17,11 @@ import android.widget.GridView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -24,11 +29,16 @@ import java.util.Random;
 import de.danoeh.antennapod.R;
 import de.danoeh.antennapod.activity.OnlineFeedViewActivity;
 import de.danoeh.antennapod.adapter.itunes.ItunesAdapter;
+import de.danoeh.antennapod.core.ClientConfig;
 import de.danoeh.antennapod.core.service.download.AntennapodHttpClient;
 import de.danoeh.antennapod.menuhandler.MenuItemUtils;
 import de.mfietz.fyydlin.FyydClient;
 import de.mfietz.fyydlin.FyydResponse;
 import de.mfietz.fyydlin.SearchHit;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+import rx.Observable;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -56,6 +66,7 @@ public class FyydSearchFragment extends Fragment {
      * List of podcasts retrieved from the search
      */
     private List<Podcast> searchResults;
+    private List<Podcast> topList;
     private Subscription subscription;
 
     private String [] PodcastCategory = {"Arts", "Business", "Comedy", "Education", "Games", "Government","Health","Kids","Music","News","Religion","Science", "Society"};
@@ -140,10 +151,15 @@ public class FyydSearchFragment extends Fragment {
             @Override
             public boolean onMenuItemActionCollapse(MenuItem item) {
                 getActivity().getSupportFragmentManager().popBackStack();
+
+                if(searchResults != null) {
+                    searchResults = null;
+                    updateData(topList);
+                }
+
                 return true;
             }
         });
-        MenuItemCompat.expandActionView(searchItem);
     }
 
     /**
@@ -181,7 +197,6 @@ public class FyydSearchFragment extends Fragment {
         updateData(searchResults);
 
     }
-
 
     private void search(String query) {
         if (subscription != null) {
