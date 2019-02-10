@@ -29,7 +29,7 @@
             android:text="@string/podcastdirectories_descr"
             android:textSize="@dimen/text_size_medium"/>
 
-        <Button
+        <!--Button
             android:id="@+id/butSearchItunes"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -46,7 +46,16 @@
             android:id="@+id/butBrowseGpoddernet"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/browse_gpoddernet_label"/>
+            android:text="@string/browse_gpoddernet_label"/-->
+
+
+        <Spinner
+            android:id="@+id/directories"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            />
 
         <View style="@style/Divider"
             android:id="@+id/div1"/>
