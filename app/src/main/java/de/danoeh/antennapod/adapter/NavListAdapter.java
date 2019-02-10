@@ -251,6 +251,7 @@ public class NavListAdapter extends BaseAdapter
         holder.count.setOnClickListener(null);
         View div = convertView.findViewById(R.id.nav_list_divider);
         String tag = tags.get(position);
+
         if (tag.equals(QueueFragment.TAG)) {
             int queueSize = itemAccess.getQueueSize();
             if (queueSize > 0) {
@@ -276,6 +277,9 @@ public class NavListAdapter extends BaseAdapter
             }
         }  else if (tag.equals(PlaybackHistoryFragment.TAG)) {
             div.setVisibility(View.VISIBLE);
+            if(hiddenFragments.contains("SubscriptionFragment") && hiddenFragments.contains("AddFeedFragment") && hiddenFragments.contains("DownloadsFragment")){
+                div.setVisibility(View.GONE);
+            }
         }else if (tag.equals(SubscriptionFragment.TAG)) {
             int sum = itemAccess.getFeedCounterSum();
             if (sum > 0) {
@@ -283,8 +287,14 @@ public class NavListAdapter extends BaseAdapter
                 holder.count.setVisibility(View.VISIBLE);
             }
             div.setVisibility(View.GONE);
+            if(hiddenFragments.contains("SubscriptionFragment") && hiddenFragments.contains("AddFeedFragment") && hiddenFragments.contains("DownloadsFragment")){
+                div.setVisibility(View.GONE);
+            }
         } else if (tag.equals(AddFeedFragment.TAG)) {
             div.setVisibility(View.GONE);
+            if(hiddenFragments.contains("SubscriptionFragment") && hiddenFragments.contains("AddFeedFragment") && hiddenFragments.contains("DownloadsFragment")){
+                div.setVisibility(View.GONE);
+            }
         } else if(tag.equals(DownloadsFragment.TAG) && UserPreferences.isEnableAutodownload()) {
             int epCacheSize = UserPreferences.getEpisodeCacheSize();
             // don't count episodes that can be reclaimed
