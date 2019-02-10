@@ -120,16 +120,16 @@
 
         <Button
             android:id="@+id/butOptions"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:layout_marginTop="4dp"
             android:background="@drawable/round_button"
             android:gravity="center" />
 
         <Button
             android:id="@+id/butOptionsOff"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:layout_marginTop="4dp"
             android:background="@drawable/round_button_off"
             android:gravity="center"
