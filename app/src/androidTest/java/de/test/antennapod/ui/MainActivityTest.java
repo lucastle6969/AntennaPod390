@@ -83,6 +83,7 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
         final Feed feed = uiTestUtils.hostedFeeds.get(0);
         openNavDrawer();
         solo.clickOnText(solo.getString(R.string.add_feed_label));
+        solo.clickOnButton(0);
         solo.enterText(0, feed.getDownload_url());
         solo.clickOnButton(solo.getString(R.string.confirm_label));
         solo.waitForActivity(OnlineFeedViewActivity.class);
