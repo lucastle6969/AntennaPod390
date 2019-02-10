@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import de.danoeh.antennapod.R;
 import de.danoeh.antennapod.activity.MainActivity;
@@ -44,6 +45,49 @@ public class AddFeedFragment extends Fragment {
         Button butSearchFyyd = (Button) root.findViewById(R.id.butSearchFyyd);
         Button butOpmlImport = (Button) root.findViewById(R.id.butOpmlImport);
         Button butConfirm = (Button) root.findViewById(R.id.butConfirm);
+        Button butOption = (Button) root.findViewById(R.id.butOptions);
+        Button butOptionOff = (Button) root.findViewById(R.id.butOptionsOff);
+
+        TextView txtFeedUrl = (TextView) root.findViewById(R.id.txtvFeedurl);
+        TextView txtOpmlImport = (TextView) root.findViewById(R.id.txtvOpmlImport);
+        TextView txtOpmlImportExpl = (TextView) root.findViewById(R.id.txtvOpmlImportExpl);
+        TextView advancedOptions = (TextView) root.findViewById(R.id.advanced);
+
+        View divider2 = (View) root.findViewById(R.id.div2);
+        View divider3 = (View) root.findViewById(R.id.div3);
+
+        butOptionOff.setOnClickListener((View v) -> {
+            if (butOption.getVisibility() == View.GONE) {
+                butOpmlImport.setVisibility(View.GONE);
+                butConfirm.setVisibility(View.GONE);
+                butOptionOff.setVisibility(View.GONE);
+                butOption.setVisibility(View.VISIBLE);
+                txtFeedUrl.setVisibility(View.GONE);
+                txtOpmlImport.setVisibility(View.GONE);
+                txtOpmlImportExpl.setVisibility(View.GONE);
+                etxtFeedurl.setVisibility(View.GONE);
+                advancedOptions.setVisibility(View.VISIBLE);
+                divider2.setVisibility(View.GONE);
+                divider3.setVisibility(View.GONE);
+
+            }
+        });
+
+        butOption.setOnClickListener((View v) -> {
+            if (butOptionOff.getVisibility() == View.GONE) {
+                butOpmlImport.setVisibility(View.VISIBLE);
+                butConfirm.setVisibility(View.VISIBLE);
+                butOptionOff.setVisibility(View.VISIBLE);
+                butOption.setVisibility(View.GONE);
+                txtFeedUrl.setVisibility(View.VISIBLE);
+                txtOpmlImport.setVisibility(View.VISIBLE);
+                txtOpmlImportExpl.setVisibility(View.VISIBLE);
+                etxtFeedurl.setVisibility(View.VISIBLE);
+                advancedOptions.setVisibility(View.GONE);
+                divider2.setVisibility(View.VISIBLE);
+                divider3.setVisibility(View.VISIBLE);
+            }
+        });
 
         final MainActivity activity = (MainActivity) getActivity();
         activity.getSupportActionBar().setTitle(R.string.add_feed_label);
