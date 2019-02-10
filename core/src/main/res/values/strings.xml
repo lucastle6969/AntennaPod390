@@ -115,8 +115,15 @@
     <string name="etxtFeedurlHint">www.example.com/feed</string>
     <string name="txtvfeedurl_label">Add Podcast by URL</string>
     <string name="podcastdirectories_label">Find Podcast in Directory</string>
-    <string name="podcastdirectories_descr">For new podcasts, you can search iTunes or fyyd, or browse gpodder.net by name, category or popularity.</string>
+    <string name="podcastdirectories_descr">Discover new podcasts by browsing through these directories:</string>
     <string name="browse_gpoddernet_label">Browse gpodder.net</string>
+    <string name="advanced">See Advanced Options...</string>
+    <string-array name="directories">
+        <item>Please Select a Directory</item>
+        <item>iTunes</item>
+        <item>fyyd</item>
+        <item>gPodder.net</item>
+    </string-array>
 
     <!-- Actions on feeds -->
     <string name="mark_all_read_label">Mark all as played</string>

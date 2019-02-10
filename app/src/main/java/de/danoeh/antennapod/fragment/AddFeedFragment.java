@@ -6,8 +6,12 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
+import android.widget.TextView;
 
 import de.danoeh.antennapod.R;
 import de.danoeh.antennapod.activity.MainActivity;
@@ -39,20 +43,98 @@ public class AddFeedFragment extends Fragment {
             etxtFeedurl.setText(args.getString(ARG_FEED_URL));
         }
 
-        Button butSearchITunes = (Button) root.findViewById(R.id.butSearchItunes);
-        Button butBrowserGpoddernet = (Button) root.findViewById(R.id.butBrowseGpoddernet);
-        Button butSearchFyyd = (Button) root.findViewById(R.id.butSearchFyyd);
+        // DEPRECATED FOR NOW
+        //Button butSearchITunes = (Button) root.findViewById(R.id.butSearchItunes);
+        //Button butBrowserGpoddernet = (Button) root.findViewById(R.id.butBrowseGpoddernet);
+        //Button butSearchFyyd = (Button) root.findViewById(R.id.butSearchFyyd);
+
         Button butOpmlImport = (Button) root.findViewById(R.id.butOpmlImport);
         Button butConfirm = (Button) root.findViewById(R.id.butConfirm);
+        Button butOption = (Button) root.findViewById(R.id.butOptions);
+        Button butOptionOff = (Button) root.findViewById(R.id.butOptionsOff);
+
+        TextView txtFeedUrl = (TextView) root.findViewById(R.id.txtvFeedurl);
+        TextView txtOpmlImport = (TextView) root.findViewById(R.id.txtvOpmlImport);
+        TextView txtOpmlImportExpl = (TextView) root.findViewById(R.id.txtvOpmlImportExpl);
+        TextView advancedOptions = (TextView) root.findViewById(R.id.advanced);
+
+        View divider2 = (View) root.findViewById(R.id.div2);
+        View divider3 = (View) root.findViewById(R.id.div3);
+
+        butOptionOff.setOnClickListener((View v) -> {
+            if (butOption.getVisibility() == View.GONE) {
+                butOpmlImport.setVisibility(View.GONE);
+                butConfirm.setVisibility(View.GONE);
+                butOptionOff.setVisibility(View.GONE);
+                butOption.setVisibility(View.VISIBLE);
+                txtFeedUrl.setVisibility(View.GONE);
+                txtOpmlImport.setVisibility(View.GONE);
+                txtOpmlImportExpl.setVisibility(View.GONE);
+                etxtFeedurl.setVisibility(View.GONE);
+                advancedOptions.setVisibility(View.VISIBLE);
+                divider2.setVisibility(View.GONE);
+                divider3.setVisibility(View.GONE);
+            }
+        });
+
+        butOption.setOnClickListener((View v) -> {
+            if (butOptionOff.getVisibility() == View.GONE) {
+                butOpmlImport.setVisibility(View.VISIBLE);
+                butConfirm.setVisibility(View.VISIBLE);
+                butOptionOff.setVisibility(View.VISIBLE);
+                butOption.setVisibility(View.GONE);
+                txtFeedUrl.setVisibility(View.VISIBLE);
+                txtOpmlImport.setVisibility(View.VISIBLE);
+                txtOpmlImportExpl.setVisibility(View.VISIBLE);
+                etxtFeedurl.setVisibility(View.VISIBLE);
+                advancedOptions.setVisibility(View.GONE);
+                divider2.setVisibility(View.VISIBLE);
+                divider3.setVisibility(View.VISIBLE);
+            }
+        });
 
         final MainActivity activity = (MainActivity) getActivity();
         activity.getSupportActionBar().setTitle(R.string.add_feed_label);
 
+        Spinner directories = (Spinner) root.findViewById(R.id.directories);
+        ArrayAdapter<String> directoryAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, getResources().getStringArray(R.array.directories));
+        directoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        directories.setAdapter(directoryAdapter);
+
+        directories.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                switch (i) {
+                    case 1:
+                        activity.loadChildFragment(new ItunesSearchFragment());
+                        directories.setSelection(0);
+                        break;
+                    case 2:
+                        activity.loadChildFragment(new FyydSearchFragment());
+                        directories.setSelection(0);
+                        break;
+                    case 3:
+                        activity.loadChildFragment(new GpodnetMainFragment());
+                        directories.setSelection(0);
+                        break;
+                }
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
+        /* DEPRECATED FOR NOW
         butSearchITunes.setOnClickListener(v -> activity.loadChildFragment(new ItunesSearchFragment()));
 
         butBrowserGpoddernet.setOnClickListener(v -> activity.loadChildFragment(new GpodnetMainFragment()));
 
         butSearchFyyd.setOnClickListener(v -> activity.loadChildFragment(new FyydSearchFragment()));
+        */
 
         butOpmlImport.setOnClickListener(v -> startActivity(new Intent(getActivity(),
                 OpmlImportFromPathActivity.class)));
