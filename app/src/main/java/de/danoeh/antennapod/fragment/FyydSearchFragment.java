@@ -143,7 +143,6 @@ public class FyydSearchFragment extends Fragment {
                 return true;
             }
         });
-        MenuItemCompat.expandActionView(searchItem);
     }
 
     /**
@@ -181,7 +180,6 @@ public class FyydSearchFragment extends Fragment {
         updateData(searchResults);
 
     }
-
 
     private void search(String query) {
         if (subscription != null) {
