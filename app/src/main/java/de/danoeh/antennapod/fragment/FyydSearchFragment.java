@@ -96,7 +96,7 @@ public class FyydSearchFragment extends Fragment {
         butRetry = (Button) root.findViewById(R.id.butRetry);
         txtvEmpty = (TextView) root.findViewById(android.R.id.empty);
 
-        loadSomePodcast();
+        loadDefaultPodcastWithQuery(PodcastCategory[randomNumGen.nextInt(12)]);
 
         return root;
     }
@@ -165,7 +165,7 @@ public class FyydSearchFragment extends Fragment {
         }
     }
 
-    private void loadSomePodcast() {
+    private void loadDefaultPodcastWithQuery(String query) {
         if (subscription != null) {
             subscription.unsubscribe();
         }
@@ -175,10 +175,8 @@ public class FyydSearchFragment extends Fragment {
         txtvEmpty.setVisibility(View.GONE);
         progressBar.setVisibility(View.VISIBLE);
 
-        String query = PodcastCategory[randomNumGen.nextInt(12)];
         search(query);
         updateData(searchResults);
-
     }
 
     private void search(String query) {
