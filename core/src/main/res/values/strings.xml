@@ -121,8 +121,8 @@
     <string-array name="directories">
         <item>Please Select a Directory</item>
         <item>iTunes</item>
-        <item>Fyyd</item>
-        <item>GPodder.Net</item>
+        <item>fyyd</item>
+        <item>gPodder.net</item>
     </string-array>
 
     <!-- Actions on feeds -->
