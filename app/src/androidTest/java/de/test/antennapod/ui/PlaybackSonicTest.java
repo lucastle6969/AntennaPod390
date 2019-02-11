@@ -59,7 +59,7 @@ public class PlaybackSonicTest extends ActivityInstrumentationTestCase2<MainActi
                 .clear()
                 .putBoolean(UserPreferences.PREF_UNPAUSE_ON_HEADSET_RECONNECT, false)
                 .putBoolean(UserPreferences.PREF_PAUSE_ON_HEADSET_DISCONNECT, false)
-                .putBoolean(UserPreferences.PREF_SONIC, true)
+                .putBoolean(UserPreferences.PREF_MEDIA_PLAYER, true)
                 .commit();
 
         solo = new Solo(getInstrumentation(), getActivity());
@@ -246,9 +246,9 @@ public class PlaybackSonicTest extends ActivityInstrumentationTestCase2<MainActi
         assertTrue(startedPlaying);
 
         boolean stoppedPlaying = solo.waitForCondition(() ->
-                uiTestUtils.getCurrentMedia(getActivity()) == null
-                    || uiTestUtils.getCurrentMedia(getActivity()).getId() != mediaId
-        , Timeout.getLargeTimeout());
+                        uiTestUtils.getCurrentMedia(getActivity()) == null
+                                || uiTestUtils.getCurrentMedia(getActivity()).getId() != mediaId
+                , Timeout.getLargeTimeout());
         assertTrue(stoppedPlaying);
 
         startLocalPlayback();
