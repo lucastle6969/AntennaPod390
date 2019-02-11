@@ -248,6 +248,7 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
         solo.sendKey(Solo.ENTER);
         solo.waitForDialogToOpen();
 
+
         GridView gridView = (GridView) solo.getView(R.id.gridView);
         ViewGroup viewGroup = (ViewGroup) gridView.getChildAt(0);
         TextView descriptionView = viewGroup.findViewById(R.id.txtvUrl);
@@ -299,5 +300,22 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
         assertNotNull(descriptionView.getText());
         assertEquals(episodeCountView.getText().toString(),numOfEpisodes);
         assertEquals(descriptionView.getText().toString(),genre);
+    }
+
+    public void testGpodderPodcastDescription() {
+        String description = "Witty, irreverent look at the world through scientists' eyes. With Brian Cox\n" +
+                "and Robin Ince";
+
+        openNavDrawer();
+        solo.clickOnText(solo.getString(R.string.add_feed_label));
+        solo.pressSpinnerItem(0, 3);
+        solo.waitForDialogToOpen();
+        solo.waitForView(R.id.txtvEpisodes);
+
+        GridView gridView = (GridView) solo.getView(R.id.gridView);
+        ViewGroup viewGroup = (ViewGroup) gridView.getChildAt(0);
+        TextView descriptionView = viewGroup.findViewById(R.id.txtvDescription);
+
+        assertEquals(description, descriptionView.getText());
     }
 }
