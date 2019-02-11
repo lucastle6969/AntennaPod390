@@ -2,6 +2,8 @@ package de.test.antennapod.ui;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.support.design.internal.NavigationMenu;
+import android.support.design.internal.NavigationMenuView;
 import android.test.ActivityInstrumentationTestCase2;
 import android.test.FlakyTest;
 import android.util.Log;
@@ -15,6 +17,7 @@ import android.widget.TextView;
 
 import com.robotium.solo.Solo;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -30,6 +33,7 @@ import de.danoeh.antennapod.fragment.DownloadsFragment;
 import de.danoeh.antennapod.fragment.EpisodesFragment;
 import de.danoeh.antennapod.fragment.PlaybackHistoryFragment;
 import de.danoeh.antennapod.fragment.QueueFragment;
+import de.danoeh.antennapod.preferences.PreferenceController;
 
 /**
  * User interface tests for MainActivity
@@ -166,49 +170,75 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
         solo.waitForActivity(PreferenceActivity.class);
     }
 
-    public void testDrawerPreferencesHideSomeElements() {
+    //Test to verify that we can properly hide elements from the navigation drawer and that the separator is still in place
+    public void testDrawerPreferencesHideSomeElements(){
         UserPreferences.setHiddenDrawerItems(new ArrayList<>());
+
         openNavDrawer();
-        solo.clickLongOnText(solo.getString(R.string.queue_label));
+        solo.clickOnText(solo.getString(R.string.settings_label));
+        solo.waitForActivity(PreferenceActivity.class);
+        solo.clickOnText(solo.getString(R.string.user_interface_label));
+        solo.clickOnText(solo.getString(R.string.pref_nav_drawer_items_title));
         solo.waitForDialogToOpen();
         solo.clickOnText(solo.getString(R.string.episodes_label));
+        solo.clickOnText(solo.getString(R.string.downloads_label));
+        solo.clickOnText(solo.getString(R.string.confirm_label));
+        solo.waitForDialogToClose();
+        solo.clickOnImageButton(0);
+        solo.clickOnImageButton(0);
+        openNavDrawer();
+
+        List<String> hidden = UserPreferences.getHiddenDrawerItems();
+        assertEquals(2, hidden.size());
+        assertTrue(hidden.contains(EpisodesFragment.TAG));
+        assertTrue(hidden.contains(DownloadsFragment.TAG));
+    }
+
+    //Test to verify that we can unhide hidden elements and that the separator stays in place
+    public void testDrawerPreferencesUnhideSomeElements(){
+        List<String> hidden = Arrays.asList(EpisodesFragment.TAG, DownloadsFragment.TAG);
+        UserPreferences.setHiddenDrawerItems(hidden);
+
+        openNavDrawer();
+        solo.clickOnText(solo.getString(R.string.settings_label));
+        solo.waitForActivity(PreferenceActivity.class);
+        solo.clickOnText(solo.getString(R.string.user_interface_label));
+        solo.clickOnText(solo.getString(R.string.pref_nav_drawer_items_title));
+        solo.waitForDialogToOpen();
+        solo.clickOnText(solo.getString(R.string.downloads_label));
         solo.clickOnText(solo.getString(R.string.playback_history_label));
         solo.clickOnText(solo.getString(R.string.confirm_label));
         solo.waitForDialogToClose();
-        List<String> hidden = UserPreferences.getHiddenDrawerItems();
+        solo.clickOnImageButton(0);
+        solo.clickOnImageButton(0);
+        openNavDrawer();
+
+        hidden = UserPreferences.getHiddenDrawerItems();
         assertEquals(2, hidden.size());
         assertTrue(hidden.contains(EpisodesFragment.TAG));
         assertTrue(hidden.contains(PlaybackHistoryFragment.TAG));
     }
 
-    public void testDrawerPreferencesUnhideSomeElements() {
-        List<String> hidden = Arrays.asList(PlaybackHistoryFragment.TAG, DownloadsFragment.TAG);
-        UserPreferences.setHiddenDrawerItems(hidden);
-        openNavDrawer();
-        solo.clickLongOnText(solo.getString(R.string.queue_label));
-        solo.waitForDialogToOpen();
-        solo.clickOnText(solo.getString(R.string.downloads_label));
-        solo.clickOnText(solo.getString(R.string.queue_label));
-        solo.clickOnText(solo.getString(R.string.confirm_label));
-        solo.waitForDialogToClose();
-        hidden = UserPreferences.getHiddenDrawerItems();
-        assertEquals(2, hidden.size());
-        assertTrue(hidden.contains(QueueFragment.TAG));
-        assertTrue(hidden.contains(PlaybackHistoryFragment.TAG));
-    }
-
-    public void testDrawerPreferencesHideAllElements() {
+    //Test to verify that all elements can be hidden without breaking the app and that the separator is not present when no navigation drawer fragments are there
+    public void testDrawerPreferencesHideAllElements(){
         UserPreferences.setHiddenDrawerItems(new ArrayList<>());
         String[] titles = getInstrumentation().getTargetContext().getResources().getStringArray(R.array.nav_drawer_titles);
 
         openNavDrawer();
-        solo.clickLongOnText(solo.getString(R.string.queue_label));
+        solo.clickOnText(solo.getString(R.string.settings_label));
+        solo.waitForActivity(PreferenceActivity.class);
+        solo.clickOnText(solo.getString(R.string.user_interface_label));
+        solo.clickOnText(solo.getString(R.string.pref_nav_drawer_items_title));
         solo.waitForDialogToOpen();
         for (String title : titles) {
             solo.clickOnText(title);
         }
         solo.clickOnText(solo.getString(R.string.confirm_label));
         solo.waitForDialogToClose();
+        solo.clickOnImageButton(0);
+        solo.clickOnImageButton(0);
+        openNavDrawer();
+
         List<String> hidden = UserPreferences.getHiddenDrawerItems();
         assertEquals(titles.length, hidden.size());
         for (String tag : MainActivity.NAV_DRAWER_TAGS) {
@@ -216,7 +246,8 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
         }
     }
 
-    public void testDrawerPreferencesHideCurrentElement() {
+    //Test to verify that we can hide the current element and the separator stays in place
+    public void testDrawerPreferencesHideCurrentElement(){
         UserPreferences.setHiddenDrawerItems(new ArrayList<>());
 
         openNavDrawer();
@@ -224,11 +255,18 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
         solo.clickOnText(downloads);
         solo.waitForView(android.R.id.list);
         openNavDrawer();
-        solo.clickLongOnText(downloads);
+        solo.clickOnText(solo.getString(R.string.settings_label));
+        solo.waitForActivity(PreferenceActivity.class);
+        solo.clickOnText(solo.getString(R.string.user_interface_label));
+        solo.clickOnText(solo.getString(R.string.pref_nav_drawer_items_title));
         solo.waitForDialogToOpen();
         solo.clickOnText(downloads);
         solo.clickOnText(solo.getString(R.string.confirm_label));
         solo.waitForDialogToClose();
+        solo.clickOnImageButton(0);
+        solo.clickOnImageButton(0);
+        openNavDrawer();
+
         List<String> hidden = UserPreferences.getHiddenDrawerItems();
         assertEquals(1, hidden.size());
         assertTrue(hidden.contains(DownloadsFragment.TAG));
