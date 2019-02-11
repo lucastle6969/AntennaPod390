@@ -223,7 +223,6 @@ public class NavListAdapter extends BaseAdapter
     }
 
     private View getNavView(String title, int position, View convertView, ViewGroup parent) {
-        List<String> hiddenFragments = UserPreferences.getHiddenDrawerItems();
         Activity context = activity.get();
         if(context == null) {
             return null;
@@ -249,7 +248,6 @@ public class NavListAdapter extends BaseAdapter
         // reset for re-use
         holder.count.setVisibility(View.GONE);
         holder.count.setOnClickListener(null);
-        View div = convertView.findViewById(R.id.nav_list_divider);
         String tag = tags.get(position);
 
         if (tag.equals(QueueFragment.TAG)) {
@@ -258,42 +256,17 @@ public class NavListAdapter extends BaseAdapter
                 holder.count.setText(String.valueOf(queueSize));
                 holder.count.setVisibility(View.VISIBLE);
             }
-            if (hiddenFragments.indexOf("PlaybackHistoryFragment") != -1){
-                div.setVisibility(View.VISIBLE);
-            } else {
-                div.setVisibility(View.GONE);
-            }
         } else if (tag.equals(EpisodesFragment.TAG)) {
             int unreadItems = itemAccess.getNumberOfNewItems();
             if (unreadItems > 0) {
                 holder.count.setText(String.valueOf(unreadItems));
                 holder.count.setVisibility(View.VISIBLE);
             }
-            if (hiddenFragments.indexOf("PlaybackHistoryFragment") != -1 &&
-                    hiddenFragments.indexOf("QueueFragment") != -1){
-                div.setVisibility(View.VISIBLE);
-            } else {
-                div.setVisibility(View.GONE);
-            }
-        }  else if (tag.equals(PlaybackHistoryFragment.TAG)) {
-            div.setVisibility(View.VISIBLE);
-            if(hiddenFragments.contains("SubscriptionFragment") && hiddenFragments.contains("AddFeedFragment") && hiddenFragments.contains("DownloadsFragment")){
-                div.setVisibility(View.GONE);
-            }
         }else if (tag.equals(SubscriptionFragment.TAG)) {
             int sum = itemAccess.getFeedCounterSum();
             if (sum > 0) {
                 holder.count.setText(String.valueOf(sum));
                 holder.count.setVisibility(View.VISIBLE);
-            }
-            div.setVisibility(View.GONE);
-            if(hiddenFragments.contains("SubscriptionFragment") && hiddenFragments.contains("AddFeedFragment") && hiddenFragments.contains("DownloadsFragment")){
-                div.setVisibility(View.GONE);
-            }
-        } else if (tag.equals(AddFeedFragment.TAG)) {
-            div.setVisibility(View.GONE);
-            if(hiddenFragments.contains("SubscriptionFragment") && hiddenFragments.contains("AddFeedFragment") && hiddenFragments.contains("DownloadsFragment")){
-                div.setVisibility(View.GONE);
             }
         } else if(tag.equals(DownloadsFragment.TAG) && UserPreferences.isEnableAutodownload()) {
             int epCacheSize = UserPreferences.getEpisodeCacheSize();
@@ -313,12 +286,52 @@ public class NavListAdapter extends BaseAdapter
                             .show()
                 );
             }
-            div.setVisibility(View.GONE);
-        }
 
+        }
+        setDivider(tag, convertView);
         holder.image.setImageDrawable(getDrawable(tags.get(position)));
 
         return convertView;
+    }
+
+    private void setDivider(String tag, View convertView){
+        List<String> hiddenFragments = UserPreferences.getHiddenDrawerItems();
+        View div = convertView.findViewById(R.id.nav_list_divider);
+        switch (tag) {
+            case QueueFragment.TAG:
+                if (hiddenFragments.contains("PlaybackHistoryFragment") && bottomElementVisible(hiddenFragments)
+                ) {
+                    div.setVisibility(View.VISIBLE);
+                } else {
+                    div.setVisibility(View.GONE);
+                }
+                break;
+            case EpisodesFragment.TAG:
+                if (hiddenFragments.contains("PlaybackHistoryFragment") &&
+                        hiddenFragments.contains("QueueFragment") &&
+                        bottomElementVisible(hiddenFragments)) {
+                    div.setVisibility(View.VISIBLE);
+                } else {
+                    div.setVisibility(View.GONE);
+                }
+                break;
+            case PlaybackHistoryFragment.TAG:
+                if (bottomElementVisible(hiddenFragments)) {
+                    div.setVisibility(View.VISIBLE);
+                } else {
+                    div.setVisibility(View.GONE);
+                }
+                break;
+            default:
+                div.setVisibility(View.GONE);
+                break;
+        }
+    }
+
+    private boolean bottomElementVisible(List<String> hiddenFragments){
+        return !hiddenFragments.contains("SubscriptionFragment") ||
+                !hiddenFragments.contains("AddFeedFragment") ||
+                !hiddenFragments.contains("DownloadsFragment");
     }
 
     private View getSectionDividerView(View convertView, ViewGroup parent) {
