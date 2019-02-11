@@ -147,7 +147,7 @@ public class ItunesAdapter extends ArrayAdapter<ItunesAdapter.Podcast> {
             String imageUrl = json.optString("artworkUrl100", null);
             String feedUrl = json.optString("feedUrl", null);
             String description = null;
-            int numOfEpisodes = 0;
+            int numOfEpisodes = json.optInt("trackCount", 0);
             return new Podcast(title, imageUrl, feedUrl, description, numOfEpisodes);
         }
 
