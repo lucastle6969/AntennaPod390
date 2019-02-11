@@ -97,12 +97,12 @@ public class MainActivity extends CastEnabledActivity implements NavDrawerActivi
     private static final String SAVE_TITLE = "title";
 
     public static final String[] NAV_DRAWER_TAGS = {
-            QueueFragment.TAG,
             EpisodesFragment.TAG,
-            SubscriptionFragment.TAG,
-            DownloadsFragment.TAG,
+            QueueFragment.TAG,
             PlaybackHistoryFragment.TAG,
+            SubscriptionFragment.TAG,
             AddFeedFragment.TAG,
+            DownloadsFragment.TAG,
             NavListAdapter.SUBSCRIPTION_LIST_TAG
     };
 
