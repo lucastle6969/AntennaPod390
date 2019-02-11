@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.GridView;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -294,6 +295,54 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
 
         assertEquals(numOfEpisodes, episodesView.getText());
         assertEquals(description, descriptionView.getText());
+    }
+
+    public void testITunesTopPodcastEpisodeDescriptionAndHiddenCount() {
+        openNavDrawer();
+        solo.clickOnText(solo.getString(R.string.add_feed_label));
+        solo.pressSpinnerItem(0, 1);
+        solo.waitForDialogToOpen();
+        solo.waitForView(R.id.action_search);
+
+        GridView gridView = (GridView) solo.getView(R.id.gridView);
+        ViewGroup viewGroup = (ViewGroup) gridView.getChildAt(0);
+
+        TextView descriptionView = viewGroup.findViewById(R.id.txtvUrl);
+        ImageView episodesIconView = viewGroup.findViewById(R.id.imgFeed);
+        TextView episodesView = viewGroup.findViewById(R.id.txtvEpisodes);
+
+        assertNotNull(descriptionView.getText());
+        assertFalse(descriptionView.getText().toString().equals(""));
+        assertEquals(View.GONE, episodesIconView.getVisibility());
+        assertEquals(View.GONE, episodesView.getVisibility());
+    }
+
+    public void testITunesSearchPodcastEpisodeCountAndGenre() {
+        String query = "Hello Internet";
+        String numOfEpisodes = "100";
+        String genre = "Educational Technology";
+
+
+        openNavDrawer();
+        solo.clickOnText(solo.getString(R.string.add_feed_label));
+        solo.pressSpinnerItem(0, 1);
+        solo.waitForDialogToOpen();
+        solo.waitForView(R.id.action_search);
+        solo.clickOnView(solo.getView(R.id.action_search));
+        solo.enterText(0, query);
+        solo.sendKey(Solo.ENTER);
+        solo.waitForDialogToOpen();
+
+        GridView gridView = (GridView) solo.getView(R.id.gridView);
+        ViewGroup viewGroup = (ViewGroup) gridView.getChildAt(0);
+
+        TextView episodeCountView = viewGroup.findViewById(R.id.txtvEpisodes);
+        TextView descriptionView = viewGroup.findViewById(R.id.txtvUrl);
+
+        assertNotNull(episodeCountView.getText());
+        assertNotNull(descriptionView.getText());
+        assertEquals(episodeCountView.getText().toString(),numOfEpisodes);
+        assertEquals(descriptionView.getText().toString(),genre);
     }
 
     public void testGpodderPodcastDescription() {
