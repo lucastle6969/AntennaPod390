@@ -12,7 +12,8 @@
         android:paddingBottom="8dp"
         android:paddingLeft="16dp"
         android:paddingRight="16dp"
-        android:paddingTop="8dp">
+        android:paddingTop="8dp"
+        android:gravity="center">
 
         <TextView
             android:id="@+id/txtvPodcastDirectories"
@@ -28,7 +29,7 @@
             android:text="@string/podcastdirectories_descr"
             android:textSize="@dimen/text_size_medium"/>
 
-        <Button
+        <!--Button
             android:id="@+id/butSearchItunes"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -45,16 +46,27 @@
             android:id="@+id/butBrowseGpoddernet"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/browse_gpoddernet_label"/>
+            android:text="@string/browse_gpoddernet_label"/-->
 
-        <View style="@style/Divider"/>
+
+        <Spinner
+            android:id="@+id/directories"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            />
+
+        <View style="@style/Divider"
+            android:id="@+id/div1"/>
 
         <TextView
             android:id="@+id/txtvFeedurl"
             style="@style/AntennaPod.TextView.Heading"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/txtvfeedurl_label"/>
+            android:text="@string/txtvfeedurl_label"
+            android:visibility="gone"/>
 
         <EditText
             android:id="@+id/etxtFeedurl"
@@ -64,36 +76,72 @@
             android:focusable="true"
             android:focusableInTouchMode="true"
             android:hint="@string/etxtFeedurlHint"
-            android:inputType="textUri"/>
+            android:inputType="textUri"
+            android:visibility="gone"/>
 
         <Button
             android:id="@+id/butConfirm"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/confirm_label"/>
+            android:text="@string/confirm_label"
+            android:visibility="gone"/>
 
-        <View style="@style/Divider"/>
+        <View style="@style/Divider"
+            android:id="@+id/div2"
+            android:visibility="gone"/>
 
         <TextView
             android:id="@+id/txtvOpmlImport"
             style="@style/AntennaPod.TextView.Heading"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/opml_import_label"/>
+            android:text="@string/opml_import_label"
+            android:visibility="gone"/>
 
         <TextView
             android:id="@+id/txtvOpmlImportExpl"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/opml_import_txtv_button_lable"
-            android:textSize="@dimen/text_size_medium"/>
+            android:textSize="@dimen/text_size_medium"
+            android:visibility="gone"/>
 
         <Button
             android:id="@+id/butOpmlImport"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:text="@string/opml_import_label"/>
+            android:text="@string/opml_import_label"
+            android:visibility="gone"/>
+
+        <View style="@style/Divider"
+            android:id="@+id/div3"
+            android:visibility="gone"/>
+
+        <Button
+            android:id="@+id/butOptions"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="4dp"
+            android:background="@drawable/round_button"
+            android:gravity="center" />
+
+        <Button
+            android:id="@+id/butOptionsOff"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="4dp"
+            android:background="@drawable/round_button_off"
+            android:gravity="center"
+            android:visibility="gone"/>
+
+        <TextView
+            android:id="@+id/advanced"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/advanced"
+            android:textSize="@dimen/text_size_medium"/>
 
     </LinearLayout>
 

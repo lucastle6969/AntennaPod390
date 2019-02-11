@@ -23,44 +23,19 @@ public class GpodnetMainFragment extends Fragment {
     private static final String TAG = "GpodnetMainFragment";
 
     private static final String PREF_LAST_TAB_POSITION = "tab_position";
-    private TabLayout tabLayout;
+    // private TabLayout tabLayout;
     private ViewPager viewPager;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        View root = inflater.inflate(R.layout.pager_fragment, container, false);
+        View root = inflater.inflate(R.layout.pager_fragment_b, container, false);
 
         viewPager = (ViewPager)root.findViewById(R.id.viewpager);
         GpodnetPagerAdapter pagerAdapter = new GpodnetPagerAdapter(getChildFragmentManager(), getResources());
         viewPager.setAdapter(pagerAdapter);
 
-        // Give the TabLayout the ViewPager
-        tabLayout = (TabLayout) root.findViewById(R.id.sliding_tabs);
-        tabLayout.setupWithViewPager(viewPager);
-
         return root;
-    }
-
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        // save our tab selection
-        SharedPreferences prefs = getActivity().getSharedPreferences(TAG, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putInt(PREF_LAST_TAB_POSITION, tabLayout.getSelectedTabPosition());
-        editor.apply();
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-
-        // restore our last position
-        SharedPreferences prefs = getActivity().getSharedPreferences(TAG, Context.MODE_PRIVATE);
-        int lastPosition = prefs.getInt(PREF_LAST_TAB_POSITION, 0);
-        viewPager.setCurrentItem(lastPosition);
     }
 
     public class GpodnetPagerAdapter extends FragmentPagerAdapter {
@@ -80,16 +55,7 @@ public class GpodnetMainFragment extends Fragment {
 
         @Override
         public Fragment getItem(int i) {
-            switch (i) {
-                case POS_TAGS:
-                    return new TagListFragment();
-                case POS_TOPLIST:
                     return new PodcastTopListFragment();
-                case POS_SUGGESTIONS:
-                    return new SuggestionListFragment();
-                default:
-                    return null;
-            }
         }
 
         @Override

@@ -4,7 +4,13 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.test.ActivityInstrumentationTestCase2;
 import android.test.FlakyTest;
+import android.util.Log;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.GridView;
 import android.widget.ListView;
+import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.robotium.solo.Solo;
 
@@ -83,6 +89,7 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
         final Feed feed = uiTestUtils.hostedFeeds.get(0);
         openNavDrawer();
         solo.clickOnText(solo.getString(R.string.add_feed_label));
+        solo.clickOnButton(0);
         solo.enterText(0, feed.getDownload_url());
         solo.clickOnButton(solo.getString(R.string.confirm_label));
         solo.waitForActivity(OnlineFeedViewActivity.class);
@@ -224,5 +231,47 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
         List<String> hidden = UserPreferences.getHiddenDrawerItems();
         assertEquals(1, hidden.size());
         assertTrue(hidden.contains(DownloadsFragment.TAG));
+    }
+
+    public void testFyydPodcastEpisodesAndDescription() {
+        String query = "TripleTwenty";
+        String description = "TripleTwenty ist der Rollenspielpodcast einer Anfängergruppe und lädt alle zum mithören ein, die sich für Pen&Paper wie \"Das Schwarze Auge\" oder \"Dungeons & Dragons\" interessieren - oder nur mal reinschnuppern wollen.";
+        String numOfEpisodes = "126";
+
+        openNavDrawer();
+        solo.clickOnText(solo.getString(R.string.add_feed_label));
+        solo.pressSpinnerItem(0, 2);
+        solo.waitForDialogToOpen();
+        solo.waitForView(R.id.action_search);
+        solo.clickOnView(solo.getView(R.id.action_search));
+        solo.enterText(0, query);
+        solo.sendKey(Solo.ENTER);
+        solo.waitForDialogToOpen();
+
+
+        GridView gridView = (GridView) solo.getView(R.id.gridView);
+        ViewGroup viewGroup = (ViewGroup) gridView.getChildAt(0);
+        TextView descriptionView = viewGroup.findViewById(R.id.txtvUrl);
+        TextView episodesView = viewGroup.findViewById(R.id.txtvEpisodes);
+
+        assertEquals(numOfEpisodes, episodesView.getText());
+        assertEquals(description, descriptionView.getText());
+    }
+
+    public void testGpodderPodcastDescription() {
+        String description = "Witty, irreverent look at the world through scientists' eyes. With Brian Cox\n" +
+                "and Robin Ince";
+
+        openNavDrawer();
+        solo.clickOnText(solo.getString(R.string.add_feed_label));
+        solo.pressSpinnerItem(0, 3);
+        solo.waitForDialogToOpen();
+        solo.waitForView(R.id.txtvEpisodes);
+
+        GridView gridView = (GridView) solo.getView(R.id.gridView);
+        ViewGroup viewGroup = (ViewGroup) gridView.getChildAt(0);
+        TextView descriptionView = viewGroup.findViewById(R.id.txtvDescription);
+
+        assertEquals(description, descriptionView.getText());
     }
 }

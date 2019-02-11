@@ -64,7 +64,7 @@
         tools:background="@android:color/holo_green_dark" />
 
     <TextView
-        android:id="@+id/txtvUrl"
+        android:id="@+id/txtvDescription"
         style="android:style/TextAppearance.Small"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -74,7 +74,7 @@
         android:textColor="?android:attr/textColorSecondary"
         android:ellipsize="middle"
         android:maxLines="2"
-        tools:text="http://www.example.com/feed"
+        tools:text="Description about the podcast"
         tools:background="@android:color/holo_green_dark"/>
 
 </RelativeLayout>

@@ -70,12 +70,18 @@ public class ItunesAdapter extends ArrayAdapter<ItunesAdapter.Podcast> {
 
         //Set the title
         viewHolder.titleView.setText(podcast.title);
-        if(podcast.feedUrl != null && !podcast.feedUrl.contains("itunes.apple.com")) {
+        if (podcast.description != null){
+            viewHolder.urlView.setText(podcast.description);
+            viewHolder.urlView.setVisibility(View.VISIBLE);
+        }
+        else if(podcast.feedUrl != null) {
             viewHolder.urlView.setText(podcast.feedUrl);
             viewHolder.urlView.setVisibility(View.VISIBLE);
         } else {
             viewHolder.urlView.setVisibility(View.GONE);
         }
+
+        viewHolder.episodesView.setText(String.format("%s", podcast.numOfEpisodes));
 
         //Update the empty imageView with the image from the feed
         Glide.with(context)
@@ -111,11 +117,23 @@ public class ItunesAdapter extends ArrayAdapter<ItunesAdapter.Podcast> {
         @Nullable
         public final String feedUrl;
 
+        /**
+         * The description of a podcast
+         */
+        @Nullable
+        public final String description;
 
-        private Podcast(String title, @Nullable String imageUrl, @Nullable String feedUrl) {
+        /**
+         *  The number of episodes of a podcast
+         */
+        public final int numOfEpisodes;
+
+        private Podcast(String title, @Nullable String imageUrl, @Nullable String feedUrl, @Nullable String description, int numOfEpisodes) {
             this.title = title;
             this.imageUrl = imageUrl;
             this.feedUrl = feedUrl;
+            this.description = description;
+            this.numOfEpisodes = numOfEpisodes;
         }
 
         /**
@@ -128,11 +146,18 @@ public class ItunesAdapter extends ArrayAdapter<ItunesAdapter.Podcast> {
             String title = json.optString("collectionName", "");
             String imageUrl = json.optString("artworkUrl100", null);
             String feedUrl = json.optString("feedUrl", null);
-            return new Podcast(title, imageUrl, feedUrl);
+            String description = null;
+            int numOfEpisodes = 0;
+            return new Podcast(title, imageUrl, feedUrl, description, numOfEpisodes);
         }
 
+        /**
+         * Constructs a Podcast instance from a fyyd search result
+         * @param searchHit
+         * @return
+         */
         public static Podcast fromSearch(SearchHit searchHit) {
-            return new Podcast(searchHit.getTitle(), searchHit.getImageUrl(), searchHit.getXmlUrl());
+            return new Podcast(searchHit.getTitle(), searchHit.getImageUrl(), searchHit.getXmlUrl(), searchHit.getDescription(), searchHit.getCountEpisodes());
         }
 
         /**
@@ -154,7 +179,11 @@ public class ItunesAdapter extends ArrayAdapter<ItunesAdapter.Podcast> {
             }
             String feedUrl = "https://itunes.apple.com/lookup?id=" +
                     json.getJSONObject("id").getJSONObject("attributes").getString("im:id");
-            return new Podcast(title, imageUrl, feedUrl);
+            String description = json.getJSONObject("summary").getString("label");
+
+            int numOfEpisodes = 0;
+
+            return new Podcast(title, imageUrl, feedUrl, description, numOfEpisodes);
         }
 
     }
@@ -174,8 +203,15 @@ public class ItunesAdapter extends ArrayAdapter<ItunesAdapter.Podcast> {
          */
         final TextView titleView;
 
+        /**
+         * TextView for holding Podcast url
+         */
         final TextView urlView;
 
+        /**
+         * TextView for holding Podcast epidode number
+         */
+        final TextView episodesView;
 
         /**
          * Constructor
@@ -185,6 +221,7 @@ public class ItunesAdapter extends ArrayAdapter<ItunesAdapter.Podcast> {
             coverView = (ImageView) view.findViewById(R.id.imgvCover);
             titleView = (TextView) view.findViewById(R.id.txtvTitle);
             urlView = (TextView) view.findViewById(R.id.txtvUrl);
+            episodesView = (TextView) view.findViewById(R.id.txtvEpisodes);
         }
     }
 }
