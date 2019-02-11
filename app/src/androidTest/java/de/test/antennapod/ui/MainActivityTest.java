@@ -256,4 +256,43 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
         assertEquals(numOfEpisodes, episodesView.getText());
         assertEquals(description, descriptionView.getText());
     }
+
+    public void testITunesTopPodcastEpisodeDescription() {
+        openNavDrawer();
+        solo.clickOnText(solo.getString(R.string.add_feed_label));
+        solo.pressSpinnerItem(0, 1);
+        solo.waitForDialogToOpen();
+        solo.waitForView(R.id.action_search);
+
+        GridView gridView = (GridView) solo.getView(R.id.gridView);
+        ViewGroup viewGroup = (ViewGroup) gridView.getChildAt(0);
+
+        TextView descriptionView = viewGroup.findViewById(R.id.txtvUrl);
+
+        assertNotNull(descriptionView.getText());
+        assertFalse(descriptionView.getText().toString().equals(""));
+    }
+
+    public void testITunesSearchPodcastEpisodeCount() {
+        String query = "Hello Internet";
+        String numOfEpisodes = "100";
+
+        openNavDrawer();
+        solo.clickOnText(solo.getString(R.string.add_feed_label));
+        solo.pressSpinnerItem(0, 1);
+        solo.waitForDialogToOpen();
+        solo.waitForView(R.id.action_search);
+        solo.clickOnView(solo.getView(R.id.action_search));
+        solo.enterText(0, query);
+        solo.sendKey(Solo.ENTER);
+        solo.waitForDialogToOpen();
+
+        GridView gridView = (GridView) solo.getView(R.id.gridView);
+        ViewGroup viewGroup = (ViewGroup) gridView.getChildAt(0);
+
+        TextView episodeCountView = viewGroup.findViewById(R.id.txtvEpisodes);
+
+        assertNotNull(episodeCountView.getText());
+        assertEquals(episodeCountView.getText().toString(),numOfEpisodes);
+    }
 }
