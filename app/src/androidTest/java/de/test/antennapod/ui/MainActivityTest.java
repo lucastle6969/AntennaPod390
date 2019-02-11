@@ -273,9 +273,11 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
         assertFalse(descriptionView.getText().toString().equals(""));
     }
 
-    public void testITunesSearchPodcastEpisodeCount() {
+    public void testITunesSearchPodcastEpisodeCountAndGenre() {
         String query = "Hello Internet";
         String numOfEpisodes = "100";
+        String genre = "Educational Technology";
+
 
         openNavDrawer();
         solo.clickOnText(solo.getString(R.string.add_feed_label));
@@ -291,8 +293,11 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
         ViewGroup viewGroup = (ViewGroup) gridView.getChildAt(0);
 
         TextView episodeCountView = viewGroup.findViewById(R.id.txtvEpisodes);
+        TextView descriptionView = viewGroup.findViewById(R.id.txtvUrl);
 
         assertNotNull(episodeCountView.getText());
+        assertNotNull(descriptionView.getText());
         assertEquals(episodeCountView.getText().toString(),numOfEpisodes);
+        assertEquals(descriptionView.getText().toString(),genre);
     }
 }
