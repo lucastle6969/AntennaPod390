@@ -81,7 +81,15 @@ public class ItunesAdapter extends ArrayAdapter<ItunesAdapter.Podcast> {
             viewHolder.urlView.setVisibility(View.GONE);
         }
 
-        viewHolder.episodesView.setText(String.format("%s", podcast.numOfEpisodes));
+        if(podcast.numOfEpisodes == 0){ // If the number of episodes of the podcast is 0 (i.e. could not be retrieved), hide the podcast episode count and icon.
+            viewHolder.episodesIconView.setVisibility(View.GONE);
+            viewHolder.episodesView.setVisibility(View.GONE);
+        } else {
+            viewHolder.episodesIconView.setVisibility(View.VISIBLE);
+            viewHolder.episodesView.setVisibility(View.VISIBLE);
+            viewHolder.episodesView.setText(String.format("%s", podcast.numOfEpisodes));
+        }
+
 
         //Update the empty imageView with the image from the feed
         Glide.with(context)
@@ -214,6 +222,11 @@ public class ItunesAdapter extends ArrayAdapter<ItunesAdapter.Podcast> {
         final TextView episodesView;
 
         /**
+         * ImageView for holding Podcast epidode number icon
+         */
+        final ImageView episodesIconView;
+
+        /**
          * Constructor
          * @param view GridView cell
          */
@@ -222,6 +235,7 @@ public class ItunesAdapter extends ArrayAdapter<ItunesAdapter.Podcast> {
             titleView = (TextView) view.findViewById(R.id.txtvTitle);
             urlView = (TextView) view.findViewById(R.id.txtvUrl);
             episodesView = (TextView) view.findViewById(R.id.txtvEpisodes);
+            episodesIconView = (ImageView) view.findViewById(R.id.imgFeed);
         }
     }
 }
