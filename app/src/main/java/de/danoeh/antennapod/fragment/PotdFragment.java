@@ -34,7 +34,7 @@ public class PotdFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        View root = inflater.inflate(R.layout.addfeed, container, false);
+        View root = inflater.inflate(R.layout.potd, container, false);
 
 
         return root;
