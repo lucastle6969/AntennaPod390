@@ -5,12 +5,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/txtvPodcastDirectories"
-        style="@style/AntennaPod.TextView.Heading"
+    <ImageView
+        android:id="@+id/imgvBackground"
+        style="@style/BigBlurryBackground"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/potd_label"/>
+        android:layout_height="@dimen/feeditemlist_header_height" />
 
     <ImageView
         android:id="@+id/imgvCover"
@@ -18,75 +17,224 @@
         android:layout_height="@dimen/thumbnail_length_onlinefeedview"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:layout_marginLeft="12dp"
-        android:layout_marginTop="33dp"
-        android:layout_marginRight="16dp"
+        android:layout_centerVertical="true"
+        android:layout_marginBottom="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="16dp"
         android:contentDescription="@string/cover_label"
+        tools:src="@drawable/ic_stat_antenna_default"
+        tools:background="@android:color/holo_green_dark"/>
+
+    <ImageButton
+        android:id="@+id/butShowInfo"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="8dp"
+        android:background="?attr/selectableItemBackground"
+        android:contentDescription="@string/show_info_label"
+        android:src="@drawable/ic_info_white_24dp"
+        tools:background="@android:color/holo_green_dark"/>
+
+    <ImageButton
+        android:id="@+id/butShowSettings"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="?attr/selectableItemBackground"
+        android:contentDescription="@string/show_feed_settings_label"
+        android:src="@drawable/ic_settings_white_24dp"
         tools:background="@android:color/holo_green_dark"
-        tools:src="@drawable/ic_stat_antenna_default" />
+        android:layout_below="@+id/butShowInfo"
+        android:layout_marginBottom="16dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"/>
 
     <TextView
         android:id="@+id/txtvTitle"
         style="@style/AntennaPod.TextView.Heading"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_marginLeft="34dp"
-        android:layout_marginTop="40dp"
-        android:layout_marginRight="94dp"
-        android:layout_marginBottom="8dp"
+        android:layout_alignParentTop="true"
+        android:layout_marginBottom="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_toLeftOf="@id/butShowInfo"
         android:layout_toRightOf="@id/imgvCover"
         android:ellipsize="end"
-        android:gravity="center_vertical"
         android:maxLines="2"
-        tools:background="@android:color/holo_green_dark"
-        tools:text="Online feed title" />
+        android:shadowColor="@color/black"
+        android:shadowRadius="3"
+        android:textColor="@color/white"
+        tools:text="Podcast title"
+        tools:background="@android:color/holo_green_dark" />
 
     <TextView
         android:id="@+id/txtvAuthor"
-        android:layout_width="wrap_content"
+        android:layout_width="0dip"
         android:layout_height="wrap_content"
         android:layout_below="@id/txtvTitle"
-        android:layout_marginLeft="47dp"
-        android:layout_marginTop="26dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_toLeftOf="@id/butShowSettings"
         android:layout_toRightOf="@id/imgvCover"
         android:ellipsize="end"
         android:lines="1"
-        android:textColor="?android:attr/textColorSecondary"
+        android:shadowColor="@color/black"
+        android:shadowRadius="3"
+        android:textColor="@color/white"
         android:textSize="@dimen/text_size_small"
-        tools:background="@android:color/holo_green_dark"
-        tools:text="Online feed author" />
+        tools:text="Podcast author"
+        tools:background="@android:color/holo_green_dark"/>
+
+    <com.joanzapata.iconify.widget.IconTextView
+        android:id="@+id/txtvFailure"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/imgvBackground"
+        android:paddingTop="2dp"
+        android:paddingBottom="2dp"
+        android:background="@color/download_failed_red"
+        android:gravity="center"
+        android:textColor="@color/white"
+        android:visibility="gone"
+        android:text="@string/refresh_failed_msg"
+        tools:text="(!) Last refresh failed"
+        />
+
+    <TextView
+        android:id="@+id/txtvInformation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/imgvBackground"
+        android:paddingTop="2dp"
+        android:paddingBottom="2dp"
+        android:gravity="center"
+        android:visibility="gone"
+        tools:text="(i) Information"
+        />
 
     <Button
         android:id="@+id/butSubscribe"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="150dp"
-        android:layout_marginTop="140dp"
+        android:layout_marginTop="100dp"
         android:layout_marginRight="16dp"
         android:layout_marginBottom="8dp"
         android:focusable="false"
         android:text="@string/subscribe_label" />
 
     <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/imgvCover"
-        android:layout_marginTop="70dp"
-        android:orientation="vertical">
+        android:layout_marginTop="150dp"
+        android:orientation="horizontal"
+        tools:background="@android:color/darker_gray">
 
-        <android.support.v7.widget.RecyclerView
-        android:id="@android:id/list"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:clipToPadding="false"
-        android:paddingTop="@dimen/list_vertical_padding"
-        android:paddingBottom="@dimen/list_vertical_padding"
-        android:scrollbarStyle="outsideOverlay"
-        tools:itemCount="13"
-        tools:listitem="@layout/new_episodes_listitem" />
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="@dimen/listitem_threeline_horizontalpadding"
+            android:layout_weight="1"
+            android:layout_marginTop="@dimen/listitem_threeline_verticalpadding"
+            android:layout_marginBottom="@dimen/listitem_threeline_verticalpadding"
+            tools:background="@android:color/holo_orange_dark">
+
+            <TextView
+                android:id="@+id/statusUnread"
+                style="@style/AntennaPod.TextView.UnreadIndicator"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                tools:text="NEW"
+                tools:background="@android:color/white" />
+
+            <TextView
+                android:id="@+id/txtvItemname"
+                style="@style/AntennaPod.TextView.ListItemPrimaryTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginBottom="4dp"
+                android:layout_toLeftOf="@id/statusUnread"
+                tools:text="Episode title"
+                tools:background="@android:color/holo_green_dark" />
+
+            <TextView
+                android:id="@+id/txtvLenSize"
+                style="@style/AntennaPod.TextView.ListItemSecondaryTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@id/txtvItemname"
+                tools:text="00:42:23"
+                tools:background="@android:color/holo_green_dark" />
+
+            <ImageView
+                android:id="@+id/imgvInPlaylist"
+                android:layout_width="@dimen/enc_icons_size"
+                android:layout_height="@dimen/enc_icons_size"
+                android:layout_alignParentRight="true"
+                android:layout_below="@id/txtvItemname"
+                android:layout_marginRight="8dp"
+                android:contentDescription="@string/in_queue_label"
+                android:src="?attr/stat_playlist"
+                android:visibility="visible"
+                tools:src="@drawable/ic_list_white_24dp"
+                tools:background="@android:color/holo_red_light" />
+
+            <ImageView
+                android:id="@+id/imgvType"
+                android:layout_width="@dimen/enc_icons_size"
+                android:layout_height="@dimen/enc_icons_size"
+                android:layout_below="@id/txtvItemname"
+                android:layout_marginRight="8dp"
+                android:layout_toLeftOf="@id/imgvInPlaylist"
+                tools:ignore="ContentDescription"
+                tools:src="@drawable/ic_hearing_white_18dp"
+                tools:background="@android:color/holo_red_light" />
+
+            <TextView
+                android:id="@+id/txtvPublished"
+                style="@style/AntennaPod.TextView.ListItemSecondaryTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/txtvItemname"
+                android:layout_marginRight="8dp"
+                android:layout_toLeftOf="@id/imgvType"
+                tools:text="Jan 23"
+                tools:background="@android:color/holo_green_dark" />
+
+            <ProgressBar
+                android:id="@+id/pbar_episode_progress"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_toLeftOf="@id/txtvPublished"
+                android:layout_toRightOf="@id/txtvLenSize"
+                android:layout_alignTop="@id/txtvPublished"
+                android:layout_alignBottom="@id/txtvPublished"
+                tools:background="@android:color/holo_blue_light"
+                android:max="100"
+                android:progress="42"
+                android:indeterminate="false" />
+
+        </RelativeLayout>
+
+        <include layout="@layout/vertical_list_divider"/>
+
+        <include layout="@layout/secondary_action"/>
 
     </LinearLayout>
 </RelativeLayout>
