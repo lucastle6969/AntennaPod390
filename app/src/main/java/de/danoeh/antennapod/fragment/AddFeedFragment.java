@@ -17,7 +17,6 @@ import de.danoeh.antennapod.R;
 import de.danoeh.antennapod.activity.MainActivity;
 import de.danoeh.antennapod.activity.OnlineFeedViewActivity;
 import de.danoeh.antennapod.activity.OpmlImportFromPathActivity;
-import de.danoeh.antennapod.activity.PotdActivity;
 import de.danoeh.antennapod.fragment.gpodnet.GpodnetMainFragment;
 
 /**
@@ -127,8 +126,7 @@ public class AddFeedFragment extends Fragment {
         });
 
 
-        butPotd.setOnClickListener(v -> startActivity(new Intent(getActivity(),
-                PotdActivity.class)));
+        butPotd.setOnClickListener(v -> activity.loadChildFragment(new PodcastOfTheDayFragment()));
 
 
         butOpmlImport.setOnClickListener(v -> startActivity(new Intent(getActivity(),
