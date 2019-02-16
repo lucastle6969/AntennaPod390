@@ -64,6 +64,7 @@ import de.danoeh.antennapod.fragment.EpisodesFragment;
 import de.danoeh.antennapod.fragment.ExternalPlayerFragment;
 import de.danoeh.antennapod.fragment.ItemlistFragment;
 import de.danoeh.antennapod.fragment.PlaybackHistoryFragment;
+import de.danoeh.antennapod.fragment.PodcastOfTheDayFragment;
 import de.danoeh.antennapod.fragment.QueueFragment;
 import de.danoeh.antennapod.fragment.SubscriptionFragment;
 import de.danoeh.antennapod.menuhandler.NavDrawerActivity;
@@ -102,6 +103,7 @@ public class MainActivity extends CastEnabledActivity implements NavDrawerActivi
             PlaybackHistoryFragment.TAG,
             SubscriptionFragment.TAG,
             AddFeedFragment.TAG,
+            PodcastOfTheDayFragment.TAG,
             DownloadsFragment.TAG,
             NavListAdapter.SUBSCRIPTION_LIST_TAG
     };
