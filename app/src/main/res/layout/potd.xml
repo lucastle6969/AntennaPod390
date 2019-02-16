@@ -1,27 +1,93 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:scrollbars="vertical">
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/txtvPodcastDirectories"
+        style="@style/AntennaPod.TextView.Heading"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/potd_label"/>
+
+    <ImageView
+        android:id="@+id/imgvCover"
+        android:layout_width="@dimen/thumbnail_length_onlinefeedview"
+        android:layout_height="@dimen/thumbnail_length_onlinefeedview"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="12dp"
+        android:layout_marginTop="33dp"
+        android:layout_marginRight="16dp"
+        android:contentDescription="@string/cover_label"
+        tools:background="@android:color/holo_green_dark"
+        tools:src="@drawable/ic_stat_antenna_default" />
+
+    <TextView
+        android:id="@+id/txtvTitle"
+        style="@style/AntennaPod.TextView.Heading"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_marginLeft="34dp"
+        android:layout_marginTop="40dp"
+        android:layout_marginRight="94dp"
+        android:layout_marginBottom="8dp"
+        android:layout_toRightOf="@id/imgvCover"
+        android:ellipsize="end"
+        android:gravity="center_vertical"
+        android:maxLines="2"
+        tools:background="@android:color/holo_green_dark"
+        tools:text="Online feed title" />
+
+    <TextView
+        android:id="@+id/txtvAuthor"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/txtvTitle"
+        android:layout_marginLeft="47dp"
+        android:layout_marginTop="26dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="8dp"
+        android:layout_toRightOf="@id/imgvCover"
+        android:ellipsize="end"
+        android:lines="1"
+        android:textColor="?android:attr/textColorSecondary"
+        android:textSize="@dimen/text_size_small"
+        tools:background="@android:color/holo_green_dark"
+        tools:text="Online feed author" />
+
+    <Button
+        android:id="@+id/butSubscribe"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="150dp"
+        android:layout_marginTop="140dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="8dp"
+        android:focusable="false"
+        android:text="@string/subscribe_label" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:paddingBottom="8dp"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp"
-        android:paddingTop="8dp"
-        android:gravity="center">
+        android:layout_below="@id/imgvCover"
+        android:layout_marginTop="70dp"
+        android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/txtvPodcastDirectories"
-            style="@style/AntennaPod.TextView.Heading"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/potd_label"/>
+        <android.support.v7.widget.RecyclerView
+        android:id="@android:id/list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:paddingTop="@dimen/list_vertical_padding"
+        android:paddingBottom="@dimen/list_vertical_padding"
+        android:scrollbarStyle="outsideOverlay"
+        tools:itemCount="13"
+        tools:listitem="@layout/new_episodes_listitem" />
 
     </LinearLayout>
+</RelativeLayout>
 
-</ScrollView>
