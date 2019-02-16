@@ -136,7 +136,8 @@ public class ItunesAdapter extends ArrayAdapter<ItunesAdapter.Podcast> {
          */
         public final int numOfEpisodes;
 
-        private Podcast(String title, @Nullable String imageUrl, @Nullable String feedUrl, @Nullable String description, int numOfEpisodes) {
+        //temp change, revert back to private once POTD page has been built.
+        public Podcast(String title, @Nullable String imageUrl, @Nullable String feedUrl, @Nullable String description, int numOfEpisodes) {
             this.title = title;
             this.imageUrl = imageUrl;
             this.feedUrl = feedUrl;

@@ -2,45 +2,42 @@ package de.danoeh.antennapod.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.Spinner;
-import android.widget.TextView;
+import android.text.TextUtils;
+import android.util.Log;
 
 import de.danoeh.antennapod.R;
-import de.danoeh.antennapod.activity.MainActivity;
-import de.danoeh.antennapod.activity.OnlineFeedViewActivity;
-import de.danoeh.antennapod.activity.OpmlImportFromPathActivity;
 import de.danoeh.antennapod.adapter.itunes.ItunesAdapter;
 import de.danoeh.antennapod.core.preferences.UserPreferences;
-import de.danoeh.antennapod.fragment.gpodnet.GpodnetMainFragment;
+import de.danoeh.antennapod.core.util.StorageUtils;
 
 /**
  * Provides actions for daily podcast recommendations
  */
 public class PotdActivity extends AppCompatActivity {
 
-    public static final String TAG = "PotdFragment";
+    public static final String TAG = "PotdActivity";
 
     /**
      * Preset value for url text field.
      */
-    private static final String ARG_FEED_URL = "feedurl";
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
+
+        // temp
+        ItunesAdapter.Podcast dummy = new ItunesAdapter.Podcast("Joe Rogan", "https://is1-ssl.mzstatic.com/image/thumb/Podcasts114/v4/ec/db/85/ecdb85e6-9a4c-4231-0e0c-a2a8953940ea/mza_4877052704493588045.jpg/170x170bb-85.png",
+        "http://joeroganexp.joerogan.libsynpro.com/rss", "THE JOE ROGAN SHOW", 1000);
+
         setTheme(UserPreferences.getTheme());
         super.onCreate(savedInstanceState);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        setContentView(R.layout.potd);
 
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setTitle("Podcast of the Day");
+
+        StorageUtils.checkStorageAvailability(this);
+
+        Log.d(TAG, "Activity was started with url " + dummy.feedUrl);
     }
-
 }
