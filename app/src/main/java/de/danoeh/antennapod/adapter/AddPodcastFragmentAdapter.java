@@ -9,6 +9,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 import de.danoeh.antennapod.fragment.FyydSearchFragment;
 import de.danoeh.antennapod.fragment.ItunesSearchFragment;
 import de.danoeh.antennapod.fragment.gpodnet.GpodnetMainFragment;
+import de.danoeh.antennapod.fragment.gpodnet.PodcastTopListFragment;
 
 public class AddPodcastFragmentAdapter extends FragmentPagerAdapter {
 
@@ -26,7 +27,7 @@ public class AddPodcastFragmentAdapter extends FragmentPagerAdapter {
             case 0:
                 return new ItunesSearchFragment();
             case 1:
-                return new GpodnetMainFragment();
+                return new PodcastTopListFragment();
             case 2:
                 return new FyydSearchFragment();
             case 3:
