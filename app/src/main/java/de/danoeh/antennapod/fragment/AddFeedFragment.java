@@ -31,7 +31,7 @@ public class AddFeedFragment extends Fragment {
         View root = inflater.inflate(R.layout.addfeed, container, false);
         viewPager = root.findViewById(R.id.viewpager);
 
-        AddPodcastFragmentAdapter adapter = new AddPodcastFragmentAdapter(getChildFragmentManager(), getResources());
+        AddPodcastFragmentAdapter adapter = new AddPodcastFragmentAdapter(getChildFragmentManager());
 
         viewPager.setAdapter(adapter);
         tabLayout = root.findViewById(R.id.sliding_tabs);
