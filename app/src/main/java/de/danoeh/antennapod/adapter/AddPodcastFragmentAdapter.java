@@ -4,16 +4,25 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
+import android.content.res.Resources;
+
 import de.danoeh.antennapod.fragment.FyydSearchFragment;
 import de.danoeh.antennapod.fragment.ItunesSearchFragment;
 import de.danoeh.antennapod.fragment.gpodnet.PodcastTopListFragment;
 
+import de.danoeh.antennapod.R;
+
+
 public class AddPodcastFragmentAdapter extends FragmentPagerAdapter {
 
     private static final int NUM_PAGES = 4;
+    final Resources resources;
 
-    public AddPodcastFragmentAdapter(FragmentManager fm) {
+    public AddPodcastFragmentAdapter(FragmentManager fm, Resources resources) {
+
         super(fm);
+        // this allows us to access the resources without passing in the context (Activity or Service)
+        this.resources = resources;
     }
 
     @Override
@@ -42,13 +51,13 @@ public class AddPodcastFragmentAdapter extends FragmentPagerAdapter {
         // Generate title based on item position
         switch (position) {
             case 0:
-                return "itunes";
+                return resources.getString(R.string.tab_itunes);
             case 1:
-                return "gPodder";
+                return resources.getString(R.string.tab_gpodder);
             case 2:
-                return "fyyd";
+                return resources.getString(R.string.tab_fyyd);
             case 3:
-                return "url";
+                return resources.getString(R.string.tab_url);
             default:
                 return null;
         }
