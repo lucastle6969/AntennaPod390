@@ -1,24 +1,19 @@
 package de.danoeh.antennapod.adapter;
 
-import android.content.Context;
-import android.content.res.Resources;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
 import de.danoeh.antennapod.fragment.FyydSearchFragment;
 import de.danoeh.antennapod.fragment.ItunesSearchFragment;
-import de.danoeh.antennapod.fragment.gpodnet.GpodnetMainFragment;
 import de.danoeh.antennapod.fragment.gpodnet.PodcastTopListFragment;
 
 public class AddPodcastFragmentAdapter extends FragmentPagerAdapter {
 
-    private Context mContext;
-    private Resources resources;
+    private static final int NUM_PAGES = 4;
 
-    public AddPodcastFragmentAdapter(FragmentManager fm, Resources resources) {
+    public AddPodcastFragmentAdapter(FragmentManager fm) {
         super(fm);
-        this.resources = resources;
     }
 
     @Override
@@ -39,7 +34,7 @@ public class AddPodcastFragmentAdapter extends FragmentPagerAdapter {
 
     @Override
     public int getCount() {
-        return 4;
+        return NUM_PAGES;
     }
 
     @Override
