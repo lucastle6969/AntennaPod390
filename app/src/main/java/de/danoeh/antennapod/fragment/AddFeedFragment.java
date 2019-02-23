@@ -17,7 +17,7 @@ import de.danoeh.antennapod.R;
 import de.danoeh.antennapod.activity.MainActivity;
 import de.danoeh.antennapod.activity.OnlineFeedViewActivity;
 import de.danoeh.antennapod.activity.OpmlImportFromPathActivity;
-import de.danoeh.antennapod.fragment.gpodnet.GpodnetMainFragment;
+import de.danoeh.antennapod.fragment.gpodnet.PodcastTopListFragment;
 
 /**
  * Provides actions for adding new podcast subscriptions
@@ -115,7 +115,7 @@ public class AddFeedFragment extends Fragment {
                         directories.setSelection(0);
                         break;
                     case 3:
-                        activity.loadChildFragment(new GpodnetMainFragment());
+                        activity.loadChildFragment(new PodcastTopListFragment());
                         directories.setSelection(0);
                         break;
                 }
@@ -127,14 +127,6 @@ public class AddFeedFragment extends Fragment {
 
             }
         });
-
-        /* DEPRECATED FOR NOW
-        butSearchITunes.setOnClickListener(v -> activity.loadChildFragment(new ItunesSearchFragment()));
-
-        butBrowserGpoddernet.setOnClickListener(v -> activity.loadChildFragment(new GpodnetMainFragment()));
-
-        butSearchFyyd.setOnClickListener(v -> activity.loadChildFragment(new FyydSearchFragment()));
-        */
 
         butOpmlImport.setOnClickListener(v -> startActivity(new Intent(getActivity(),
                 OpmlImportFromPathActivity.class)));
