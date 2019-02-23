@@ -1,7 +1,5 @@
 package de.danoeh.antennapod.fragment;
 
-import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -9,19 +7,9 @@ import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.Spinner;
-import android.widget.TextView;
 
 import de.danoeh.antennapod.R;
-import de.danoeh.antennapod.activity.MainActivity;
-import de.danoeh.antennapod.activity.OnlineFeedViewActivity;
-import de.danoeh.antennapod.activity.OpmlImportFromPathActivity;
 import de.danoeh.antennapod.adapter.AddPodcastFragmentAdapter;
-import de.danoeh.antennapod.fragment.gpodnet.GpodnetMainFragment;
 
 /**
  * Provides actions for adding new podcast subscriptions
@@ -46,7 +34,6 @@ public class AddFeedFragment extends Fragment {
         AddPodcastFragmentAdapter adapter = new AddPodcastFragmentAdapter(getChildFragmentManager(), getResources());
 
         viewPager.setAdapter(adapter);
-
         tabLayout = root.findViewById(R.id.sliding_tabs);
         tabLayout.setupWithViewPager(viewPager);
 
