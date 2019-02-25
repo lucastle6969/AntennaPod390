@@ -8,6 +8,7 @@ import android.content.res.Resources;
 
 import de.danoeh.antennapod.fragment.FyydSearchFragment;
 import de.danoeh.antennapod.fragment.ItunesSearchFragment;
+import de.danoeh.antennapod.fragment.URLSearchFragment;
 import de.danoeh.antennapod.fragment.gpodnet.PodcastTopListFragment;
 
 import de.danoeh.antennapod.R;
@@ -35,8 +36,7 @@ public class AddPodcastFragmentAdapter extends FragmentPagerAdapter {
             case 2:
                 return new FyydSearchFragment();
             case 3:
-                // TODO MAKE URL FRAGMENT and RETURN IT HERE!
-                return new Fragment();
+                return new URLSearchFragment();
         }
         return null;
     }
