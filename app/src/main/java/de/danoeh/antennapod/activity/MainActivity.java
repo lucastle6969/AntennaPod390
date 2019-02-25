@@ -297,6 +297,9 @@ public class MainActivity extends CastEnabledActivity implements NavDrawerActivi
             case EpisodesFragment.TAG:
                 fragment = new EpisodesFragment();
                 break;
+            case PodcastOfTheDayFragment.TAG:
+                fragment = new PodcastOfTheDayFragment();
+                break;
             case DownloadsFragment.TAG:
                 fragment = new DownloadsFragment();
                 break;
@@ -521,6 +524,7 @@ public class MainActivity extends CastEnabledActivity implements NavDrawerActivi
                 case EpisodesFragment.TAG:
                     requestCastButton(MenuItem.SHOW_AS_ACTION_IF_ROOM);
                     return retVal;
+                case PodcastOfTheDayFragment.TAG:
                 case DownloadsFragment.TAG:
                 case PlaybackHistoryFragment.TAG:
                 case AddFeedFragment.TAG:

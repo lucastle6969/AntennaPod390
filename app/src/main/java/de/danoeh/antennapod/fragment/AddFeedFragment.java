@@ -43,8 +43,6 @@ public class AddFeedFragment extends Fragment {
             etxtFeedurl.setText(args.getString(ARG_FEED_URL));
         }
 
-        Button butPotd = (Button) root.findViewById(R.id.butPotd);
-
         Button butOpmlImport = (Button) root.findViewById(R.id.butOpmlImport);
         Button butConfirm = (Button) root.findViewById(R.id.butConfirm);
         Button butOption = (Button) root.findViewById(R.id.butOptions);
@@ -124,10 +122,6 @@ public class AddFeedFragment extends Fragment {
 
             }
         });
-
-
-        butPotd.setOnClickListener(v -> activity.loadChildFragment(new PodcastOfTheDayFragment()));
-
 
         butOpmlImport.setOnClickListener(v -> startActivity(new Intent(getActivity(),
                 OpmlImportFromPathActivity.class)));

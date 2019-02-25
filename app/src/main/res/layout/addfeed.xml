@@ -29,13 +29,6 @@
             android:text="@string/podcastdirectories_descr"
             android:textSize="@dimen/text_size_medium"/>
 
-        <Button
-            android:id="@+id/butPotd"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:text="@string/potd_label"/>
-
         <Spinner
             android:id="@+id/directories"
             android:layout_width="match_parent"

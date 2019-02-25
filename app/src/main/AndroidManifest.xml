@@ -190,11 +190,6 @@
             android:label="@string/opml_import_label">
         </activity>
         <activity
-            android:name=".activity.PotdActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize"
-            android:label="@string/potd_label">
-        </activity>
-        <activity
             android:name=".activity.OpmlImportFromIntentActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/opml_import_label">
