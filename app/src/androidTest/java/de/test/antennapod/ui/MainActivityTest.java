@@ -272,10 +272,42 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
         assertTrue(hidden.contains(DownloadsFragment.TAG));
     }
 
+    public void testNavDrawPodcastOfTheDay() {
+        openNavDrawer();
+        solo.clickOnText(solo.getString(R.string.podcast_of_the_day));
+        solo.waitForView(android.R.id.list);
+        assertEquals(solo.getString(R.string.podcast_of_the_day), getActionbarTitle());
+    }
+
+    public void testGenerateNewPodcastOfTheDay() {
+        openNavDrawer();
+        solo.clickOnText(solo.getString(R.string.podcast_of_the_day));
+        solo.waitForView(android.R.id.list);
+        assertEquals(solo.getString(R.string.podcast_of_the_day), getActionbarTitle());
+
+        solo.clickOnText(solo.getString(R.string.generate_new_podcast));
+        solo.clickOnButton(0);
+        assertEquals(solo.getString(R.string.podcast_of_the_day), getActionbarTitle());
+    }
+
+    public void testGoToPodcastOfTheDayPageAndSubscribe() {
+        openNavDrawer();
+        solo.clickOnText(solo.getString(R.string.podcast_of_the_day));
+        solo.waitForView(android.R.id.list);
+        assertEquals(solo.getString(R.string.podcast_of_the_day), getActionbarTitle());
+
+        solo.clickOnButton(solo.getString(R.string.go_to_podcast_page));
+        solo.waitForActivity(OnlineFeedViewActivity.class);
+        solo.waitForView(R.id.butSubscribe);
+        assertEquals(solo.getString(R.string.subscribe_label), solo.getButton(0).getText().toString());
+        solo.clickOnButton(0);
+        solo.waitForText(solo.getString(R.string.subscribed_label));
+    }
+
     public void testFyydPodcastEpisodesAndDescription() {
         String query = "TripleTwenty";
         String description = "TripleTwenty ist der Rollenspielpodcast einer Anfängergruppe und lädt alle zum mithören ein, die sich für Pen&Paper wie \"Das Schwarze Auge\" oder \"Dungeons & Dragons\" interessieren - oder nur mal reinschnuppern wollen.";
-        String numOfEpisodes = "126";
+        String numOfEpisodes = "127";
 
         openNavDrawer();
         solo.clickOnText(solo.getString(R.string.add_feed_label));

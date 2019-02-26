@@ -36,7 +36,7 @@
         android:shadowColor="@color/black"
         android:shadowRadius="3"
         tools:background="@android:color/holo_green_dark"
-        tools:text="Podcast title" />
+        tools:text="@string/podcast_title" />
 
     <TextView
         android:id="@+id/potdAuthor"
@@ -55,7 +55,7 @@
         android:shadowRadius="3"
         android:textSize="@dimen/text_size_small"
         tools:background="@android:color/holo_green_dark"
-        tools:text="Podcast author" />
+        tools:text="@string/podcast_author" />
 
     <TextView
         android:id="@+id/potdInformation"
@@ -81,7 +81,7 @@
         android:layout_marginRight="16dp"
         android:layout_marginBottom="8dp"
         android:focusable="false"
-        android:text="Generate new podcast" />
+        android:text="@string/generate_new_podcast" />
 
     <Button
         android:id="@+id/butGoToPodcast"
@@ -93,7 +93,7 @@
         android:layout_marginStart="19dp"
         android:layout_marginLeft="19dp"
         android:layout_marginTop="187dp"
-        android:text="Go to Podcast Page" />
+        android:text="@string/go_to_podcast_page" />
 
     <TextView
         android:id="@+id/potdDescription"
@@ -111,7 +111,7 @@
         android:shadowRadius="3"
         android:textSize="@dimen/text_size_small"
         tools:background="@android:color/holo_green_dark"
-        tools:text="Podcast Description" />
+        tools:text="@string/podcast_description" />
 
 </RelativeLayout>
 
