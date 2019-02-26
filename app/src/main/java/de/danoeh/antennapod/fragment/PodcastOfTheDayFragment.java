@@ -1,9 +1,10 @@
 package de.danoeh.antennapod.fragment;
 
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -46,7 +47,9 @@ public class PodcastOfTheDayFragment extends Fragment {
         super.onCreateView(inflater, container, savedInstanceState);
         View root = inflater.inflate(R.layout.potd, container, false);
 
-        new LongOperation().execute("");
+//        new LongOperation().execute("");
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
 
         //call api to set potd here
         potdTitle = (TextView) root.findViewById(R.id.potdTitle);
@@ -57,11 +60,11 @@ public class PodcastOfTheDayFragment extends Fragment {
 
         Button butGenerateNew = (Button) root.findViewById(R.id.butGenerateNew);
 
-//        try {
-//            ItunesAdapter.Podcast ptd = getDailyPodcast();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
+        try {
+            ItunesAdapter.Podcast ptd = getDailyPodcast();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         butGenerateNew.setOnClickListener(v -> {
             // call fxn here to replace potd
@@ -107,60 +110,61 @@ public class PodcastOfTheDayFragment extends Fragment {
         setHasOptionsMenu(true);
     }
 
-//    public ItunesAdapter.Podcast getDailyPodcast() throws IOException {
-//
-//        String url = "https://listennotes.p.rapidapi.com/api/v1/just_listen";
-//        OkHttpClient client1 = AntennapodHttpClient.getHttpClient();
-//
-//        Request request = new Request.Builder()
-//                .url(url)
-//                .header("X-RapidAPI-Key", "387264864dmshfd180124e6714c0p185435jsn064b6c62d311")
-//                .build();
-//
-//        Response response1 = client1.newCall(request).execute();
-//        String res = response1.body().string();
-//
-//
-//        return null;
-//    }
+    public ItunesAdapter.Podcast getDailyPodcast() throws IOException {
 
-    private class LongOperation extends AsyncTask<String, Void, String> {
+        String url = "https://listennotes.p.rapidapi.com/api/v1/just_listen";
+        OkHttpClient client1 = AntennapodHttpClient.getHttpClient();
 
-        @Override
-        protected String doInBackground(String... params) {
-            String url = "https://jsonplaceholder.typicode.com/todos/1";
-            OkHttpClient client1 = AntennapodHttpClient.getHttpClient();
-            Request request = new Request.Builder()
-                    .url(url)
-                    //.header("X-RapidAPI-Key", "387264864dmshfd180124e6714c0p185435jsn064b6c62d311")
-                    .build();
+        Request request = new Request.Builder()
+                .url(url)
+                .header("X-RapidAPI-Key", "387264864dmshfd180124e6714c0p185435jsn064b6c62d311")
+                .build();
 
-            Response response1 = null;
-            try {
-                response1 = client1.newCall(request).execute();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            ResponseBody reps = response1.body();
+        Response response1 = client1.newCall(request).execute();
+        String res = response1.body().string();
+        Log.d("Response", res);
 
 
-            return "Executed";
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-
-        }
-
-        @Override
-        protected void onPreExecute() {
-            // Do the UI-task here
-        }
-
-        @Override
-        protected void onProgressUpdate(Void... values) {
-            // Do the UI-task here which has to be done during backgroung tasks are running like a downloading process
-        }
+        return null;
     }
+
+//    private class LongOperation extends AsyncTask<String, Void, String> {
+//
+//        @Override
+//        protected String doInBackground(String... params) {
+//            String url = "https://jsonplaceholder.typicode.com/todos/1";
+//            OkHttpClient client1 = AntennapodHttpClient.getHttpClient();
+//            Request request = new Request.Builder()
+//                    .url(url)
+//                    //.header("X-RapidAPI-Key", "387264864dmshfd180124e6714c0p185435jsn064b6c62d311")
+//                    .build();
+//
+//            Response response1 = null;
+//            try {
+//                response1 = client1.newCall(request).execute();
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//            ResponseBody reps = response1.body();
+//
+//
+//            return "Executed";
+//        }
+//
+//        @Override
+//        protected void onPostExecute(String result) {
+//
+//        }
+//
+//        @Override
+//        protected void onPreExecute() {
+//            // Do the UI-task here
+//        }
+//
+//        @Override
+//        protected void onProgressUpdate(Void... values) {
+//            // Do the UI-task here which has to be done during backgroung tasks are running like a downloading process
+//        }
+//    }
 
 }
