@@ -113,7 +113,7 @@ public class FyydSearchFragment extends Fragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.itunes_search, menu);
+        inflater.inflate(R.menu.gpodder_podcasts, menu);
         MenuItem searchItem = menu.findItem(R.id.action_search);
         final SearchView sv = (SearchView) MenuItemCompat.getActionView(searchItem);
         MenuItemUtils.adjustTextColor(getActivity(), sv);
