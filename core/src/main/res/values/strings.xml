@@ -112,7 +112,7 @@
 
     <!-- 'Add Feed' Activity labels -->
     <string name="feedurl_label">Feed URL</string>
-    <string name="etxtFeedurlHint">http://www.example.com/feed.xml</string>
+    <string name="etxtFeedurlHint">https://www.example.com/feed</string>
     <string name="txtvfeedurl_label">Add Podcast by URL</string>
     <string name="tab_itunes">iTunes</string>
     <string name="tab_gpodder">gPodder</string>

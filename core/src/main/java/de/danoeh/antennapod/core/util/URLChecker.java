@@ -80,6 +80,7 @@ public final class URLChecker {
 
     /**
      * Checks if a URL should be considered by the URL utility
+     * a url should not include any white spaces, and should include at least a '.' or a '/'
      *
      * @return boolean describing the validity of the URL
      */
