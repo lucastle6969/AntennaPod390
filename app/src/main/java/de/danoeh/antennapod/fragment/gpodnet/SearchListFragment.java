@@ -45,11 +45,6 @@ public class SearchListFragment extends PodcastListFragment {
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-    }
-
-    @Override
     protected List<GpodnetPodcast> loadPodcastData(GpodnetService service) throws GpodnetServiceException {
         return service.searchPodcasts(query, 0);
     }
