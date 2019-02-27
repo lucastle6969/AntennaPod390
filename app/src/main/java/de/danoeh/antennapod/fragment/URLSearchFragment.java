@@ -12,6 +12,7 @@ import android.widget.EditText;
 
 import de.danoeh.antennapod.R;
 import de.danoeh.antennapod.activity.OnlineFeedViewActivity;
+import de.danoeh.antennapod.core.util.URLChecker;
 
 public class URLSearchFragment extends Fragment {
     private static final String ARG_FEED_URL = "feedurl";
@@ -31,10 +32,15 @@ public class URLSearchFragment extends Fragment {
         }
 
         butConfirm.setOnClickListener(v -> {
-            Intent intent = new Intent(getActivity(), OnlineFeedViewActivity.class);
-            intent.putExtra(OnlineFeedViewActivity.ARG_FEEDURL, etxtFeedurl.getText().toString());
-            intent.putExtra(OnlineFeedViewActivity.ARG_TITLE, getString(R.string.add_feed_label));
-            startActivity(intent);
+            if(URLChecker.validateURL(etxtFeedurl.getText().toString())){
+                Intent intent = new Intent(getActivity(), OnlineFeedViewActivity.class);
+                intent.putExtra(OnlineFeedViewActivity.ARG_FEEDURL, etxtFeedurl.getText().toString());
+                intent.putExtra(OnlineFeedViewActivity.ARG_TITLE, getString(R.string.add_feed_label));
+                startActivity(intent);
+             }
+             else{
+                etxtFeedurl.setError("Please enter a valid URL.");
+             }
         });
 
         return root;

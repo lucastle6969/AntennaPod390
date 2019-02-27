@@ -77,4 +77,17 @@ public final class URLChecker {
             return prepareURL(url);
         }
     }
+
+    /**
+     * Checks if a URL should be considered by the URL utility
+     *
+     * @return boolean describing the validity of the URL
+     */
+    public static boolean validateURL(String url){
+
+        if ((url.indexOf(" ") < 0) && ((url.indexOf(".")>=0) || (url.indexOf("/")>=0)))
+            return true;
+        return false;
+    }
 }
+
