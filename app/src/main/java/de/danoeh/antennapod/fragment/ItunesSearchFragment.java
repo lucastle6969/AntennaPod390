@@ -8,7 +8,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -186,6 +185,16 @@ public class ItunesSearchFragment extends Fragment {
             @Override
             public boolean onQueryTextChange(String s) {
                 return false;
+            }
+        });
+        sv.setOnCloseListener(new android.support.v7.widget.SearchView.OnCloseListener() {
+            @Override
+            public boolean onClose(){
+                if(searchResults != null) {
+                    searchResults = null;
+                    updateData(topList);
+                }
+                return true;
             }
         });
 

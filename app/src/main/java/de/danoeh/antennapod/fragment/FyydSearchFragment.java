@@ -111,6 +111,14 @@ public class FyydSearchFragment extends Fragment {
             }
         });
 
+        sv.setOnCloseListener(new android.support.v7.widget.SearchView.OnCloseListener() {
+            @Override
+            public boolean onClose(){
+                getActivity().getSupportFragmentManager().popBackStack();
+                loadDefaultPodcastWithQuery(PodcastCategory[randomNumGen.nextInt(12)]);
+                return true;
+            }
+        });
 
         loadDefaultPodcastWithQuery(PodcastCategory[randomNumGen.nextInt(12)]);
 
