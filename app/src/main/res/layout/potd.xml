@@ -106,7 +106,7 @@
         android:layout_marginLeft="13dp"
         android:layout_marginTop="14dp"
         android:ellipsize="end"
-        android:lines="1"
+        android:lines="20"
         android:shadowColor="@color/black"
         android:shadowRadius="3"
         android:textSize="@dimen/text_size_small"

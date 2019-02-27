@@ -3,7 +3,7 @@ package de.danoeh.antennapod.fragment;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.StrictMode;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,27 +15,26 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
+import java.util.concurrent.atomic.AtomicReference;
 
 import de.danoeh.antennapod.R;
 import de.danoeh.antennapod.activity.OnlineFeedViewActivity;
-import de.danoeh.antennapod.adapter.itunes.ItunesAdapter;
 import de.danoeh.antennapod.core.glide.ApGlideSettings;
 import de.danoeh.antennapod.core.service.download.AntennapodHttpClient;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-import okhttp3.ResponseBody;
 
 
 public class PodcastOfTheDayFragment extends Fragment {
 
     public static final String TAG = "PodcastOfTheDayFragment";
-
-    //initialize only here
-    ItunesAdapter.Podcast potd = new ItunesAdapter.Podcast("Joe Rogan Experience",
-            "https://is1-ssl.mzstatic.com/image/thumb/Podcasts114/v4/ec/db/85/ecdb85e6-9a4c-4231-0e0c-a2a8953940ea/mza_4877052704493588045.jpg/170x170bb-85.png",
-            "http://joeroganexp.joerogan.libsynpro.com/rss", "THE JOE ROGAN EXPERIENCE", 1000);
+    final String LISTENNOTES_URL = "https://listennotes.p.rapidapi.com/api/v1/";
+    final String API_KEY = "387264864dmshfd180124e6714c0p185435jsn064b6c62d311";
 
     TextView potdTitle;
     TextView potdAuthor; //not a variable in the Podcast class, to be populated another way or removed.
@@ -43,16 +42,62 @@ public class PodcastOfTheDayFragment extends Fragment {
     ImageView potdImage;
     Button butGoToPodcast;
 
+    // The iTunes Podcast object does not contain all the info required for POTD functionality, therefore a new object was required to not interfere with the iTunes Activity
+    private class DailyPodcast {
+
+        /**
+         * The name of the podcast
+         */
+        private final String title;
+
+        /**
+         * URL of the podcast image
+         */
+        @Nullable
+        private final String imageUrl;
+        /**
+         * URL of the podcast feed
+         */
+        @Nullable
+        private final String feedUrl;
+
+        /**
+         * The description of a podcast
+         */
+        @Nullable
+        private final String description;
+
+        /**
+         *  The number of episodes of a podcast
+         */
+        private final int numOfEpisodes;
+
+        /**
+         *  The author of a podcast
+         */
+        private final String author;
+
+
+        private DailyPodcast(String title, @Nullable String imageUrl, @Nullable String feedUrl, @Nullable String description, int numOfEpisodes, @Nullable String author) {
+            this.title = title;
+            this.imageUrl = imageUrl;
+            this.feedUrl = feedUrl;
+            this.description = description;
+            this.numOfEpisodes = numOfEpisodes;
+            this.author = author;
+        }
+
+    }
+
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         View root = inflater.inflate(R.layout.potd, container, false);
 
-        new LongOperation().execute("");
-//        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-//        StrictMode.setThreadPolicy(policy);
+        AtomicReference<ListenNotesOperation> blue = new AtomicReference<>(new ListenNotesOperation());
+        blue.get().execute();
 
-        //call api to set potd here
         potdTitle = (TextView) root.findViewById(R.id.potdTitle);
         potdAuthor = (TextView) root.findViewById(R.id.potdAuthor);
         potdDescription = (TextView) root.findViewById(R.id.potdDescription);
@@ -61,25 +106,15 @@ public class PodcastOfTheDayFragment extends Fragment {
 
         Button butGenerateNew = (Button) root.findViewById(R.id.butGenerateNew);
 
-//        try {
-//            ItunesAdapter.Podcast ptd = getDailyPodcast();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-
         butGenerateNew.setOnClickListener(v -> {
-            // call fxn here to replace potd
-            potd = new ItunesAdapter.Podcast("Ben Shapiro Show",
-                    "https://is2-ssl.mzstatic.com/image/thumb/Podcasts114/v4/44/d1/13/44d11389-a5e4-fc86-e047-5b16a9e91df4/mza_6616198664604292592.jpg/170x170bb-85.png",
-                    "http://feeds.soundcloud.com/users/soundcloud:users:174770374/sounds.rss", "THE BEN SHAPIRO SHOW", 1000);
-            populate();
+            blue.set(new ListenNotesOperation());
+            blue.get().execute();
         });
 
-        populate();
         return root;
     }
 
-    private void populate(){
+    private void populate(DailyPodcast potd){
         butGoToPodcast.setOnClickListener(v -> {
             Intent intent = new Intent(getActivity(), OnlineFeedViewActivity.class);
             intent.putExtra(OnlineFeedViewActivity.ARG_FEEDURL, potd.feedUrl);
@@ -98,6 +133,7 @@ public class PodcastOfTheDayFragment extends Fragment {
 
         potdTitle.setText(potd.title);
         potdDescription.setText(potd.description);
+        potdAuthor.setText(potd.author);
     }
 
     @Override
@@ -111,61 +147,85 @@ public class PodcastOfTheDayFragment extends Fragment {
         setHasOptionsMenu(true);
     }
 
-//    public ItunesAdapter.Podcast getDailyPodcast() throws IOException {
-//
-//        String url = "https://listennotes.p.rapidapi.com/api/v1/just_listen";
-//        OkHttpClient client1 = AntennapodHttpClient.getHttpClient();
-//
-//        Request request = new Request.Builder()
-//                .url(url)
-//                .header("X-RapidAPI-Key", "387264864dmshfd180124e6714c0p185435jsn064b6c62d311")
-//                .build();
-//
-//        Response response1 = client1.newCall(request).execute();
-//        String res = response1.body().string();
-//        Log.d("Response", res);
-//
-//
-//        return null;
-//    }
+    public DailyPodcast getDailyPodcast(String apiRes) {
 
-    private class LongOperation extends AsyncTask<String, Void, String> {
+        JSONObject json;
+        DailyPodcast potDay;
+        try {
+            json = new JSONObject(apiRes);
+            String dailyTitle = json.getString("title");
+            String dailyImage = json.getString("image");
+            String dailyRSS = json .getString("rss");
+            String dailyDescription = json.getString("description");
+            int dailyEpisodes = Integer.parseInt(json.getString("total_episodes"));
+            String dailyAuthor = json.getString("publisher");
+            potDay = new DailyPodcast(dailyTitle, dailyImage, dailyRSS, dailyDescription, dailyEpisodes, dailyAuthor);
+        } catch (JSONException e) {
+            e.printStackTrace();
+            potDay = new DailyPodcast("JSON_ERROR", "JSON_ERROR", "JSON_ERROR", "JSON_ERROR", 0, "JSON_ERROR");
+        }
+
+        return potDay;
+    }
+
+    private class ListenNotesOperation extends AsyncTask<String, Void, String> {
 
         @Override
         protected String doInBackground(String... params) {
-            String url = "https://listennotes.p.rapidapi.com/api/v1/just_listen";
-            OkHttpClient client1 = AntennapodHttpClient.getHttpClient();
-            Request request = new Request.Builder()
-                    .url(url)
-                    .header("X-RapidAPI-Key", "387264864dmshfd180124e6714c0p185435jsn064b6c62d311")
-                    .build();
-
-            Response response1 = null;
+            String res;
             try {
-                response1 = client1.newCall(request).execute();
-                if (response1.isSuccessful()) {
-                    return response1.body().string();
+                String url = LISTENNOTES_URL + "just_listen";
+                OkHttpClient client = AntennapodHttpClient.getHttpClient();
+
+                Request request = new Request.Builder()
+                        .url(url)
+                        .header("X-RapidAPI-Key", API_KEY)
+                        .build();
+
+                Response response = client.newCall(request).execute();
+                if (response.isSuccessful()) {
+                    res = response.body().string();
+                    Log.d("APIResponse_Random", res);
+                } else {
+                    return "FAIL";
                 }
-            } catch (IOException e) {
+
+                JSONObject json = new JSONObject(res);
+                String podcastID = json.getString("podcast_id");
+                url = LISTENNOTES_URL + "podcasts/" + podcastID;
+                request = new Request.Builder()
+                        .url(url)
+                        .header("X-RapidAPI-Key", API_KEY)
+                        .build();
+
+                response = client.newCall(request).execute();
+                if (response.isSuccessful()) {
+                    res = response.body().string();
+                    Log.d("APIResponse_Podcast", res);
+                } else {
+                    return "FAIL";
+                }
+            } catch (IOException | JSONException e) {
                 e.printStackTrace();
+                return "FAIL";
             }
-            return "Fail.";
+
+            return res;
         }
 
         @Override
         protected void onPostExecute(String result) {
             Log.d("Response", result);
+            DailyPodcast potDay;
+            if (result.equals("FAIL")) {
+                potDay = new DailyPodcast("API_ERROR", "API_ERROR", "API_ERROR", "API_ERROR", 0, "API_ERROR");
+            } else {
+                potDay = getDailyPodcast(result);
+            }
+            populate(potDay);
+
         }
 
-        @Override
-        protected void onPreExecute() {
-            // Do the UI-task here
-        }
-
-        @Override
-        protected void onProgressUpdate(Void... values) {
-            // Do the UI-task here which has to be done during backgroung tasks are running like a downloading process
-        }
     }
 
 }
