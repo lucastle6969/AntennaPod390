@@ -1,6 +1,8 @@
 package de.danoeh.antennapod.fragment;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -19,6 +21,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 import java.util.concurrent.atomic.AtomicReference;
 
 import de.danoeh.antennapod.R;
@@ -37,12 +44,16 @@ public class PodcastOfTheDayFragment extends Fragment {
     final String API_KEY = "387264864dmshfd180124e6714c0p185435jsn064b6c62d311";
 
     TextView potdTitle;
-    TextView potdAuthor; //not a variable in the Podcast class, to be populated another way or removed.
+    TextView potdAuthor;
     TextView potdDescription;
     ImageView potdImage;
     Button butGoToPodcast;
+    Button butGenerateNew;
 
-    // The iTunes Podcast object does not contain all the info required for POTD functionality, therefore a new object was required to not interfere with the iTunes Activity
+    SharedPreferences prefs;
+    SharedPreferences.Editor edit;
+
+
     private class DailyPodcast {
 
         /**
@@ -77,7 +88,6 @@ public class PodcastOfTheDayFragment extends Fragment {
          */
         private final String author;
 
-
         private DailyPodcast(String title, @Nullable String imageUrl, @Nullable String feedUrl, @Nullable String description, int numOfEpisodes, @Nullable String author) {
             this.title = title;
             this.imageUrl = imageUrl;
@@ -86,32 +96,52 @@ public class PodcastOfTheDayFragment extends Fragment {
             this.numOfEpisodes = numOfEpisodes;
             this.author = author;
         }
-
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         View root = inflater.inflate(R.layout.potd, container, false);
-
-        AtomicReference<ListenNotesOperation> blue = new AtomicReference<>(new ListenNotesOperation());
-        blue.get().execute();
-
         potdTitle = (TextView) root.findViewById(R.id.potdTitle);
         potdAuthor = (TextView) root.findViewById(R.id.potdAuthor);
         potdDescription = (TextView) root.findViewById(R.id.potdDescription);
         potdImage = (ImageView) root.findViewById(R.id.potdCover);
         butGoToPodcast = (Button) root.findViewById(R.id.butGoToPodcast);
+        butGenerateNew = (Button) root.findViewById(R.id.butGenerateNew);
+        AtomicReference<ListenNotesOperation> potdOp = new AtomicReference<>(new ListenNotesOperation());
 
-        Button butGenerateNew = (Button) root.findViewById(R.id.butGenerateNew);
+        prefs = getActivity().getSharedPreferences("POTD", Context.MODE_PRIVATE);
+        if (compareDates()){
+            String title = prefs.getString("title", "");
+            String imageUrl = prefs.getString("imageUrl", "");
+            String feedUrl = prefs.getString("feedUrl", "");
+            String description = prefs.getString("description", "");
+            int numOfEpisodes = prefs.getInt("numOfEpisodes", 0);
+            String author = prefs.getString("title", "");
+
+            DailyPodcast storedPodcast = new DailyPodcast(title, imageUrl, feedUrl, description, numOfEpisodes, author);
+            populate(storedPodcast);
+
+        }else {
+            potdOp.get().execute();
+        }
 
         butGenerateNew.setOnClickListener(v -> {
-            blue.set(new ListenNotesOperation());
-            blue.get().execute();
+            potdOp.set(new ListenNotesOperation());
+            potdOp.get().execute();
         });
-
         return root;
+    }
+
+    private String getTodayDateStr(){
+        Date date = Calendar.getInstance().getTime();
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.CANADA);
+        return dateFormat.format(date);
+    }
+
+    private boolean compareDates(){
+        String storedDate = prefs.getString("date", "");
+        return (getTodayDateStr().equals(storedDate));
     }
 
     private void populate(DailyPodcast potd){
@@ -134,7 +164,22 @@ public class PodcastOfTheDayFragment extends Fragment {
         potdTitle.setText(potd.title);
         potdDescription.setText(potd.description);
         potdAuthor.setText(potd.author);
+
+        if (!compareDates()){
+            edit = prefs.edit();
+            edit.putString("date", getTodayDateStr());
+            edit.putString("title", potd.title);
+            edit.putString("imageUrl", potd.imageUrl);
+            edit.putString("feedUrl", potd.feedUrl);
+            edit.putString("description", potd.description);
+            edit.putInt("numOfEpisodes", potd.numOfEpisodes);
+            edit.putString("author", potd.author);
+            edit.apply();
+        }
+
     }
+
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -150,7 +195,7 @@ public class PodcastOfTheDayFragment extends Fragment {
     public DailyPodcast getDailyPodcast(String apiRes) {
 
         JSONObject json;
-        DailyPodcast potDay;
+        DailyPodcast potd;
         try {
             json = new JSONObject(apiRes);
             String dailyTitle = json.getString("title");
@@ -159,13 +204,13 @@ public class PodcastOfTheDayFragment extends Fragment {
             String dailyDescription = json.getString("description");
             int dailyEpisodes = Integer.parseInt(json.getString("total_episodes"));
             String dailyAuthor = json.getString("publisher");
-            potDay = new DailyPodcast(dailyTitle, dailyImage, dailyRSS, dailyDescription, dailyEpisodes, dailyAuthor);
+            potd = new DailyPodcast(dailyTitle, dailyImage, dailyRSS, dailyDescription, dailyEpisodes, dailyAuthor);
         } catch (JSONException e) {
             e.printStackTrace();
-            potDay = new DailyPodcast("JSON_ERROR", "JSON_ERROR", "JSON_ERROR", "JSON_ERROR", 0, "JSON_ERROR");
+            potd = new DailyPodcast("JSON_ERROR", "JSON_ERROR", "JSON_ERROR", "JSON_ERROR", 0, "JSON_ERROR");
         }
 
-        return potDay;
+        return potd;
     }
 
     private class ListenNotesOperation extends AsyncTask<String, Void, String> {
