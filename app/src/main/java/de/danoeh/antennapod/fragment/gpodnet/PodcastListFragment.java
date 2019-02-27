@@ -52,26 +52,6 @@ public abstract class PodcastListFragment extends Fragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.provider_search, menu);
-        MenuItem searchItem = menu.findItem(R.id.action_search);
-        final SearchView sv = (SearchView) MenuItemCompat.getActionView(searchItem);
-        MenuItemUtils.adjustTextColor(getActivity(), sv);
-        sv.setQueryHint(getString(R.string.gpodnet_search_hint));
-        sv.setOnQueryTextListener(new android.support.v7.widget.SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String s) {
-                sv.clearFocus();
-                MainActivity activity = (MainActivity)getActivity();
-                if (activity != null) {
-                    activity.loadChildFragment(SearchListFragment.newInstance(s));
-                }
-                return true;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String s) {
-                return false;
-            }
-        });
     }
 
     @Override
@@ -86,6 +66,24 @@ public abstract class PodcastListFragment extends Fragment {
         gridView.setOnItemClickListener((parent, view, position, id) ->
                 onPodcastSelected((GpodnetPodcast) gridView.getAdapter().getItem(position)));
         butRetry.setOnClickListener(v -> loadData());
+
+        final SearchView sv = root.findViewById(R.id.action_search);
+        sv.setQueryHint(getString(R.string.gpodnet_search_hint));
+        sv.setOnQueryTextListener(new android.support.v7.widget.SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+                sv.clearFocus();
+                MainActivity activity = (MainActivity)getActivity();
+                if (activity != null) {
+                    activity.loadChildFragment(SearchListFragment.newInstance(s));
+                }
+                return true;
+            }
+            @Override
+            public boolean onQueryTextChange(String s) {
+                return false;
+            }
+        });
 
         loadData();
         return root;

@@ -96,6 +96,22 @@ public class FyydSearchFragment extends Fragment {
         butRetry = (Button) root.findViewById(R.id.butRetry);
         txtvEmpty = (TextView) root.findViewById(android.R.id.empty);
 
+        final SearchView sv = root.findViewById(R.id.action_search);
+        sv.setQueryHint(getString(R.string.search_fyyd_label));
+        sv.setOnQueryTextListener(new android.support.v7.widget.SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+                sv.clearFocus();
+                search(s);
+                return true;
+            }
+            @Override
+            public boolean onQueryTextChange(String s) {
+                return false;
+            }
+        });
+
+
         loadDefaultPodcastWithQuery(PodcastCategory[randomNumGen.nextInt(12)]);
 
         return root;
@@ -114,35 +130,6 @@ public class FyydSearchFragment extends Fragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.provider_search, menu);
-        MenuItem searchItem = menu.findItem(R.id.action_search);
-        final SearchView sv = (SearchView) MenuItemCompat.getActionView(searchItem);
-        MenuItemUtils.adjustTextColor(getActivity(), sv);
-        sv.setQueryHint(getString(R.string.search_fyyd_label));
-        sv.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String s) {
-                sv.clearFocus();
-                search(s);
-                return true;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String s) {
-                return false;
-            }
-        });
-        MenuItemCompat.setOnActionExpandListener(searchItem, new MenuItemCompat.OnActionExpandListener() {
-            @Override
-            public boolean onMenuItemActionExpand(MenuItem item) {
-                return true;
-            }
-
-            @Override
-            public boolean onMenuItemActionCollapse(MenuItem item) {
-                getActivity().getSupportFragmentManager().popBackStack();
-                return true;
-            }
-        });
     }
 
     /**
