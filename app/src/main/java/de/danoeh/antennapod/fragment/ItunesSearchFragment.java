@@ -203,6 +203,12 @@ public class ItunesSearchFragment extends Fragment {
         adapter = null;
     }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.provider_search, menu);
+    }
+
     private void loadToplist() {
         if (subscription != null) {
             subscription.unsubscribe();

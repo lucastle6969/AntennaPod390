@@ -126,6 +126,12 @@ public class FyydSearchFragment extends Fragment {
         adapter = null;
     }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.provider_search, menu);
+    }
+
     /**
      * Replace adapter data with provided search results from SearchTask.
      * @param result List of Podcast objects containing search results
