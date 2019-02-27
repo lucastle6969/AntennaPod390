@@ -77,4 +77,18 @@ public final class URLChecker {
             return prepareURL(url);
         }
     }
+
+    /**
+     * Checks if a URL should be considered by the URL utility
+     * a url should not include any white spaces, and should include at least a '.' or a '/'
+     *
+     * @return boolean describing the validity of the URL
+     */
+    public static boolean validateURL(String url){
+
+        if ((url.indexOf(" ") < 0) && ((url.indexOf(".")>=0) || (url.indexOf("/")>=0)))
+            return true;
+        return false;
+    }
 }
+
