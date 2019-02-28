@@ -7,21 +7,27 @@
         style="@style/AntennaPod.TextView.Heading"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
         android:text="@string/txtvfeedurl_label"/>
 
     <EditText
         android:id="@+id/etxtFeedurl"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="18dp"
+        android:layout_marginRight="18dp"
         android:cursorVisible="true"
         android:focusable="true"
         android:focusableInTouchMode="true"
         android:hint="@string/etxtFeedurlHint"
-        android:inputType="textUri"/>
+        android:inputType="textUri"
+        android:imeOptions="actionSearch"/>
 
     <Button
         android:id="@+id/butConfirm"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="18dp"
+        android:layout_marginRight="18dp"
         android:text="@string/confirm_label"/>
 </LinearLayout>
