@@ -5,13 +5,9 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -22,13 +18,11 @@ import android.widget.TextView;
 import java.util.List;
 
 import de.danoeh.antennapod.R;
-import de.danoeh.antennapod.activity.MainActivity;
 import de.danoeh.antennapod.activity.OnlineFeedViewActivity;
 import de.danoeh.antennapod.adapter.gpodnet.PodcastListAdapter;
 import de.danoeh.antennapod.core.gpoddernet.GpodnetService;
 import de.danoeh.antennapod.core.gpoddernet.GpodnetServiceException;
 import de.danoeh.antennapod.core.gpoddernet.model.GpodnetPodcast;
-import de.danoeh.antennapod.menuhandler.MenuItemUtils;
 
 
 
@@ -81,6 +75,14 @@ public abstract class PodcastSearchListFragment extends Fragment {
             @Override
             public boolean onQueryTextChange(String s) {
                 return false;
+            }
+        });
+        sv.setOnCloseListener(new android.support.v7.widget.SearchView.OnCloseListener() {
+            @Override
+            public boolean onClose(){
+                sv.clearFocus();
+                loadData();
+                return true;
             }
         });
 
