@@ -27,11 +27,12 @@ import de.danoeh.antennapod.core.gpoddernet.model.GpodnetPodcast;
 
 
 /**
- * Displays a list of GPodnetPodcast-Objects in a GridView
+ * Displays a list of GPodnetPodcast-Objects in a GridView with a search bar (for gpodder search)
+ * search does NOT search among displayed list results
  */
 public abstract class PodcastSearchListFragment extends Fragment {
 
-    private static final String TAG = "PodcastListFragment";
+    private static final String TAG = "PodcastSearchListFrag";
 
     private GridView gridView;
     private ProgressBar progressBar;
@@ -44,11 +45,6 @@ public abstract class PodcastSearchListFragment extends Fragment {
         setHasOptionsMenu(true);
     }
 
-//    @Override
-//    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-//        super.onCreateOptionsMenu(menu, inflater);
-//        inflater.inflate(R.menu.provider_search, menu);
-//    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
