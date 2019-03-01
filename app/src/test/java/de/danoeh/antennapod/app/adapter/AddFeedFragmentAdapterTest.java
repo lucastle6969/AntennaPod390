@@ -1,4 +1,4 @@
-package de.danoeh.antennapod.fragment;
+package de.danoeh.antennapod.app.adapter;
 
 import android.app.Application;
 import android.content.res.Resources;
@@ -10,6 +10,9 @@ import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 import de.danoeh.antennapod.R;
 import de.danoeh.antennapod.adapter.AddPodcastFragmentAdapter;
+import de.danoeh.antennapod.fragment.FyydSearchFragment;
+import de.danoeh.antennapod.fragment.ItunesSearchFragment;
+import de.danoeh.antennapod.fragment.URLSearchFragment;
 import de.danoeh.antennapod.fragment.gpodnet.PodcastTopListFragment;
 
 import static org.mockito.Mockito.mock;
@@ -18,13 +21,13 @@ import static org.mockito.Mockito.when;
 @RunWith(RobolectricTestRunner.class)
 public class AddFeedFragmentAdapterTest extends ApplicationTestCase<Application> {
 
-    public AddFeedFragmentAdapterTest() {
-        super(Application.class);
-    }
-
     private FragmentManager fm;
     private Resources resources;
     private AddPodcastFragmentAdapter adapter;
+
+    public AddFeedFragmentAdapterTest() {
+        super(Application.class);
+    }
 
     @Before
     public void setUp() {
