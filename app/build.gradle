@@ -120,6 +120,12 @@ android {
         additionalParameters "--no-version-vectors"
     }
 
+    testOptions {
+        unitTests {
+            includeAndroidResources = true
+        }
+    }
+
     flavorDimensions "market"
     productFlavors {
         free {
@@ -183,6 +189,15 @@ dependencies {
     implementation 'com.github.mfietz:fyydlin:v0.3'
     implementation 'com.github.ByteHamster:SearchPreference:v1.0.8'
 
+    testImplementation  'junit:junit:4.12'
+    testImplementation 'org.robolectric:robolectric:4.2'
+
+    // required if you want to use Mockito for unit tests
+    testImplementation  "org.mockito:mockito-core:2.24.5"
+
+    // required if you want to use Mockito for Android tests
+    androidTestImplementation 'org.mockito:mockito-android:2.7.22'
+    androidTestImplementation 'com.android.support:support-annotations:28.0.0'
     androidTestImplementation "com.jayway.android.robotium:robotium-solo:$robotiumSoloVersion"
 }
 
