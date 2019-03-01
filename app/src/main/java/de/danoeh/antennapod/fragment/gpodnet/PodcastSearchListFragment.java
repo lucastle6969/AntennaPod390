@@ -60,7 +60,13 @@ public abstract class PodcastSearchListFragment extends Fragment {
         butRetry.setOnClickListener(v -> loadData());
 
         final SearchView sv = root.findViewById(R.id.action_search);
+        sv.setIconifiedByDefault(false);
         sv.setQueryHint(getString(R.string.gpodnet_search_hint));
+
+        if(!sv.isFocused()) {
+            sv.clearFocus();
+        }
+
         sv.setOnQueryTextListener(new android.support.v7.widget.SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
@@ -76,6 +82,8 @@ public abstract class PodcastSearchListFragment extends Fragment {
         sv.setOnCloseListener(new android.support.v7.widget.SearchView.OnCloseListener() {
             @Override
             public boolean onClose(){
+                //Clear query
+                sv.setQuery("", false);
                 sv.clearFocus();
                 loadData();
                 return true;

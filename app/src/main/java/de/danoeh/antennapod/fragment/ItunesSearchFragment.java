@@ -174,7 +174,13 @@ public class ItunesSearchFragment extends Fragment {
         txtvEmpty = (TextView) root.findViewById(android.R.id.empty);
 
         final SearchView sv = root.findViewById(R.id.action_search);
+        sv.setIconifiedByDefault(false);
         sv.setQueryHint(getString(R.string.search_itunes_label));
+
+        if(!sv.isFocused()) {
+            sv.clearFocus();
+        }
+
         sv.setOnQueryTextListener(new android.support.v7.widget.SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
@@ -188,8 +194,14 @@ public class ItunesSearchFragment extends Fragment {
             }
         });
         sv.setOnCloseListener(new android.support.v7.widget.SearchView.OnCloseListener() {
+
             @Override
             public boolean onClose(){
+
+                //Clear query
+                sv.setQuery("", false);
+                sv.clearFocus();
+
                 if(searchResults != null) {
                     searchResults = null;
                     updateData(topList);
