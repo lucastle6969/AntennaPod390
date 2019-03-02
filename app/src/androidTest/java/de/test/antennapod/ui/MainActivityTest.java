@@ -361,4 +361,19 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
 
         assertEquals(description, descriptionView.getText());
     }
+
+    public void testGpodderSearch() {
+
+        openNavDrawer();
+        solo.clickOnText("Add Podcast");
+        solo.clickOnText("gPodder");
+        solo.waitForView(R.id.txtvEpisodes);
+        // repeating this action to avoid flaky test where Robotium clicks on iTunes tab
+        solo.clickOnText("gPodder");
+        solo.enterText(1, "hello");
+        solo.sendKey(Solo.ENTER);
+        solo.waitForView(R.id.txtvEpisodes);
+
+        assertTrue(solo.searchText("Internet"));
+    }
 }
