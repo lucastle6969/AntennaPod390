@@ -13,7 +13,7 @@ import de.danoeh.antennapod.adapter.AddPodcastFragmentAdapter;
 import de.danoeh.antennapod.fragment.FyydSearchFragment;
 import de.danoeh.antennapod.fragment.ItunesSearchFragment;
 import de.danoeh.antennapod.fragment.URLSearchFragment;
-import de.danoeh.antennapod.fragment.gpodnet.PodcastTopListFragment;
+import de.danoeh.antennapod.fragment.gpodnet.GpodderSearchFragment;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -45,7 +45,7 @@ public class AddFeedFragmentAdapterTest extends ApplicationTestCase<Application>
     @Test
     public void testGetItemFragment() {
         assertTrue(adapter.getItem(0) instanceof ItunesSearchFragment);
-        assertTrue(adapter.getItem(1) instanceof PodcastTopListFragment);
+        assertTrue(adapter.getItem(1) instanceof GpodderSearchFragment);
         assertTrue(adapter.getItem(2) instanceof FyydSearchFragment);
         assertTrue(adapter.getItem(3) instanceof URLSearchFragment);
         assertNull(adapter.getItem(4));
