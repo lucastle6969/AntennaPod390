@@ -376,4 +376,19 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
 
         assertTrue(solo.searchText("Internet"));
     }
+
+    @FlakyTest(tolerance = 3)
+    public void testItunesSearch() {
+
+        openNavDrawer();
+        solo.clickOnText(solo.getString(R.string.add_feed_label));
+        solo.clickOnText(solo.getString(R.string.tab_itunes));
+        solo.waitForView(R.id.txtvEpisodes);
+        solo.enterText(0,"hello");
+        solo.sendKey(Solo.ENTER);
+        solo.waitForView(R.id.txtvEpisodes);
+
+        assertTrue(solo.searchText("Internet"));
+
+    }
 }
