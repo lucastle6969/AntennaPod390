@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import de.danoeh.antennapod.R;
+import de.danoeh.antennapod.activity.MainActivity;
 import de.danoeh.antennapod.adapter.AddPodcastFragmentAdapter;
 
 /**
@@ -26,6 +27,8 @@ public class AddFeedFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
+        ((MainActivity) getActivity()).getSupportActionBar().setTitle(R.string.add_feed_label);
+
         View root = inflater.inflate(R.layout.addfeed, container, false);
 
         ViewPager viewPager = root.findViewById(R.id.viewpager);

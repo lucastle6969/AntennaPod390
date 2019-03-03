@@ -78,7 +78,8 @@ public class FyydSearchFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View root = inflater.inflate(R.layout.fragment_itunes_search, container, false);
+
+        View root = inflater.inflate(R.layout.fragment_provider_search, container, false);
         gridView = root.findViewById(R.id.gridView);
         adapter = new ItunesAdapter(getActivity(), new ArrayList<>());
         gridView.setAdapter(adapter);
@@ -95,6 +96,41 @@ public class FyydSearchFragment extends Fragment {
         txtvError = root.findViewById(R.id.txtvError);
         butRetry = root.findViewById(R.id.butRetry);
         txtvEmpty = root.findViewById(android.R.id.empty);
+
+        final SearchView sv = root.findViewById(R.id.action_search);
+        sv.setIconifiedByDefault(false);
+        sv.setQueryHint(getString(R.string.search_fyyd_label));
+
+        if(!sv.isFocused()) {
+            sv.clearFocus();
+        }
+
+        sv.setOnQueryTextListener(new android.support.v7.widget.SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+                sv.clearFocus();
+                search(s);
+                return true;
+            }
+            @Override
+            public boolean onQueryTextChange(String s) {
+                return false;
+            }
+        });
+
+        sv.setOnCloseListener(new android.support.v7.widget.SearchView.OnCloseListener() {
+            @Override
+            public boolean onClose(){
+
+                //Clear query
+                sv.setQuery("", false);
+                sv.clearFocus();
+
+                getActivity().getSupportFragmentManager().popBackStack();
+                loadDefaultPodcastWithQuery(PodcastCategory[randomNumGen.nextInt(12)]);
+                return true;
+            }
+        });
 
         loadDefaultPodcastWithQuery(PodcastCategory[randomNumGen.nextInt(12)]);
 
@@ -113,36 +149,7 @@ public class FyydSearchFragment extends Fragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.gpodder_podcasts, menu);
-        MenuItem searchItem = menu.findItem(R.id.action_search);
-        final SearchView sv = (SearchView) MenuItemCompat.getActionView(searchItem);
-        MenuItemUtils.adjustTextColor(getActivity(), sv);
-        sv.setQueryHint(getString(R.string.search_fyyd_label));
-        sv.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String s) {
-                sv.clearFocus();
-                search(s);
-                return true;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String s) {
-                return false;
-            }
-        });
-        MenuItemCompat.setOnActionExpandListener(searchItem, new MenuItemCompat.OnActionExpandListener() {
-            @Override
-            public boolean onMenuItemActionExpand(MenuItem item) {
-                return true;
-            }
-
-            @Override
-            public boolean onMenuItemActionCollapse(MenuItem item) {
-                getActivity().getSupportFragmentManager().popBackStack();
-                return true;
-            }
-        });
+        inflater.inflate(R.menu.provider_search, menu);
     }
 
     /**

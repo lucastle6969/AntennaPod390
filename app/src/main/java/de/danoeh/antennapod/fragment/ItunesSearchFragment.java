@@ -3,19 +3,18 @@ package de.danoeh.antennapod.fragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
 
 import com.afollestad.materialdialogs.MaterialDialog;
 
@@ -34,7 +33,6 @@ import de.danoeh.antennapod.activity.OnlineFeedViewActivity;
 import de.danoeh.antennapod.adapter.itunes.ItunesAdapter;
 import de.danoeh.antennapod.core.ClientConfig;
 import de.danoeh.antennapod.core.service.download.AntennapodHttpClient;
-import de.danoeh.antennapod.menuhandler.MenuItemUtils;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -107,7 +105,8 @@ public class ItunesSearchFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View root = inflater.inflate(R.layout.fragment_itunes_search, container, false);
+
+        View root = inflater.inflate(R.layout.fragment_provider_search, container, false);
         gridView = root.findViewById(R.id.gridView);
         adapter = new ItunesAdapter(getActivity(), new ArrayList<>());
         gridView.setAdapter(adapter);
@@ -173,6 +172,39 @@ public class ItunesSearchFragment extends Fragment {
         butRetry = root.findViewById(R.id.butRetry);
         txtvEmpty = root.findViewById(android.R.id.empty);
 
+        final SearchView sv = root.findViewById(R.id.action_search);
+        sv.setIconifiedByDefault(false);
+        sv.setQueryHint(getString(R.string.search_itunes_label));
+
+        if(!sv.isFocused()) {
+            sv.clearFocus();
+        }
+
+        sv.setOnQueryTextListener(new android.support.v7.widget.SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+                sv.clearFocus();
+                search(s);
+                return true;
+            }
+            @Override
+            public boolean onQueryTextChange(String s) {
+                return false;
+            }
+        });
+        sv.setOnCloseListener(() -> {
+
+            //Clear query
+            sv.setQuery("", false);
+            sv.clearFocus();
+
+            if(searchResults != null) {
+                searchResults = null;
+                updateData(topList);
+            }
+            return true;
+        });
+
         loadToplist();
 
         return root;
@@ -190,39 +222,7 @@ public class ItunesSearchFragment extends Fragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.gpodder_podcasts, menu);
-        MenuItem searchItem = menu.findItem(R.id.action_search);
-        final SearchView sv = (SearchView) MenuItemCompat.getActionView(searchItem);
-        MenuItemUtils.adjustTextColor(getActivity(), sv);
-        sv.setQueryHint(getString(R.string.search_itunes_label));
-        sv.setOnQueryTextListener(new android.support.v7.widget.SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String s) {
-                sv.clearFocus();
-                search(s);
-                return true;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String s) {
-                return false;
-            }
-        });
-        MenuItemCompat.setOnActionExpandListener(searchItem, new MenuItemCompat.OnActionExpandListener() {
-            @Override
-            public boolean onMenuItemActionExpand(MenuItem item) {
-                return true;
-            }
-
-            @Override
-            public boolean onMenuItemActionCollapse(MenuItem item) {
-                if(searchResults != null) {
-                    searchResults = null;
-                    updateData(topList);
-                }
-                return true;
-            }
-        });
+        inflater.inflate(R.menu.provider_search, menu);
     }
 
     private void loadToplist() {
