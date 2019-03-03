@@ -9,7 +9,7 @@ import android.content.res.Resources;
 import de.danoeh.antennapod.fragment.FyydSearchFragment;
 import de.danoeh.antennapod.fragment.ItunesSearchFragment;
 import de.danoeh.antennapod.fragment.URLSearchFragment;
-import de.danoeh.antennapod.fragment.gpodnet.PodcastTopListFragment;
+import de.danoeh.antennapod.fragment.gpodnet.GpodderSearchFragment;
 
 import de.danoeh.antennapod.R;
 
@@ -17,7 +17,7 @@ import de.danoeh.antennapod.R;
 public class AddPodcastFragmentAdapter extends FragmentPagerAdapter {
 
     private static final int NUM_PAGES = 4;
-    final Resources resources;
+    private final Resources resources;
 
     public AddPodcastFragmentAdapter(FragmentManager fm, Resources resources) {
 
@@ -32,7 +32,7 @@ public class AddPodcastFragmentAdapter extends FragmentPagerAdapter {
             case 0:
                 return new ItunesSearchFragment();
             case 1:
-                return new PodcastTopListFragment();
+                return new GpodderSearchFragment();
             case 2:
                 return new FyydSearchFragment();
             case 3:

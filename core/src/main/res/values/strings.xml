@@ -118,6 +118,7 @@
     <string name="tab_gpodder">gPodder</string>
     <string name="tab_fyyd">fyyd</string>
     <string name="tab_url">url</string>
+    <string name="url_search_error_invalid">Please enter a valid URL.</string>
     <string-array name="directories">
         <item>Please Select a Directory</item>
         <item>iTunes</item>

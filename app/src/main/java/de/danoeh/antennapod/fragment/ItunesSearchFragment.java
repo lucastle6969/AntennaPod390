@@ -3,19 +3,18 @@ package de.danoeh.antennapod.fragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
 
 import com.afollestad.materialdialogs.MaterialDialog;
 
@@ -24,18 +23,16 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 import de.danoeh.antennapod.R;
 import de.danoeh.antennapod.activity.OnlineFeedViewActivity;
 import de.danoeh.antennapod.adapter.itunes.ItunesAdapter;
 import de.danoeh.antennapod.core.ClientConfig;
 import de.danoeh.antennapod.core.service.download.AntennapodHttpClient;
-import de.danoeh.antennapod.menuhandler.MenuItemUtils;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -108,8 +105,9 @@ public class ItunesSearchFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View root = inflater.inflate(R.layout.fragment_itunes_search, container, false);
-        gridView = (GridView) root.findViewById(R.id.gridView);
+
+        View root = inflater.inflate(R.layout.fragment_provider_search, container, false);
+        gridView = root.findViewById(R.id.gridView);
         adapter = new ItunesAdapter(getActivity(), new ArrayList<>());
         gridView.setAdapter(adapter);
 
@@ -135,8 +133,7 @@ public class ItunesSearchFragment extends Fragment {
                             try {
                                 Response response = client.newCall(httpReq.build()).execute();
                                 if (response.isSuccessful()) {
-                                    String resultString = response.body().string();
-                                    JSONObject result = new JSONObject(resultString);
+                                    JSONObject result = this.parseResponse(response);
                                     JSONObject results = result.getJSONArray("results").getJSONObject(0);
                                     String feedUrl = results.getString("feedUrl");
                                     subscriber.onNext(feedUrl);
@@ -144,7 +141,7 @@ public class ItunesSearchFragment extends Fragment {
                                     String prefix = getString(R.string.error_msg_prefix);
                                     subscriber.onError(new IOException(prefix + response));
                                 }
-                            } catch (IOException | JSONException e) {
+                            } catch (IOException | JSONException | NullPointerException e) {
                                 subscriber.onError(e);
                             }
                             subscriber.onCompleted();
@@ -170,10 +167,43 @@ public class ItunesSearchFragment extends Fragment {
                         });
             }
         });
-        progressBar = (ProgressBar) root.findViewById(R.id.progressBar);
-        txtvError = (TextView) root.findViewById(R.id.txtvError);
-        butRetry = (Button) root.findViewById(R.id.butRetry);
-        txtvEmpty = (TextView) root.findViewById(android.R.id.empty);
+        progressBar = root.findViewById(R.id.progressBar);
+        txtvError = root.findViewById(R.id.txtvError);
+        butRetry = root.findViewById(R.id.butRetry);
+        txtvEmpty = root.findViewById(android.R.id.empty);
+
+        final SearchView sv = root.findViewById(R.id.action_search);
+        sv.setIconifiedByDefault(false);
+        sv.setQueryHint(getString(R.string.search_itunes_label));
+
+        if(!sv.isFocused()) {
+            sv.clearFocus();
+        }
+
+        sv.setOnQueryTextListener(new android.support.v7.widget.SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+                sv.clearFocus();
+                search(s);
+                return true;
+            }
+            @Override
+            public boolean onQueryTextChange(String s) {
+                return false;
+            }
+        });
+        sv.setOnCloseListener(() -> {
+
+            //Clear query
+            sv.setQuery("", false);
+            sv.clearFocus();
+
+            if(searchResults != null) {
+                searchResults = null;
+                updateData(topList);
+            }
+            return true;
+        });
 
         loadToplist();
 
@@ -192,39 +222,7 @@ public class ItunesSearchFragment extends Fragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.gpodder_podcasts, menu);
-        MenuItem searchItem = menu.findItem(R.id.action_search);
-        final SearchView sv = (SearchView) MenuItemCompat.getActionView(searchItem);
-        MenuItemUtils.adjustTextColor(getActivity(), sv);
-        sv.setQueryHint(getString(R.string.search_itunes_label));
-        sv.setOnQueryTextListener(new android.support.v7.widget.SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String s) {
-                sv.clearFocus();
-                search(s);
-                return true;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String s) {
-                return false;
-            }
-        });
-        MenuItemCompat.setOnActionExpandListener(searchItem, new MenuItemCompat.OnActionExpandListener() {
-            @Override
-            public boolean onMenuItemActionExpand(MenuItem item) {
-                return true;
-            }
-
-            @Override
-            public boolean onMenuItemActionCollapse(MenuItem item) {
-                if(searchResults != null) {
-                    searchResults = null;
-                    updateData(topList);
-                }
-                return true;
-            }
-        });
+        inflater.inflate(R.menu.provider_search, menu);
     }
 
     private void loadToplist() {
@@ -255,8 +253,7 @@ public class ItunesSearchFragment extends Fragment {
                             response = client.newCall(httpReq.build()).execute();
                         }
                         if(response.isSuccessful()) {
-                            String resultString = response.body().string();
-                            JSONObject result = new JSONObject(resultString);
+                            JSONObject result = this.parseResponse(response);
                             JSONObject feed = result.getJSONObject("feed");
                             JSONArray entries = feed.getJSONArray("entry");
 
@@ -270,7 +267,7 @@ public class ItunesSearchFragment extends Fragment {
                             String prefix = getString(R.string.error_msg_prefix);
                             subscriber.onError(new IOException(prefix + response));
                         }
-                    } catch (IOException | JSONException e) {
+                    } catch (IOException | JSONException | NullPointerException e) {
                         subscriber.onError(e);
                     }
                     subscriber.onNext(results);
@@ -302,16 +299,6 @@ public class ItunesSearchFragment extends Fragment {
         txtvEmpty.setVisibility(View.GONE);
         progressBar.setVisibility(View.VISIBLE);
         subscription = rx.Observable.create((Observable.OnSubscribe<List<Podcast>>) subscriber -> {
-                    String encodedQuery = null;
-                    try {
-                        encodedQuery = URLEncoder.encode(query, "UTF-8");
-                    } catch (UnsupportedEncodingException e) {
-                        // this won't ever be thrown
-                    }
-                    if (encodedQuery == null) {
-                        encodedQuery = query; // failsafe
-                    }
-
                     //Spaces in the query need to be replaced with '+' character.
                     String formattedUrl = String.format(API_URL, query).replace(' ', '+');
 
@@ -324,8 +311,7 @@ public class ItunesSearchFragment extends Fragment {
                         Response response = client.newCall(httpReq.build()).execute();
 
                         if(response.isSuccessful()) {
-                            String resultString = response.body().string();
-                            JSONObject result = new JSONObject(resultString);
+                            JSONObject result = this.parseResponse(response);
                             JSONArray j = result.getJSONArray("results");
 
                             for (int i = 0; i < j.length(); i++) {
@@ -338,7 +324,7 @@ public class ItunesSearchFragment extends Fragment {
                             String prefix = getString(R.string.error_msg_prefix);
                             subscriber.onError(new IOException(prefix + response));
                         }
-                    } catch (IOException | JSONException e) {
+                    } catch (IOException | JSONException | NullPointerException e) {
                         subscriber.onError(e);
                     }
                     subscriber.onNext(podcasts);
@@ -357,6 +343,11 @@ public class ItunesSearchFragment extends Fragment {
                     butRetry.setOnClickListener(v -> search(query));
                     butRetry.setVisibility(View.VISIBLE);
                 });
+    }
+
+    private JSONObject parseResponse(Response response) throws NullPointerException, IOException, JSONException {
+        String resultString = Objects.requireNonNull(response.body()).string();
+        return new JSONObject(resultString);
     }
 
 }
