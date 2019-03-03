@@ -2,22 +2,15 @@ package de.test.antennapod.ui;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.support.design.internal.NavigationMenu;
-import android.support.design.internal.NavigationMenuView;
 import android.test.ActivityInstrumentationTestCase2;
 import android.test.FlakyTest;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.Spinner;
 import android.widget.TextView;
-
 import com.robotium.solo.Solo;
-
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -272,6 +265,28 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
         assertTrue(hidden.contains(DownloadsFragment.TAG));
     }
 
+    public void testFyydPodcastSearch() {
+        String query = "TripleTwenty";
+        String description = "TripleTwenty ist der Rollenspielpodcast einer Anfängergruppe und lädt alle zum mithören ein, die sich für Pen&Paper wie \"Das Schwarze Auge\" oder \"Dungeons & Dragons\" interessieren - oder nur mal reinschnuppern wollen.";
+
+        openNavDrawer();
+        solo.clickOnText(solo.getString(R.string.add_feed_label));
+        solo.waitForDialogToOpen();
+        solo.waitForView(R.id.sliding_tabs);
+        solo.clickOnText(solo.getString(R.string.tab_fyyd));
+        solo.waitForView(R.id.action_search);
+        solo.clickOnView(solo.getView(R.id.action_search));
+        solo.enterText(0, query);
+        solo.sendKey(Solo.ENTER);
+        solo.clickOnText(solo.getString(R.string.tab_fyyd));
+        solo.waitForText(query);
+        solo.waitForView(R.id.txtvUrl);
+
+        TextView descTextView = (TextView) solo.getView(R.id.txtvUrl);
+
+        assertEquals(description, descTextView.getText());
+    }
+
     public void testFyydPodcastEpisodesAndDescription() {
         String query = "TripleTwenty";
         String description = "TripleTwenty ist der Rollenspielpodcast einer Anfängergruppe und lädt alle zum mithören ein, die sich für Pen&Paper wie \"Das Schwarze Auge\" oder \"Dungeons & Dragons\" interessieren - oder nur mal reinschnuppern wollen.";
@@ -286,7 +301,6 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
         solo.enterText(0, query);
         solo.sendKey(Solo.ENTER);
         solo.waitForDialogToOpen();
-
 
         GridView gridView = (GridView) solo.getView(R.id.gridView);
         ViewGroup viewGroup = (ViewGroup) gridView.getChildAt(0);
