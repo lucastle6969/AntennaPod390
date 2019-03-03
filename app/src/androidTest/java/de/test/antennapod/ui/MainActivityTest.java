@@ -361,4 +361,21 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
 
         assertEquals(description, descriptionView.getText());
     }
+
+    @FlakyTest(tolerance = 2)
+    public void testURLSearchFragment(){
+
+        String url = "http://www.hellointernet.fm/podcast?format=rss";
+
+
+        solo.clickOnText(solo.getString(R.string.tab_url));
+        solo.waitForView(R.id.etxtFeedurl);
+        solo.clearEditText(0);
+        solo.enterText(0, url);
+        solo.sendKey(Solo.ENTER);
+        solo.clickOnButton(0);
+        solo.waitForActivity(OnlineFeedViewActivity.class);
+        solo.waitForView(R.id.butSubscribe);
+        solo.assertCurrentActivity("Expected OnlineViewFeedActivity to be active.", OnlineFeedViewActivity.class);
+    }
 }
