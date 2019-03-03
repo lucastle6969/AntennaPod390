@@ -17,8 +17,6 @@ import de.danoeh.antennapod.adapter.AddPodcastFragmentAdapter;
 public class AddFeedFragment extends Fragment {
 
     public static final String TAG = "AddFeedFragment";
-    private TabLayout tabLayout;
-    private ViewPager viewPager;
 
     /**
      * Preset value for url text field.
@@ -29,12 +27,14 @@ public class AddFeedFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         View root = inflater.inflate(R.layout.addfeed, container, false);
-        viewPager = root.findViewById(R.id.viewpager);
+
+        ViewPager viewPager = root.findViewById(R.id.viewpager);
 
         AddPodcastFragmentAdapter adapter = new AddPodcastFragmentAdapter(getChildFragmentManager(), getResources());
 
         viewPager.setAdapter(adapter);
-        tabLayout = root.findViewById(R.id.sliding_tabs);
+
+        TabLayout tabLayout = root.findViewById(R.id.sliding_tabs);
         tabLayout.setupWithViewPager(viewPager);
 
         return root;

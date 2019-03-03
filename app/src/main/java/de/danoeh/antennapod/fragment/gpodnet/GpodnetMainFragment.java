@@ -1,10 +1,7 @@
 package de.danoeh.antennapod.fragment.gpodnet;
 
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Bundle;
-import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -23,15 +20,14 @@ public class GpodnetMainFragment extends Fragment {
     private static final String TAG = "GpodnetMainFragment";
 
     private static final String PREF_LAST_TAB_POSITION = "tab_position";
-    // private TabLayout tabLayout;
-    private ViewPager viewPager;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         View root = inflater.inflate(R.layout.pager_fragment_b, container, false);
 
-        viewPager = (ViewPager)root.findViewById(R.id.viewpager);
+        // private TabLayout tabLayout;
+        ViewPager viewPager = root.findViewById(R.id.viewpager);
         GpodnetPagerAdapter pagerAdapter = new GpodnetPagerAdapter(getChildFragmentManager(), getResources());
         viewPager.setAdapter(pagerAdapter);
 
