@@ -43,52 +43,52 @@ public class PodcastOfTheDayFragment extends Fragment {
     final String LISTENNOTES_URL = "https://listennotes.p.rapidapi.com/api/v1/";
     final String API_KEY = "387264864dmshfd180124e6714c0p185435jsn064b6c62d311";
 
-    TextView potdTitle;
-    TextView potdAuthor;
-    TextView potdDescription;
-    ImageView potdImage;
-    Button butGoToPodcast;
-    Button butGenerateNew;
+    public TextView potdTitle;
+    public TextView potdAuthor;
+    public TextView potdDescription;
+    public ImageView potdImage;
+    public Button butGoToPodcast;
+    public Button butGenerateNew;
 
     SharedPreferences prefs;
     SharedPreferences.Editor edit;
 
 
-    private class DailyPodcast {
+    public static class DailyPodcast {
 
         /**
          * The name of the podcast
          */
-        private final String title;
+        public final String title;
 
         /**
          * URL of the podcast image
          */
         @Nullable
-        private final String imageUrl;
+        public final String imageUrl;
         /**
          * URL of the podcast feed
          */
         @Nullable
-        private final String feedUrl;
+        public final String feedUrl;
 
         /**
          * The description of a podcast
          */
         @Nullable
-        private final String description;
+        public final String description;
 
         /**
          *  The number of episodes of a podcast
          */
-        private final int numOfEpisodes;
+        public final int numOfEpisodes;
 
         /**
          *  The author of a podcast
          */
-        private final String author;
+        public final String author;
 
-        private DailyPodcast(String title, @Nullable String imageUrl, @Nullable String feedUrl, @Nullable String description, int numOfEpisodes, @Nullable String author) {
+        public DailyPodcast(String title, @Nullable String imageUrl, @Nullable String feedUrl, @Nullable String description, int numOfEpisodes, @Nullable String author) {
             this.title = title;
             this.imageUrl = imageUrl;
             this.feedUrl = feedUrl;
@@ -120,7 +120,7 @@ public class PodcastOfTheDayFragment extends Fragment {
             String author = prefs.getString("title", "");
 
             DailyPodcast storedPodcast = new DailyPodcast(title, imageUrl, feedUrl, description, numOfEpisodes, author);
-            populate(storedPodcast);
+            populate(storedPodcast, Boolean.FALSE);
 
         }else {
             potdOp.get().execute();
@@ -144,28 +144,29 @@ public class PodcastOfTheDayFragment extends Fragment {
         return (getTodayDateStr().equals(storedDate));
     }
 
-    private void populate(DailyPodcast potd){
+    public void populate(DailyPodcast potd, Boolean skip){
         butGoToPodcast.setOnClickListener(v -> {
             Intent intent = new Intent(getActivity(), OnlineFeedViewActivity.class);
             intent.putExtra(OnlineFeedViewActivity.ARG_FEEDURL, potd.feedUrl);
             intent.putExtra(OnlineFeedViewActivity.ARG_TITLE, potd.title);
             startActivity(intent);
         });
-
-        Glide.with(this)
-                .load(potd.imageUrl)
-                .placeholder(R.color.light_gray)
-                .error(R.color.light_gray)
-                .diskCacheStrategy(ApGlideSettings.AP_DISK_CACHE_STRATEGY)
-                .fitCenter()
-                .dontAnimate()
-                .into(potdImage);
+        if(!skip) {
+            Glide.with(this)
+                    .load(potd.imageUrl)
+                    .placeholder(R.color.light_gray)
+                    .error(R.color.light_gray)
+                    .diskCacheStrategy(ApGlideSettings.AP_DISK_CACHE_STRATEGY)
+                    .fitCenter()
+                    .dontAnimate()
+                    .into(potdImage);
+        }
 
         potdTitle.setText(potd.title);
         potdDescription.setText(potd.description);
         potdAuthor.setText(potd.author);
 
-        if (!compareDates()){
+        if (!skip && !compareDates()){
             edit = prefs.edit();
             edit.putString("date", getTodayDateStr());
             edit.putString("title", potd.title);
@@ -267,7 +268,7 @@ public class PodcastOfTheDayFragment extends Fragment {
             } else {
                 potDay = getDailyPodcast(result);
             }
-            populate(potDay);
+            populate(potDay, Boolean.FALSE);
 
         }
 
