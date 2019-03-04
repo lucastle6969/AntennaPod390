@@ -378,6 +378,26 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
         assertEquals(description, descriptionView.getText());
     }
 
+
+    @FlakyTest(tolerance = 2)
+    public void testURLSearchFragment(){
+
+        String url = "http://www.hellointernet.fm/podcast?format=rss";
+
+        openNavDrawer();
+        solo.clickOnText(solo.getString(R.string.add_feed_label));
+        solo.clickOnText(solo.getString(R.string.tab_url));
+        solo.waitForView(R.id.etxtFeedurl);
+        solo.clearEditText(0);
+        solo.enterText(0, url);
+        solo.sendKey(Solo.ENTER);
+        solo.clickOnButton(0);
+        solo.waitForActivity(OnlineFeedViewActivity.class);
+        solo.waitForView(R.id.butSubscribe);
+        solo.assertCurrentActivity("Expected OnlineViewFeedActivity to be active.", OnlineFeedViewActivity.class);
+    }
+}
+
     public void testGpodderSearch() {
 
         openNavDrawer();
@@ -408,3 +428,4 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
 
     }
 }
+
