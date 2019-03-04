@@ -294,6 +294,8 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
 
         podcastOfTheDay = textView.getText().toString();
 
+        // This command is run twice to give robotium the time to click on the String.
+        // This might be because of the relative layout being too slow.
         solo.clickOnText(solo.getString(R.string.generate_new_podcast));
         solo.clickOnText(solo.getString(R.string.generate_new_podcast));
 
