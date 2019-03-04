@@ -7,10 +7,13 @@ import android.test.FlakyTest;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.GridView;
-import android.widget.ImageView;
 import android.widget.ListView;
+
+import android.widget.RelativeLayout;
+
 import android.widget.TextView;
 import com.robotium.solo.Solo;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -264,6 +267,64 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
         assertTrue(hidden.contains(DownloadsFragment.TAG));
     }
 
+    public void testNavDrawPodcastOfTheDay() {
+        openNavDrawer();
+        solo.clickOnText(solo.getString(R.string.podcast_of_the_day));
+        solo.waitForView(android.R.id.list);
+        assertEquals(solo.getString(R.string.podcast_of_the_day), getActionbarTitle());
+    }
+
+    public void testGenerateNewPodcastOfTheDay() {
+        String podcastOfTheDay = "";
+        String generatedPodcast = "";
+
+        openNavDrawer();
+        solo.clickOnText(solo.getString(R.string.podcast_of_the_day));
+        solo.waitForView(android.R.id.list);
+        assertEquals(solo.getString(R.string.podcast_of_the_day), getActionbarTitle());
+
+        RelativeLayout relativeLayout = (RelativeLayout) solo.getView(R.id.potdlayout);
+        TextView textView = (TextView) relativeLayout.getChildAt(1);
+
+
+        podcastOfTheDay = textView.getText().toString();
+
+        // This command is run twice to give robotium the time to click on the String.
+        // This might be because of the relative layout being too slow.
+        solo.clickOnText(solo.getString(R.string.generate_new_podcast));
+        solo.clickOnText(solo.getString(R.string.generate_new_podcast));
+
+        RelativeLayout generatedRelativeLayout = (RelativeLayout) solo.getView(R.id.potdlayout);
+        TextView generatedTextView = (TextView) generatedRelativeLayout.getChildAt(1);
+        generatedPodcast = generatedTextView.getText().toString();
+
+        assertTrue(!podcastOfTheDay.equals(generatedPodcast));
+    }
+
+    public void testGoToPodcastOfTheDayPageAndSubscribe() {
+        String podcast = "";
+        String podcastPage = "";
+
+        openNavDrawer();
+        solo.clickOnText(solo.getString(R.string.podcast_of_the_day));
+        solo.waitForView(android.R.id.list);
+        assertEquals(solo.getString(R.string.podcast_of_the_day), getActionbarTitle());
+
+        RelativeLayout relativeLayout = (RelativeLayout) solo.getView(R.id.potdlayout);
+        TextView textView = (TextView) relativeLayout.getChildAt(1);
+        podcast = textView.getText().toString();
+
+        solo.clickOnButton(solo.getString(R.string.go_to_podcast_page));
+        solo.waitForActivity(OnlineFeedViewActivity.class);
+
+        solo.waitForView(R.id.butSubscribe);
+        RelativeLayout relativeLayoutPodcastPage = (RelativeLayout) solo.getView(R.id.feed_layout);
+        TextView podcastPageTextView = (TextView) relativeLayoutPodcastPage.getChildAt(1);
+        podcastPage = podcastPageTextView.getText().toString();
+        assertEquals(podcast, podcastPage);
+
+    }
+
     public void testFyydPodcastSearch() {
         String query = "TripleTwenty";
 
@@ -317,7 +378,6 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
     }
 
     public void testURLSearchFragment(){
-
         String url = "http://www.hellointernet.fm/podcast?format=rss";
 
         openNavDrawer();
@@ -334,7 +394,6 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
     }
 
     public void testGpodderSearch() {
-
         openNavDrawer();
         solo.clickOnText("Add Podcast");
         solo.clickOnText("gPodder");
@@ -350,7 +409,6 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
 
     @FlakyTest(tolerance = 3)
     public void testItunesSearch() {
-
         openNavDrawer();
         solo.clickOnText(solo.getString(R.string.add_feed_label));
         solo.clickOnText(solo.getString(R.string.tab_itunes));
@@ -360,7 +418,6 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
         solo.waitForView(R.id.txtvEpisodes);
 
         assertTrue(solo.searchText("Internet"));
-
     }
 }
 

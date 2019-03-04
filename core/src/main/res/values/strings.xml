@@ -17,6 +17,12 @@
     <string name="new_label">New</string>
     <string name="settings_label">Settings</string>
     <string name="downloads_label">Downloads</string>
+    <string name="podcast_of_the_day">Podcast of the day</string>
+    <string name="generate_new_podcast">Generate new podcast</string>
+    <string name="go_to_podcast_page">Go to Podcast Page</string>
+    <string name="podcast_description">Podcast description</string>
+    <string name="podcast_title">Podcast title</string>
+    <string name="podcast_author">Podcast author</string>
     <string name="downloads_running_label">Running</string>
     <string name="downloads_completed_label">Completed</string>
     <string name="downloads_log_label">Log</string>
