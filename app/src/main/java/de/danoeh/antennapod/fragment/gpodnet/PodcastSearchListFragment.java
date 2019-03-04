@@ -131,27 +131,29 @@ public abstract class PodcastSearchListFragment extends Fragment {
             protected void onPostExecute(List<GpodnetPodcast> gpodnetPodcasts) {
                 super.onPostExecute(gpodnetPodcasts);
                 final Context context = getActivity();
-                if (context != null && gpodnetPodcasts != null && gpodnetPodcasts.size() > 0) {
-                    PodcastListAdapter listAdapter = new PodcastListAdapter(context, 0, gpodnetPodcasts);
-                    gridView.setAdapter(listAdapter);
-                    listAdapter.notifyDataSetChanged();
+                if(context != null){
+                    if (gpodnetPodcasts != null && gpodnetPodcasts.size() > 0) {
+                        PodcastListAdapter listAdapter = new PodcastListAdapter(context, 0, gpodnetPodcasts);
+                        gridView.setAdapter(listAdapter);
+                        listAdapter.notifyDataSetChanged();
 
-                    progressBar.setVisibility(View.GONE);
-                    gridView.setVisibility(View.VISIBLE);
-                    txtvError.setVisibility(View.GONE);
-                    butRetry.setVisibility(View.GONE);
-                } else if (context != null && gpodnetPodcasts != null) {
-                    gridView.setVisibility(View.GONE);
-                    progressBar.setVisibility(View.GONE);
-                    txtvError.setText(getString(R.string.search_status_no_results));
-                    txtvError.setVisibility(View.VISIBLE);
-                    butRetry.setVisibility(View.GONE);
-                } else if (context != null) {
-                    gridView.setVisibility(View.GONE);
-                    progressBar.setVisibility(View.GONE);
-                    txtvError.setText(getString(R.string.error_msg_prefix) + exception.getMessage());
-                    txtvError.setVisibility(View.VISIBLE);
-                    butRetry.setVisibility(View.VISIBLE);
+                        progressBar.setVisibility(View.GONE);
+                        gridView.setVisibility(View.VISIBLE);
+                        txtvError.setVisibility(View.GONE);
+                        butRetry.setVisibility(View.GONE);
+                    } else if (gpodnetPodcasts != null) {
+                        gridView.setVisibility(View.GONE);
+                        progressBar.setVisibility(View.GONE);
+                        txtvError.setText(getString(R.string.search_status_no_results));
+                        txtvError.setVisibility(View.VISIBLE);
+                        butRetry.setVisibility(View.GONE);
+                    } else {
+                        gridView.setVisibility(View.GONE);
+                        progressBar.setVisibility(View.GONE);
+                        txtvError.setText(getString(R.string.error_msg_prefix) + exception.getMessage());
+                        txtvError.setVisibility(View.VISIBLE);
+                        butRetry.setVisibility(View.VISIBLE);
+                    }
                 }
             }
 
@@ -193,27 +195,29 @@ public abstract class PodcastSearchListFragment extends Fragment {
             protected void onPostExecute(List<GpodnetPodcast> gpodnetPodcasts) {
                 super.onPostExecute(gpodnetPodcasts);
                 final Context context = getActivity();
-                if (context != null && gpodnetPodcasts != null && gpodnetPodcasts.size() > 0) {
-                    PodcastListAdapter listAdapter = new PodcastListAdapter(context, 0, gpodnetPodcasts);
-                    gridView.setAdapter(listAdapter);
-                    listAdapter.notifyDataSetChanged();
+                if(context != null){
+                    if (gpodnetPodcasts != null && gpodnetPodcasts.size() > 0) {
+                        PodcastListAdapter listAdapter = new PodcastListAdapter(context, 0, gpodnetPodcasts);
+                        gridView.setAdapter(listAdapter);
+                        listAdapter.notifyDataSetChanged();
 
-                    progressBar.setVisibility(View.GONE);
-                    gridView.setVisibility(View.VISIBLE);
-                    txtvError.setVisibility(View.GONE);
-                    butRetry.setVisibility(View.GONE);
-                } else if (context != null && gpodnetPodcasts != null) {
-                    gridView.setVisibility(View.GONE);
-                    progressBar.setVisibility(View.GONE);
-                    txtvError.setText(getString(R.string.search_status_no_results));
-                    txtvError.setVisibility(View.VISIBLE);
-                    butRetry.setVisibility(View.GONE);
-                } else if (context != null) {
-                    gridView.setVisibility(View.GONE);
-                    progressBar.setVisibility(View.GONE);
-                    txtvError.setText(getString(R.string.error_msg_prefix) + exception.getMessage());
-                    txtvError.setVisibility(View.VISIBLE);
-                    butRetry.setVisibility(View.VISIBLE);
+                        progressBar.setVisibility(View.GONE);
+                        gridView.setVisibility(View.VISIBLE);
+                        txtvError.setVisibility(View.GONE);
+                        butRetry.setVisibility(View.GONE);
+                    } else if (gpodnetPodcasts != null) {
+                        gridView.setVisibility(View.GONE);
+                        progressBar.setVisibility(View.GONE);
+                        txtvError.setText(getString(R.string.search_status_no_results));
+                        txtvError.setVisibility(View.VISIBLE);
+                        butRetry.setVisibility(View.GONE);
+                    } else {
+                        gridView.setVisibility(View.GONE);
+                        progressBar.setVisibility(View.GONE);
+                        txtvError.setText(getString(R.string.error_msg_prefix) + exception.getMessage());
+                        txtvError.setVisibility(View.VISIBLE);
+                        butRetry.setVisibility(View.VISIBLE);
+                    }
                 }
             }
 
