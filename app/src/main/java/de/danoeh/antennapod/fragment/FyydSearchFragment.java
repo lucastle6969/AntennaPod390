@@ -58,8 +58,8 @@ public class FyydSearchFragment extends Fragment {
     private List<Podcast> searchResults;
     private Subscription subscription;
 
-    private String [] PodcastCategory = {"Arts", "Business", "Comedy", "Education", "Games", "Government","Health","Kids","Music","News","Religion","Science", "Society"};
-    Random randomNumGen = new Random();
+    private final String [] PodcastCategory = {"Arts", "Business", "Comedy", "Education", "Games", "Government","Health","Kids","Music","News","Religion","Science", "Society"};
+    private final Random randomNumGen = new Random();
 
     /**
      * Constructor
@@ -78,8 +78,9 @@ public class FyydSearchFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+
         View root = inflater.inflate(R.layout.fragment_provider_search, container, false);
-        gridView = (GridView) root.findViewById(R.id.gridView);
+        gridView = root.findViewById(R.id.gridView);
         adapter = new ItunesAdapter(getActivity(), new ArrayList<>());
         gridView.setAdapter(adapter);
 
@@ -91,10 +92,10 @@ public class FyydSearchFragment extends Fragment {
             intent.putExtra(OnlineFeedViewActivity.ARG_TITLE, podcast.title);
             startActivity(intent);
         });
-        progressBar = (ProgressBar) root.findViewById(R.id.progressBar);
-        txtvError = (TextView) root.findViewById(R.id.txtvError);
-        butRetry = (Button) root.findViewById(R.id.butRetry);
-        txtvEmpty = (TextView) root.findViewById(android.R.id.empty);
+        progressBar = root.findViewById(R.id.progressBar);
+        txtvError = root.findViewById(R.id.txtvError);
+        butRetry = root.findViewById(R.id.butRetry);
+        txtvEmpty = root.findViewById(android.R.id.empty);
 
         final SearchView sv = root.findViewById(R.id.action_search);
         sv.setIconifiedByDefault(false);

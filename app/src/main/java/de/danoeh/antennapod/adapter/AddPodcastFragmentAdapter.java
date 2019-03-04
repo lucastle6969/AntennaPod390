@@ -17,7 +17,7 @@ import de.danoeh.antennapod.R;
 public class AddPodcastFragmentAdapter extends FragmentPagerAdapter {
 
     private static final int NUM_PAGES = 4;
-    final Resources resources;
+    private final Resources resources;
 
     public AddPodcastFragmentAdapter(FragmentManager fm, Resources resources) {
 
