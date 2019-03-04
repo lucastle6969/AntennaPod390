@@ -64,6 +64,7 @@ import de.danoeh.antennapod.fragment.EpisodesFragment;
 import de.danoeh.antennapod.fragment.ExternalPlayerFragment;
 import de.danoeh.antennapod.fragment.ItemlistFragment;
 import de.danoeh.antennapod.fragment.PlaybackHistoryFragment;
+import de.danoeh.antennapod.fragment.PodcastOfTheDayFragment;
 import de.danoeh.antennapod.fragment.QueueFragment;
 import de.danoeh.antennapod.fragment.SubscriptionFragment;
 import de.danoeh.antennapod.menuhandler.NavDrawerActivity;
@@ -102,6 +103,7 @@ public class MainActivity extends CastEnabledActivity implements NavDrawerActivi
             PlaybackHistoryFragment.TAG,
             SubscriptionFragment.TAG,
             AddFeedFragment.TAG,
+            PodcastOfTheDayFragment.TAG,
             DownloadsFragment.TAG,
             NavListAdapter.SUBSCRIPTION_LIST_TAG
     };
@@ -294,6 +296,9 @@ public class MainActivity extends CastEnabledActivity implements NavDrawerActivi
                 break;
             case EpisodesFragment.TAG:
                 fragment = new EpisodesFragment();
+                break;
+            case PodcastOfTheDayFragment.TAG:
+                fragment = new PodcastOfTheDayFragment();
                 break;
             case DownloadsFragment.TAG:
                 fragment = new DownloadsFragment();
@@ -519,6 +524,7 @@ public class MainActivity extends CastEnabledActivity implements NavDrawerActivi
                 case EpisodesFragment.TAG:
                     requestCastButton(MenuItem.SHOW_AS_ACTION_IF_ROOM);
                     return retVal;
+                case PodcastOfTheDayFragment.TAG:
                 case DownloadsFragment.TAG:
                 case PlaybackHistoryFragment.TAG:
                 case AddFeedFragment.TAG:

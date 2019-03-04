@@ -35,6 +35,7 @@ import de.danoeh.antennapod.core.glide.ApGlideSettings;
 import de.danoeh.antennapod.core.preferences.UserPreferences;
 import de.danoeh.antennapod.fragment.AddFeedFragment;
 import de.danoeh.antennapod.fragment.AllEpisodesFragment;
+import de.danoeh.antennapod.fragment.PodcastOfTheDayFragment;
 import de.danoeh.antennapod.fragment.DownloadsFragment;
 import de.danoeh.antennapod.fragment.EpisodesFragment;
 import de.danoeh.antennapod.fragment.NewEpisodesFragment;
@@ -126,6 +127,9 @@ public class NavListAdapter extends BaseAdapter
                 break;
             case AllEpisodesFragment.TAG:
                 icon = R.attr.feed;
+                break;
+            case PodcastOfTheDayFragment.TAG:
+                icon = R.attr.type_video;
                 break;
             case DownloadsFragment.TAG:
                 icon = R.attr.av_download;

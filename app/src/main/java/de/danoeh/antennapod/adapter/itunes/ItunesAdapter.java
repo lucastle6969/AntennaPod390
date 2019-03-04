@@ -136,6 +136,7 @@ public class ItunesAdapter extends ArrayAdapter<ItunesAdapter.Podcast> {
          */
         public final int numOfEpisodes;
 
+
         private Podcast(String title, @Nullable String imageUrl, @Nullable String feedUrl, @Nullable String description, int numOfEpisodes) {
             this.title = title;
             this.imageUrl = imageUrl;

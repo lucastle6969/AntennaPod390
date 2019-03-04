@@ -43,11 +43,6 @@ public class AddFeedFragment extends Fragment {
             etxtFeedurl.setText(args.getString(ARG_FEED_URL));
         }
 
-        // DEPRECATED FOR NOW
-        //Button butSearchITunes = (Button) root.findViewById(R.id.butSearchItunes);
-        //Button butBrowserGpoddernet = (Button) root.findViewById(R.id.butBrowseGpoddernet);
-        //Button butSearchFyyd = (Button) root.findViewById(R.id.butSearchFyyd);
-
         Button butOpmlImport = (Button) root.findViewById(R.id.butOpmlImport);
         Button butConfirm = (Button) root.findViewById(R.id.butConfirm);
         Button butOption = (Button) root.findViewById(R.id.butOptions);
@@ -127,14 +122,6 @@ public class AddFeedFragment extends Fragment {
 
             }
         });
-
-        /* DEPRECATED FOR NOW
-        butSearchITunes.setOnClickListener(v -> activity.loadChildFragment(new ItunesSearchFragment()));
-
-        butBrowserGpoddernet.setOnClickListener(v -> activity.loadChildFragment(new GpodnetMainFragment()));
-
-        butSearchFyyd.setOnClickListener(v -> activity.loadChildFragment(new FyydSearchFragment()));
-        */
 
         butOpmlImport.setOnClickListener(v -> startActivity(new Intent(getActivity(),
                 OpmlImportFromPathActivity.class)));
