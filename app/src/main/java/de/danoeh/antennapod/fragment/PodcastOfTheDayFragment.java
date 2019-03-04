@@ -54,7 +54,7 @@ public class PodcastOfTheDayFragment extends Fragment {
     SharedPreferences.Editor edit;
 
 
-    public static class DailyPodcast {
+    public static class PodcastOfTheDay {
 
         /**
          * The name of the podcast
@@ -64,11 +64,13 @@ public class PodcastOfTheDayFragment extends Fragment {
         /**
          * URL of the podcast image
          */
+
         @Nullable
         public final String imageUrl;
         /**
          * URL of the podcast feed
          */
+
         @Nullable
         public final String feedUrl;
 
@@ -88,7 +90,7 @@ public class PodcastOfTheDayFragment extends Fragment {
          */
         public final String author;
 
-        public DailyPodcast(String title, @Nullable String imageUrl, @Nullable String feedUrl, @Nullable String description, int numOfEpisodes, @Nullable String author) {
+        public PodcastOfTheDay(String title, @Nullable String imageUrl, @Nullable String feedUrl, @Nullable String description, int numOfEpisodes, @Nullable String author) {
             this.title = title;
             this.imageUrl = imageUrl;
             this.feedUrl = feedUrl;
@@ -101,13 +103,13 @@ public class PodcastOfTheDayFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        View root = inflater.inflate(R.layout.potd, container, false);
-        potdTitle = (TextView) root.findViewById(R.id.potdTitle);
-        potdAuthor = (TextView) root.findViewById(R.id.potdAuthor);
-        potdDescription = (TextView) root.findViewById(R.id.potdDescription);
-        potdImage = (ImageView) root.findViewById(R.id.potdCover);
-        butGoToPodcast = (Button) root.findViewById(R.id.butGoToPodcast);
-        butGenerateNew = (Button) root.findViewById(R.id.butGenerateNew);
+        View root = inflater.inflate(R.layout.podcast_of_the_day, container, false);
+        potdTitle = root.findViewById(R.id.potdTitle);
+        potdAuthor = root.findViewById(R.id.potdAuthor);
+        potdDescription = root.findViewById(R.id.potdDescription);
+        potdImage = root.findViewById(R.id.potdCover);
+        butGoToPodcast = root.findViewById(R.id.butGoToPodcast);
+        butGenerateNew = root.findViewById(R.id.butGenerateNew);
         AtomicReference<ListenNotesOperation> potdOp = new AtomicReference<>(new ListenNotesOperation());
 
         prefs = getActivity().getSharedPreferences("POTD", Context.MODE_PRIVATE);
@@ -119,7 +121,7 @@ public class PodcastOfTheDayFragment extends Fragment {
             int numOfEpisodes = prefs.getInt("numOfEpisodes", 0);
             String author = prefs.getString("title", "");
 
-            DailyPodcast storedPodcast = new DailyPodcast(title, imageUrl, feedUrl, description, numOfEpisodes, author);
+            PodcastOfTheDay storedPodcast = new PodcastOfTheDay(title, imageUrl, feedUrl, description, numOfEpisodes, author);
             populate(storedPodcast, Boolean.FALSE);
 
         }else {
@@ -144,7 +146,7 @@ public class PodcastOfTheDayFragment extends Fragment {
         return (getTodayDateStr().equals(storedDate));
     }
 
-    public void populate(DailyPodcast potd, Boolean skip){
+    public void populate(PodcastOfTheDay potd, Boolean skip){
         butGoToPodcast.setOnClickListener(v -> {
             Intent intent = new Intent(getActivity(), OnlineFeedViewActivity.class);
             intent.putExtra(OnlineFeedViewActivity.ARG_FEEDURL, potd.feedUrl);
@@ -193,10 +195,10 @@ public class PodcastOfTheDayFragment extends Fragment {
         setHasOptionsMenu(true);
     }
 
-    public DailyPodcast getDailyPodcast(String apiRes) {
+    public PodcastOfTheDay getDailyPodcast(String apiRes) {
 
         JSONObject json;
-        DailyPodcast potd;
+        PodcastOfTheDay potd;
         try {
             json = new JSONObject(apiRes);
             String dailyTitle = json.getString("title");
@@ -205,10 +207,10 @@ public class PodcastOfTheDayFragment extends Fragment {
             String dailyDescription = json.getString("description");
             int dailyEpisodes = Integer.parseInt(json.getString("total_episodes"));
             String dailyAuthor = json.getString("publisher");
-            potd = new DailyPodcast(dailyTitle, dailyImage, dailyRSS, dailyDescription, dailyEpisodes, dailyAuthor);
+            potd = new PodcastOfTheDay(dailyTitle, dailyImage, dailyRSS, dailyDescription, dailyEpisodes, dailyAuthor);
         } catch (JSONException e) {
             e.printStackTrace();
-            potd = new DailyPodcast("JSON_ERROR", "JSON_ERROR", "JSON_ERROR", "JSON_ERROR", 0, "JSON_ERROR");
+            potd = new PodcastOfTheDay("JSON_ERROR", "JSON_ERROR", "JSON_ERROR", "JSON_ERROR", 0, "JSON_ERROR");
         }
 
         return potd;
@@ -218,7 +220,7 @@ public class PodcastOfTheDayFragment extends Fragment {
 
         @Override
         protected String doInBackground(String... params) {
-            String res;
+            String result;
             try {
                 String url = LISTENNOTES_URL + "just_listen";
                 OkHttpClient client = AntennapodHttpClient.getHttpClient();
@@ -230,13 +232,13 @@ public class PodcastOfTheDayFragment extends Fragment {
 
                 Response response = client.newCall(request).execute();
                 if (response.isSuccessful()) {
-                    res = response.body().string();
-                    Log.d("APIResponse_Random", res);
+                    result = response.body().string();
+                    Log.d("APIResponse_Random", result);
                 } else {
                     return "FAIL";
                 }
 
-                JSONObject json = new JSONObject(res);
+                JSONObject json = new JSONObject(result);
                 String podcastID = json.getString("podcast_id");
                 url = LISTENNOTES_URL + "podcasts/" + podcastID;
                 request = new Request.Builder()
@@ -246,8 +248,8 @@ public class PodcastOfTheDayFragment extends Fragment {
 
                 response = client.newCall(request).execute();
                 if (response.isSuccessful()) {
-                    res = response.body().string();
-                    Log.d("APIResponse_Podcast", res);
+                    result = response.body().string();
+                    Log.d("APIResponse_Podcast", result);
                 } else {
                     return "FAIL";
                 }
@@ -256,15 +258,15 @@ public class PodcastOfTheDayFragment extends Fragment {
                 return "FAIL";
             }
 
-            return res;
+            return result;
         }
 
         @Override
         protected void onPostExecute(String result) {
             Log.d("Response", result);
-            DailyPodcast potDay;
+            PodcastOfTheDay potDay;
             if (result.equals("FAIL")) {
-                potDay = new DailyPodcast("API_ERROR", "API_ERROR", "API_ERROR", "API_ERROR", 0, "API_ERROR");
+                potDay = new PodcastOfTheDay("API_ERROR", "API_ERROR", "API_ERROR", "API_ERROR", 0, "API_ERROR");
             } else {
                 potDay = getDailyPodcast(result);
             }

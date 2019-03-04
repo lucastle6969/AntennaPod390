@@ -54,7 +54,7 @@ public class PodcastOfTheDayTest extends ApplicationTestCase<Application> {
                 " TED and TEDx conferences around the globe, is also available in video format.";
         int potdEpisodes = 753;
         String potdAuthor = "TED";
-        PodcastOfTheDayFragment.DailyPodcast potd = new PodcastOfTheDayFragment.DailyPodcast(potdTitle, potdImage, potdFeed, potdDescription, potdEpisodes, potdAuthor);
+        PodcastOfTheDayFragment.PodcastOfTheDay potd = new PodcastOfTheDayFragment.PodcastOfTheDay(potdTitle, potdImage, potdFeed, potdDescription, potdEpisodes, potdAuthor);
         when(potdFragmentMock.getDailyPodcast("API_RESPONSE")).thenReturn(potd);
 
         apiJSON = "{" +
@@ -83,7 +83,7 @@ public class PodcastOfTheDayTest extends ApplicationTestCase<Application> {
 
     @Test
     public void testPopulate() {
-        PodcastOfTheDayFragment.DailyPodcast potd = potdFragmentMock.getDailyPodcast("API_RESPONSE");
+        PodcastOfTheDayFragment.PodcastOfTheDay potd = potdFragmentMock.getDailyPodcast("API_RESPONSE");
         potdFragment.populate(potd, Boolean.TRUE);
         verify(potdFragment.potdTitle).setText("TED Talks Daily");
         verify(potdFragment.potdAuthor).setText("TED");
@@ -97,7 +97,7 @@ public class PodcastOfTheDayTest extends ApplicationTestCase<Application> {
 
     @Test
     public void testGetDailyPodcast() {
-        PodcastOfTheDayFragment.DailyPodcast potd = potdFragment.getDailyPodcast(apiJSON);
+        PodcastOfTheDayFragment.PodcastOfTheDay potd = potdFragment.getDailyPodcast(apiJSON);
         assertEquals(potd.author, "Scientific American");
         assertEquals(potd.description, "Leading science journalists provide a daily minute commentary on some of the most " +
                 "interesting developments in the world of science. For a full-length, weekly podcast you can subscribe to Science Talk:" +
