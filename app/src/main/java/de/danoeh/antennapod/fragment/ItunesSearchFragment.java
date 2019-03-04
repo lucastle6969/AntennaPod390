@@ -172,18 +172,18 @@ public class ItunesSearchFragment extends Fragment {
         butRetry = root.findViewById(R.id.butRetry);
         txtvEmpty = root.findViewById(android.R.id.empty);
 
-        final SearchView sv = root.findViewById(R.id.action_search);
-        sv.setIconifiedByDefault(false);
-        sv.setQueryHint(getString(R.string.search_itunes_label));
+        final SearchView searchView = root.findViewById(R.id.action_search);
+        searchView.setIconifiedByDefault(false);
+        searchView.setQueryHint(getString(R.string.search_itunes_label));
 
-        if(!sv.isFocused()) {
-            sv.clearFocus();
+        if(!searchView.isFocused()) {
+            searchView.clearFocus();
         }
 
-        sv.setOnQueryTextListener(new android.support.v7.widget.SearchView.OnQueryTextListener() {
+        searchView.setOnQueryTextListener(new android.support.v7.widget.SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
-                sv.clearFocus();
+                searchView.clearFocus();
                 search(s);
                 return true;
             }
@@ -192,11 +192,11 @@ public class ItunesSearchFragment extends Fragment {
                 return false;
             }
         });
-        sv.setOnCloseListener(() -> {
+        searchView.setOnCloseListener(() -> {
 
             //Clear query
-            sv.setQuery("", false);
-            sv.clearFocus();
+            searchView.setQuery("", false);
+            searchView.clearFocus();
 
             if(searchResults != null) {
                 searchResults = null;

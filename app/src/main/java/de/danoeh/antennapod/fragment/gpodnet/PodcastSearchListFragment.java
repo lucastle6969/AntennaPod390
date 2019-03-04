@@ -50,27 +50,27 @@ public abstract class PodcastSearchListFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_provider_search, container, false);
 
-        gridView = (GridView) root.findViewById(R.id.gridView);
-        progressBar = (ProgressBar) root.findViewById(R.id.progressBar);
-        txtvError = (TextView) root.findViewById(R.id.txtvError);
-        butRetry = (Button) root.findViewById(R.id.butRetry);
+        gridView = root.findViewById(R.id.gridView);
+        progressBar = root.findViewById(R.id.progressBar);
+        txtvError = root.findViewById(R.id.txtvError);
+        butRetry = root.findViewById(R.id.butRetry);
 
         gridView.setOnItemClickListener((parent, view, position, id) ->
                 onPodcastSelected((GpodnetPodcast) gridView.getAdapter().getItem(position)));
         butRetry.setOnClickListener(v -> loadData());
 
-        final SearchView sv = root.findViewById(R.id.action_search);
-        sv.setIconifiedByDefault(false);
-        sv.setQueryHint(getString(R.string.gpodnet_search_hint));
+        final SearchView searchView = root.findViewById(R.id.action_search);
+        searchView.setIconifiedByDefault(false);
+        searchView.setQueryHint(getString(R.string.gpodnet_search_hint));
 
-        if(!sv.isFocused()) {
-            sv.clearFocus();
+        if(!searchView.isFocused()) {
+            searchView.clearFocus();
         }
 
-        sv.setOnQueryTextListener(new android.support.v7.widget.SearchView.OnQueryTextListener() {
+        searchView.setOnQueryTextListener(new android.support.v7.widget.SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
-                sv.clearFocus();
+                searchView.clearFocus();
                 reloadData(s);
                 return true;
             }
@@ -79,12 +79,12 @@ public abstract class PodcastSearchListFragment extends Fragment {
                 return false;
             }
         });
-        sv.setOnCloseListener(new android.support.v7.widget.SearchView.OnCloseListener() {
+        searchView.setOnCloseListener(new android.support.v7.widget.SearchView.OnCloseListener() {
             @Override
             public boolean onClose(){
                 //Clear query
-                sv.setQuery("", false);
-                sv.clearFocus();
+                searchView.setQuery("", false);
+                searchView.clearFocus();
                 loadData();
                 return true;
             }
