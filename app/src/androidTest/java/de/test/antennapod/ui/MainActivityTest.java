@@ -317,21 +317,18 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
         assertEquals(View.GONE, episodesView.getVisibility());
     }
 
+    @FlakyTest(tolerance = 2)
     public void testITunesSearchPodcastEpisodeCountAndGenre() {
         String query = "Hello Internet";
-        String numOfEpisodes = "100";
         String genre = "Educational Technology";
-
 
         openNavDrawer();
         solo.clickOnText(solo.getString(R.string.add_feed_label));
-        solo.pressSpinnerItem(0, 1);
-        solo.waitForDialogToOpen();
-        solo.waitForView(R.id.action_search);
-        solo.clickOnView(solo.getView(R.id.action_search));
+        solo.clickOnText(solo.getString(R.string.tab_itunes));
+        solo.waitForView(R.id.gridView);
         solo.enterText(0, query);
         solo.sendKey(Solo.ENTER);
-        solo.waitForDialogToOpen();
+        solo.waitForView(R.id.gridView);
 
         GridView gridView = (GridView) solo.getView(R.id.gridView);
         ViewGroup viewGroup = (ViewGroup) gridView.getChildAt(0);
@@ -341,7 +338,7 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
 
         assertNotNull(episodeCountView.getText());
         assertNotNull(descriptionView.getText());
-        assertEquals(episodeCountView.getText().toString(),numOfEpisodes);
+        assertTrue(Integer.parseInt(episodeCountView.getText().toString())>0);
         assertEquals(descriptionView.getText().toString(),genre);
     }
 
