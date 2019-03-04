@@ -25,8 +25,7 @@ import de.danoeh.antennapod.core.storage.PodDBAdapter;
 import de.danoeh.antennapod.fragment.DownloadsFragment;
 import de.danoeh.antennapod.fragment.EpisodesFragment;
 import de.danoeh.antennapod.fragment.PlaybackHistoryFragment;
-import de.danoeh.antennapod.fragment.QueueFragment;
-import de.danoeh.antennapod.preferences.PreferenceController;
+
 
 /**
  * User interface tests for MainActivity
@@ -267,24 +266,30 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
 
     public void testFyydPodcastSearch() {
         String query = "TripleTwenty";
-        String description = "TripleTwenty ist der Rollenspielpodcast einer Anfängergruppe und lädt alle zum mithören ein, die sich für Pen&Paper wie \"Das Schwarze Auge\" oder \"Dungeons & Dragons\" interessieren - oder nur mal reinschnuppern wollen.";
 
         openNavDrawer();
         solo.clickOnText(solo.getString(R.string.add_feed_label));
         solo.waitForDialogToOpen();
         solo.waitForView(R.id.sliding_tabs);
         solo.clickOnText(solo.getString(R.string.tab_fyyd));
-        solo.waitForView(R.id.action_search);
-        solo.clickOnView(solo.getView(R.id.action_search));
-        solo.enterText(0, query);
+        solo.clickOnText(solo.getString(R.string.search_fyyd_label));
+        solo.enterText(1, query);
         solo.sendKey(Solo.ENTER);
         solo.clickOnText(solo.getString(R.string.tab_fyyd));
-        solo.waitForText(query);
-        solo.waitForView(R.id.txtvUrl);
 
-        TextView descTextView = (TextView) solo.getView(R.id.txtvUrl);
-
-        assertEquals(description, descTextView.getText());
+        ArrayList<View> views = solo.getCurrentViews();
+        TextView titleTextView = null;
+        for (View view : views) {
+            if (view.getId() == R.id.txtvTitle) {
+                TextView textView = (TextView) view;
+                if (textView.getText().equals(query)) {
+                    titleTextView = textView;
+                    break;
+                }
+            }
+        }
+        assertNotNull(titleTextView);
+        assertEquals(query, titleTextView.getText().toString());
     }
 
     public void testFyydPodcastEpisodesAndDescription() {
