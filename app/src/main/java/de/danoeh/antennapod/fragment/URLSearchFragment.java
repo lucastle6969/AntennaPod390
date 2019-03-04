@@ -18,14 +18,12 @@ import de.danoeh.antennapod.core.util.URLChecker;
 public class URLSearchFragment extends Fragment {
     private static final String ARG_FEED_URL = "feedurl";
 
-    private EditText etxtFeedurl;
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_url_search, container, false);
 
-        etxtFeedurl = root.findViewById(R.id.etxtFeedurl);
+        EditText etxtFeedurl = root.findViewById(R.id.etxtFeedurl);
         Button butConfirm = root.findViewById(R.id.butConfirm);
 
         // Setting default text for URL search box.
@@ -34,30 +32,32 @@ public class URLSearchFragment extends Fragment {
             etxtFeedurl.setText(args.getString(ARG_FEED_URL));
         }
 
+        // Setting listener for keyboard search action
         etxtFeedurl.setOnEditorActionListener((v, actionId, event) -> {
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                submitURL();
+                submitURL(etxtFeedurl);
                 return true;
             }
             return false;
         });
 
-        butConfirm.setOnClickListener(v -> {
-            submitURL();
-        });
+        // Setting listener for confirm button
+        butConfirm.setOnClickListener(v -> submitURL(etxtFeedurl));
 
         return root;
     }
 
-    private void submitURL(){
-        if(URLChecker.validateURL(etxtFeedurl.getText().toString())){
+    /* Opens the detailed view of a searched podcast, if URL is valid.
+       Otherwise, displays error text. */
+    private void submitURL(EditText urlSearchBox){
+        if(URLChecker.validateURL(urlSearchBox.getText().toString())){
             Intent intent = new Intent(getActivity(), OnlineFeedViewActivity.class);
-            intent.putExtra(OnlineFeedViewActivity.ARG_FEEDURL, etxtFeedurl.getText().toString());
+            intent.putExtra(OnlineFeedViewActivity.ARG_FEEDURL, urlSearchBox.getText().toString());
             intent.putExtra(OnlineFeedViewActivity.ARG_TITLE, getString(R.string.add_feed_label));
             startActivity(intent);
         }
         else{
-            etxtFeedurl.setError("Please enter a valid URL.");
+            urlSearchBox.setError(getString(R.string.url_search_error_invalid));
         }
     }
 

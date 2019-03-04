@@ -2,22 +2,15 @@ package de.test.antennapod.ui;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.support.design.internal.NavigationMenu;
-import android.support.design.internal.NavigationMenuView;
 import android.test.ActivityInstrumentationTestCase2;
 import android.test.FlakyTest;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.Spinner;
 import android.widget.TextView;
-
 import com.robotium.solo.Solo;
-
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -32,8 +25,7 @@ import de.danoeh.antennapod.core.storage.PodDBAdapter;
 import de.danoeh.antennapod.fragment.DownloadsFragment;
 import de.danoeh.antennapod.fragment.EpisodesFragment;
 import de.danoeh.antennapod.fragment.PlaybackHistoryFragment;
-import de.danoeh.antennapod.fragment.QueueFragment;
-import de.danoeh.antennapod.preferences.PreferenceController;
+
 
 /**
  * User interface tests for MainActivity
@@ -272,6 +264,34 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
         assertTrue(hidden.contains(DownloadsFragment.TAG));
     }
 
+    public void testFyydPodcastSearch() {
+        String query = "TripleTwenty";
+
+        openNavDrawer();
+        solo.clickOnText(solo.getString(R.string.add_feed_label));
+        solo.waitForDialogToOpen();
+        solo.waitForView(R.id.sliding_tabs);
+        solo.clickOnText(solo.getString(R.string.tab_fyyd));
+        solo.clickOnText(solo.getString(R.string.search_fyyd_label));
+        solo.enterText(1, query);
+        solo.sendKey(Solo.ENTER);
+        solo.clickOnText(solo.getString(R.string.tab_fyyd));
+
+        ArrayList<View> views = solo.getCurrentViews();
+        TextView titleTextView = null;
+        for (View view : views) {
+            if (view.getId() == R.id.txtvTitle) {
+                TextView textView = (TextView) view;
+                if (textView.getText().equals(query)) {
+                    titleTextView = textView;
+                    break;
+                }
+            }
+        }
+        assertNotNull(titleTextView);
+        assertEquals(query, titleTextView.getText().toString());
+    }
+
     public void testFyydPodcastEpisodesAndDescription() {
         String query = "TripleTwenty";
         String description = "TripleTwenty ist der Rollenspielpodcast einer Anfängergruppe und lädt alle zum mithören ein, die sich für Pen&Paper wie \"Das Schwarze Auge\" oder \"Dungeons & Dragons\" interessieren - oder nur mal reinschnuppern wollen.";
@@ -286,7 +306,6 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
         solo.enterText(0, query);
         solo.sendKey(Solo.ENTER);
         solo.waitForDialogToOpen();
-
 
         GridView gridView = (GridView) solo.getView(R.id.gridView);
         ViewGroup viewGroup = (ViewGroup) gridView.getChildAt(0);

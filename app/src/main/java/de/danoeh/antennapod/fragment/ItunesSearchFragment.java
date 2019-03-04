@@ -23,11 +23,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 import de.danoeh.antennapod.R;
 import de.danoeh.antennapod.activity.OnlineFeedViewActivity;
@@ -106,8 +105,9 @@ public class ItunesSearchFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+
         View root = inflater.inflate(R.layout.fragment_provider_search, container, false);
-        gridView = (GridView) root.findViewById(R.id.gridView);
+        gridView = root.findViewById(R.id.gridView);
         adapter = new ItunesAdapter(getActivity(), new ArrayList<>());
         gridView.setAdapter(adapter);
 
@@ -133,8 +133,7 @@ public class ItunesSearchFragment extends Fragment {
                             try {
                                 Response response = client.newCall(httpReq.build()).execute();
                                 if (response.isSuccessful()) {
-                                    String resultString = response.body().string();
-                                    JSONObject result = new JSONObject(resultString);
+                                    JSONObject result = this.parseResponse(response);
                                     JSONObject results = result.getJSONArray("results").getJSONObject(0);
                                     String feedUrl = results.getString("feedUrl");
                                     subscriber.onNext(feedUrl);
@@ -142,7 +141,7 @@ public class ItunesSearchFragment extends Fragment {
                                     String prefix = getString(R.string.error_msg_prefix);
                                     subscriber.onError(new IOException(prefix + response));
                                 }
-                            } catch (IOException | JSONException e) {
+                            } catch (IOException | JSONException | NullPointerException e) {
                                 subscriber.onError(e);
                             }
                             subscriber.onCompleted();
@@ -168,10 +167,10 @@ public class ItunesSearchFragment extends Fragment {
                         });
             }
         });
-        progressBar = (ProgressBar) root.findViewById(R.id.progressBar);
-        txtvError = (TextView) root.findViewById(R.id.txtvError);
-        butRetry = (Button) root.findViewById(R.id.butRetry);
-        txtvEmpty = (TextView) root.findViewById(android.R.id.empty);
+        progressBar = root.findViewById(R.id.progressBar);
+        txtvError = root.findViewById(R.id.txtvError);
+        butRetry = root.findViewById(R.id.butRetry);
+        txtvEmpty = root.findViewById(android.R.id.empty);
 
         final SearchView sv = root.findViewById(R.id.action_search);
         sv.setIconifiedByDefault(false);
@@ -193,21 +192,17 @@ public class ItunesSearchFragment extends Fragment {
                 return false;
             }
         });
-        sv.setOnCloseListener(new android.support.v7.widget.SearchView.OnCloseListener() {
+        sv.setOnCloseListener(() -> {
 
-            @Override
-            public boolean onClose(){
+            //Clear query
+            sv.setQuery("", false);
+            sv.clearFocus();
 
-                //Clear query
-                sv.setQuery("", false);
-                sv.clearFocus();
-
-                if(searchResults != null) {
-                    searchResults = null;
-                    updateData(topList);
-                }
-                return true;
+            if(searchResults != null) {
+                searchResults = null;
+                updateData(topList);
             }
+            return true;
         });
 
         loadToplist();
@@ -258,8 +253,7 @@ public class ItunesSearchFragment extends Fragment {
                             response = client.newCall(httpReq.build()).execute();
                         }
                         if(response.isSuccessful()) {
-                            String resultString = response.body().string();
-                            JSONObject result = new JSONObject(resultString);
+                            JSONObject result = this.parseResponse(response);
                             JSONObject feed = result.getJSONObject("feed");
                             JSONArray entries = feed.getJSONArray("entry");
 
@@ -273,7 +267,7 @@ public class ItunesSearchFragment extends Fragment {
                             String prefix = getString(R.string.error_msg_prefix);
                             subscriber.onError(new IOException(prefix + response));
                         }
-                    } catch (IOException | JSONException e) {
+                    } catch (IOException | JSONException | NullPointerException e) {
                         subscriber.onError(e);
                     }
                     subscriber.onNext(results);
@@ -305,16 +299,6 @@ public class ItunesSearchFragment extends Fragment {
         txtvEmpty.setVisibility(View.GONE);
         progressBar.setVisibility(View.VISIBLE);
         subscription = rx.Observable.create((Observable.OnSubscribe<List<Podcast>>) subscriber -> {
-                    String encodedQuery = null;
-                    try {
-                        encodedQuery = URLEncoder.encode(query, "UTF-8");
-                    } catch (UnsupportedEncodingException e) {
-                        // this won't ever be thrown
-                    }
-                    if (encodedQuery == null) {
-                        encodedQuery = query; // failsafe
-                    }
-
                     //Spaces in the query need to be replaced with '+' character.
                     String formattedUrl = String.format(API_URL, query).replace(' ', '+');
 
@@ -327,8 +311,7 @@ public class ItunesSearchFragment extends Fragment {
                         Response response = client.newCall(httpReq.build()).execute();
 
                         if(response.isSuccessful()) {
-                            String resultString = response.body().string();
-                            JSONObject result = new JSONObject(resultString);
+                            JSONObject result = this.parseResponse(response);
                             JSONArray j = result.getJSONArray("results");
 
                             for (int i = 0; i < j.length(); i++) {
@@ -341,7 +324,7 @@ public class ItunesSearchFragment extends Fragment {
                             String prefix = getString(R.string.error_msg_prefix);
                             subscriber.onError(new IOException(prefix + response));
                         }
-                    } catch (IOException | JSONException e) {
+                    } catch (IOException | JSONException | NullPointerException e) {
                         subscriber.onError(e);
                     }
                     subscriber.onNext(podcasts);
@@ -360,6 +343,11 @@ public class ItunesSearchFragment extends Fragment {
                     butRetry.setOnClickListener(v -> search(query));
                     butRetry.setVisibility(View.VISIBLE);
                 });
+    }
+
+    private JSONObject parseResponse(Response response) throws NullPointerException, IOException, JSONException {
+        String resultString = Objects.requireNonNull(response.body()).string();
+        return new JSONObject(resultString);
     }
 
 }
