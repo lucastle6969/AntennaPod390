@@ -292,50 +292,6 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
         assertEquals(query, titleTextView.getText().toString());
     }
 
-    public void testFyydPodcastEpisodesAndDescription() {
-        String query = "TripleTwenty";
-        String description = "TripleTwenty ist der Rollenspielpodcast einer Anfängergruppe und lädt alle zum mithören ein, die sich für Pen&Paper wie \"Das Schwarze Auge\" oder \"Dungeons & Dragons\" interessieren - oder nur mal reinschnuppern wollen.";
-        String numOfEpisodes = "126";
-
-        openNavDrawer();
-        solo.clickOnText(solo.getString(R.string.add_feed_label));
-        solo.pressSpinnerItem(0, 2);
-        solo.waitForDialogToOpen();
-        solo.waitForView(R.id.action_search);
-        solo.clickOnView(solo.getView(R.id.action_search));
-        solo.enterText(0, query);
-        solo.sendKey(Solo.ENTER);
-        solo.waitForDialogToOpen();
-
-        GridView gridView = (GridView) solo.getView(R.id.gridView);
-        ViewGroup viewGroup = (ViewGroup) gridView.getChildAt(0);
-        TextView descriptionView = viewGroup.findViewById(R.id.txtvUrl);
-        TextView episodesView = viewGroup.findViewById(R.id.txtvEpisodes);
-
-        assertEquals(numOfEpisodes, episodesView.getText());
-        assertEquals(description, descriptionView.getText());
-    }
-
-    public void testITunesTopPodcastEpisodeDescriptionAndHiddenCount() {
-        openNavDrawer();
-        solo.clickOnText(solo.getString(R.string.add_feed_label));
-        solo.pressSpinnerItem(0, 1);
-        solo.waitForDialogToOpen();
-        solo.waitForView(R.id.action_search);
-
-        GridView gridView = (GridView) solo.getView(R.id.gridView);
-        ViewGroup viewGroup = (ViewGroup) gridView.getChildAt(0);
-
-        TextView descriptionView = viewGroup.findViewById(R.id.txtvUrl);
-        ImageView episodesIconView = viewGroup.findViewById(R.id.imgFeed);
-        TextView episodesView = viewGroup.findViewById(R.id.txtvEpisodes);
-
-        assertNotNull(descriptionView.getText());
-        assertFalse(descriptionView.getText().toString().equals(""));
-        assertEquals(View.GONE, episodesIconView.getVisibility());
-        assertEquals(View.GONE, episodesView.getVisibility());
-    }
-
     @FlakyTest(tolerance = 2)
     public void testITunesSearchPodcastEpisodeCountAndGenre() {
         String query = "Hello Internet";
@@ -361,24 +317,6 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
         assertEquals(descriptionView.getText().toString(),genre);
     }
 
-    public void testGpodderPodcastDescription() {
-        String description = "Witty, irreverent look at the world through scientists' eyes. With Brian Cox\n" +
-                "and Robin Ince";
-
-        openNavDrawer();
-        solo.clickOnText(solo.getString(R.string.add_feed_label));
-        solo.pressSpinnerItem(0, 3);
-        solo.waitForDialogToOpen();
-        solo.waitForView(R.id.txtvEpisodes);
-
-        GridView gridView = (GridView) solo.getView(R.id.gridView);
-        ViewGroup viewGroup = (ViewGroup) gridView.getChildAt(0);
-        TextView descriptionView = viewGroup.findViewById(R.id.txtvDescription);
-
-        assertEquals(description, descriptionView.getText());
-    }
-
-
     @FlakyTest(tolerance = 2)
     public void testURLSearchFragment(){
 
@@ -396,7 +334,6 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
         solo.waitForView(R.id.butSubscribe);
         solo.assertCurrentActivity("Expected OnlineViewFeedActivity to be active.", OnlineFeedViewActivity.class);
     }
-}
 
     public void testGpodderSearch() {
 
