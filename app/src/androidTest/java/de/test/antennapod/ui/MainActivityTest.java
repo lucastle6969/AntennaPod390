@@ -292,7 +292,6 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
         assertEquals(query, titleTextView.getText().toString());
     }
 
-    @FlakyTest(tolerance = 2)
     public void testITunesSearchPodcastEpisodeCountAndGenre() {
         String query = "Hello Internet";
         String genre = "Educational Technology";
@@ -317,7 +316,6 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
         assertEquals(descriptionView.getText().toString(),genre);
     }
 
-    @FlakyTest(tolerance = 2)
     public void testURLSearchFragment(){
 
         String url = "http://www.hellointernet.fm/podcast?format=rss";
