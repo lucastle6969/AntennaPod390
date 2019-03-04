@@ -367,7 +367,8 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
 
         String url = "http://www.hellointernet.fm/podcast?format=rss";
 
-
+        openNavDrawer();
+        solo.clickOnText(solo.getString(R.string.add_feed_label));
         solo.clickOnText(solo.getString(R.string.tab_url));
         solo.waitForView(R.id.etxtFeedurl);
         solo.clearEditText(0);
