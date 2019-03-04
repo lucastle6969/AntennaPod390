@@ -26,12 +26,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
 
 import de.danoeh.antennapod.R;
 import de.danoeh.antennapod.activity.OnlineFeedViewActivity;
 import de.danoeh.antennapod.adapter.itunes.ItunesAdapter;
 import de.danoeh.antennapod.core.ClientConfig;
+import de.danoeh.antennapod.core.service.OKHttpUtils;
 import de.danoeh.antennapod.core.service.download.AntennapodHttpClient;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -133,7 +133,7 @@ public class ItunesSearchFragment extends Fragment {
                             try {
                                 Response response = client.newCall(httpReq.build()).execute();
                                 if (response.isSuccessful()) {
-                                    JSONObject result = this.parseResponse(response);
+                                    JSONObject result = new JSONObject(OKHttpUtils.responseToString(response));
                                     JSONObject results = result.getJSONArray("results").getJSONObject(0);
                                     String feedUrl = results.getString("feedUrl");
                                     subscriber.onNext(feedUrl);
@@ -253,7 +253,7 @@ public class ItunesSearchFragment extends Fragment {
                             response = client.newCall(httpReq.build()).execute();
                         }
                         if(response.isSuccessful()) {
-                            JSONObject result = this.parseResponse(response);
+                            JSONObject result = new JSONObject(OKHttpUtils.responseToString(response));
                             JSONObject feed = result.getJSONObject("feed");
                             JSONArray entries = feed.getJSONArray("entry");
 
@@ -311,7 +311,7 @@ public class ItunesSearchFragment extends Fragment {
                         Response response = client.newCall(httpReq.build()).execute();
 
                         if(response.isSuccessful()) {
-                            JSONObject result = this.parseResponse(response);
+                            JSONObject result = new JSONObject(OKHttpUtils.responseToString(response));
                             JSONArray j = result.getJSONArray("results");
 
                             for (int i = 0; i < j.length(); i++) {
@@ -343,11 +343,6 @@ public class ItunesSearchFragment extends Fragment {
                     butRetry.setOnClickListener(v -> search(query));
                     butRetry.setVisibility(View.VISIBLE);
                 });
-    }
-
-    private JSONObject parseResponse(Response response) throws NullPointerException, IOException, JSONException {
-        String resultString = Objects.requireNonNull(response.body()).string();
-        return new JSONObject(resultString);
     }
 
 }
