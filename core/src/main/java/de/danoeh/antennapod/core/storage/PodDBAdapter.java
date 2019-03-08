@@ -591,6 +591,20 @@ public class PodDBAdapter {
         return result;
     }
 
+    public long setSingleBookmark(Bookmark bookmark) {
+        long result = 0;
+        try {
+            db.beginTransactionNonExclusive();
+            result = setBookmark(bookmark);
+            db.setTransactionSuccessful();
+        } catch (SQLException e) {
+            Log.e(TAG, Log.getStackTraceString(e));
+        } finally {
+            db.endTransaction();
+        }
+        return result;
+    }
+
     /**
      * Update the flattr status of a FeedItem
      */
@@ -696,6 +710,21 @@ public class PodDBAdapter {
             setChapters(item);
         }
         return item.getId();
+    }
+
+    /**
+     * Insert Bookmark object into the TABLE_NAME_BOOKMARKS table of the database
+     * @param bookmark  The Bookmark object
+     * @return the id of the entry
+     */
+    private long setBookmark(Bookmark bookmark) {
+        ContentValues values = new ContentValues();
+        values.put(KEY_BOOKMARK_TITLE, bookmark.getTitle());
+        values.put(KEY_BOOKMARK_TIMESTAMP, bookmark.getTimestamp());
+        values.put(KEY_BOOKMARK_UID, bookmark.getUid());
+        values.put(KEY_BOOKMARK_PODCAST, bookmark.getPodcastTitle());
+        bookmark.setId(db.insert(TABLE_NAME_BOOKMARKS, null, values));
+        return bookmark.getId();
     }
 
     public void setFeedItemRead(int played, long itemId, long mediaId,

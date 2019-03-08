@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
+import de.danoeh.antennapod.core.feed.Bookmark;
 import de.danoeh.antennapod.core.util.IntentUtils;
 import org.shredzone.flattr4j.model.Flattr;
 
@@ -741,6 +742,20 @@ public class DBWriter {
             adapter.setSingleFeedItem(item);
             adapter.close();
             EventBus.getDefault().post(FeedItemEvent.updated(item));
+        });
+    }
+
+    /**
+     * Saves Bookmark object in the database. This method will save all attributes of Bookmark object.
+     *
+     * @param bookmark  The Bookmark object.
+     */
+    public static Future<?> setBookmark(final Bookmark bookmark){
+        return dbExec.submit(()-> {
+            PodDBAdapter adapter = PodDBAdapter.getInstance();
+            adapter.open();
+            adapter.setSingleBookmark(bookmark);
+            adapter.close();
         });
     }
 
