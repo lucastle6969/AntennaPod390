@@ -1523,6 +1523,20 @@ public class PodDBAdapter {
         return db.rawQuery(FEED_STATISTICS_QUERY, null);
     }
 
+    public void editBookmarkByUid(Bookmark bookmark) {
+        ContentValues values = new ContentValues();
+        values.put(KEY_BOOKMARK_TITLE, bookmark.getTitle());
+        values.put(KEY_BOOKMARK_TIMESTAMP, bookmark.getTimestamp());
+        values.put(KEY_BOOKMARK_UID, bookmark.getUid());
+        values.put(KEY_BOOKMARK_PODCAST, bookmark.getPodcastTitle());
+        db.update(TABLE_NAME_BOOKMARKS, values, KEY_ID + "=" + bookmark.getId(), null);
+    }
+
+    public void deleteBookmarkByUid(String id) {
+        db.delete(TABLE_NAME_BOOKMARKS, KEY_ID + "=" + id, null);
+    }
+
+
     /**
      * Called when a database corruption happens
      */
