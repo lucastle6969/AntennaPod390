@@ -1,5 +1,6 @@
 package de.danoeh.antennapod.core.storage;
 
+import de.danoeh.antennapod.core.feed.Bookmark;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -110,6 +111,10 @@ public class PodDBAdapter {
     public static final String KEY_LAST_PLAYED_TIME = "last_played_time";
     public static final String KEY_INCLUDE_FILTER = "include_filter";
     public static final String KEY_EXCLUDE_FILTER = "exclude_filter";
+    public static final String KEY_BOOKMARK_TITLE = "title";
+    public static final String KEY_BOOKMARK_TIMESTAMP = "timestamp";
+    public static final String KEY_BOOKMARK_UID = "uid";
+    public static final String KEY_BOOKMARK_PODCAST = "podcast_title";
 
     // Table names
     static final String TABLE_NAME_FEEDS = "Feeds";
@@ -120,10 +125,16 @@ public class PodDBAdapter {
     static final String TABLE_NAME_QUEUE = "Queue";
     static final String TABLE_NAME_SIMPLECHAPTERS = "SimpleChapters";
     static final String TABLE_NAME_FAVORITES = "Favorites";
+    static final String TABLE_NAME_BOOKMARKS = "Bookmarks";
 
     // SQL Statements for creating new tables
     private static final String TABLE_PRIMARY_KEY = KEY_ID
             + " INTEGER PRIMARY KEY AUTOINCREMENT ,";
+
+    static final String CREATE_TABLE_BOOKMARKS = "CREATE TABLE "
+            + TABLE_NAME_BOOKMARKS + "(" + KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+            + KEY_BOOKMARK_TITLE + " VARCHAR," + KEY_BOOKMARK_TIMESTAMP + " INTEGER,"
+            + KEY_BOOKMARK_UID + " VARCHAR," + KEY_BOOKMARK_PODCAST + " VARCHAR)";
 
     private static final String CREATE_TABLE_FEEDS = "CREATE TABLE "
             + TABLE_NAME_FEEDS + " (" + TABLE_PRIMARY_KEY + KEY_TITLE
@@ -275,7 +286,8 @@ public class PodDBAdapter {
             TABLE_NAME_DOWNLOAD_LOG,
             TABLE_NAME_QUEUE,
             TABLE_NAME_SIMPLECHAPTERS,
-            TABLE_NAME_FAVORITES
+            TABLE_NAME_FAVORITES,
+            TABLE_NAME_BOOKMARKS
     };
 
     /**
@@ -1564,6 +1576,7 @@ public class PodDBAdapter {
             db.execSQL(CREATE_TABLE_QUEUE);
             db.execSQL(CREATE_TABLE_SIMPLECHAPTERS);
             db.execSQL(CREATE_TABLE_FAVORITES);
+            db.execSQL(CREATE_TABLE_BOOKMARKS);
 
             db.execSQL(CREATE_INDEX_FEEDITEMS_FEED);
             db.execSQL(CREATE_INDEX_FEEDITEMS_PUBDATE);
