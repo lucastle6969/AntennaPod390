@@ -120,13 +120,12 @@
                     android:layout_width="@dimen/audioplayer_playercontrols_length"
                     android:layout_height="@dimen/audioplayer_playercontrols_length"
                     android:layout_toLeftOf="@id/butPlay"
-                    android:layout_marginLeft="16dp"
                     android:background="?attr/selectableItemBackground"
                     android:contentDescription="@string/rewind_label"
-                    android:src="?attr/av_rew_big"
                     android:scaleType="fitCenter"
-                    tools:src="@drawable/ic_fast_rewind_white_36dp"
-                    tools:background="@android:color/holo_blue_dark" />
+                    android:src="?attr/av_rew_big"
+                    tools:background="@android:color/holo_blue_dark"
+                    tools:src="@drawable/ic_fast_rewind_white_36dp" />
 
                 <TextView
                     android:id="@+id/txtvRev"
@@ -208,6 +207,21 @@
                     android:contentDescription="@string/skip_episode_label"
                     tools:src="@drawable/ic_skip_white_36dp"
                     tools:background="@android:color/holo_green_dark" />
+
+                <ImageButton
+                    android:id="@+id/butBookmark"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_alignParentTop="true"
+
+                    android:layout_toEndOf="@+id/butSkip"
+                    android:layout_toRightOf="@+id/butSkip"
+                    android:background="?attr/selectableItemBackground"
+                    android:contentDescription="Add Bookmark"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/bookmark_icon"
+                    tools:src="@drawable/bookmark_icon" />
+
             </RelativeLayout>
 
         </LinearLayout>
