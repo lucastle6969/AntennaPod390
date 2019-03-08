@@ -1384,6 +1384,13 @@ public class PodDBAdapter {
         return result;
     }
 
+    public final Cursor getBookmarksCursor(String podcastTitle, String uid) {
+        final String query = "SELECT * FROM " + TABLE_NAME_BOOKMARKS +
+                             " WHERE " + KEY_BOOKMARK_PODCAST + " = " + podcastTitle +
+                             " AND " + KEY_BOOKMARK_UID + " = " + uid;
+        return db.rawQuery(query, null);
+    }
+
     /**
      * Uses DatabaseUtils to escape a search query and removes ' at the
      * beginning and the end of the string returned by the escape method.
