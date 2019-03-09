@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,6 +30,7 @@ public class BookmarkFragment extends Fragment implements MediaplayerInfoContent
     private View root;
     private PlaybackController controller;
 
+    TextView emptyView;
     RecyclerView recyclerView;
     BookmarkAdapter bookmarkAdapter;
     List<String> bookmarkList = new ArrayList<>();
@@ -53,6 +55,7 @@ public class BookmarkFragment extends Fragment implements MediaplayerInfoContent
                              Bundle savedInstanceState) {
         root = inflater.inflate(R.layout.bookmark_fragment, container, false);
         recyclerView = root.findViewById(R.id.bookmarkList);
+        emptyView = root.findViewById(R.id.empty_view);
 
         bookmarkAdapter = new BookmarkAdapter(bookmarkList);
 
@@ -61,8 +64,17 @@ public class BookmarkFragment extends Fragment implements MediaplayerInfoContent
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(bookmarkAdapter);
 
-        bookmarkList.add("TEST 1");
-        bookmarkList.add("TEST 2");
+        if (bookmarkList.isEmpty()) {
+            recyclerView.setVisibility(View.GONE);
+            emptyView.setVisibility(View.VISIBLE);
+        }
+        else {
+            recyclerView.setVisibility(View.VISIBLE);
+            emptyView.setVisibility(View.GONE);
+        }
+
+        //bookmarkList.add("TEST 1");
+        //bookmarkList.add("TEST 2");
         return root;
     }
 
