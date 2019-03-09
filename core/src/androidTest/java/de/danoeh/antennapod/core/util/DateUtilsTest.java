@@ -165,4 +165,11 @@ public class DateUtilsTest extends AndroidTestCase {
         final Date actual = DateUtils.parse("Sun 01 Mar 2015 01:00:00 GMT-0400 (EDT)");
         assertEquals(expected, actual);
     }
+
+    public void testFormatTimestamp() {
+        final int timestamp = 1000;
+        final String actual = DateUtils.formatTimestamp(timestamp);
+        final String expected = "00:00:01";
+        assertEquals(expected, actual);
+    }
 }
