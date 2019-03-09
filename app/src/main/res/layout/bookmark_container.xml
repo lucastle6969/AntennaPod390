@@ -7,6 +7,11 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"/>
+
     <LinearLayout
         android:id="@+id/content"
         android:layout_width="match_parent"
@@ -63,38 +68,35 @@
             </RelativeLayout>
         </RelativeLayout>
 
-        <include layout="@layout/vertical_list_divider"/>
-
-        <ImageView
+        <ImageButton
             android:id="@+id/imgBookmarkDelete"
             android:layout_height="32dp"
             android:layout_width="32dp"
             android:contentDescription="@string/cover_label"
-            tools:src="@drawable/ic_delete_grey600_24dp"/>
+            android:background="@null"
+            android:src="@drawable/ic_delete_grey600_24dp"/>
 
         <include layout="@layout/vertical_list_divider"/>
 
-        <ImageView
+        <ImageButton
             android:id="@+id/imgBookmarkEdit"
             android:layout_height="32dp"
             android:layout_width="32dp"
             android:contentDescription="@string/cover_label"
-            tools:src="@drawable/ic_sort_grey600_24dp" />
+            android:background="@null"
+            android:src="@drawable/ic_sort_grey600_24dp"/>
 
         <include layout="@layout/vertical_list_divider"/>
 
-        <ImageView
+        <ImageButton
             android:id="@+id/imgBookmarkPlay"
             android:layout_height="32dp"
             android:layout_width="32dp"
             android:contentDescription="@string/cover_label"
-            tools:src="@drawable/ic_play_arrow_grey600_24dp" />
+            android:background="@null"
+            android:src="@drawable/ic_play_arrow_grey600_24dp" />
 
     </LinearLayout>
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@android:color/darker_gray"/>
 
 </FrameLayout>
