@@ -7,8 +7,6 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
-import de.danoeh.antennapod.core.feed.Bookmark;
-import de.danoeh.antennapod.core.util.IntentUtils;
 import org.shredzone.flattr4j.model.Flattr;
 
 import java.io.File;
@@ -31,6 +29,7 @@ import de.danoeh.antennapod.core.event.FavoritesEvent;
 import de.danoeh.antennapod.core.event.FeedItemEvent;
 import de.danoeh.antennapod.core.event.MessageEvent;
 import de.danoeh.antennapod.core.event.QueueEvent;
+import de.danoeh.antennapod.core.feed.Bookmark;
 import de.danoeh.antennapod.core.feed.EventDistributor;
 import de.danoeh.antennapod.core.feed.Feed;
 import de.danoeh.antennapod.core.feed.FeedEvent;
@@ -43,6 +42,7 @@ import de.danoeh.antennapod.core.preferences.PlaybackPreferences;
 import de.danoeh.antennapod.core.preferences.UserPreferences;
 import de.danoeh.antennapod.core.service.download.DownloadStatus;
 import de.danoeh.antennapod.core.service.playback.PlaybackService;
+import de.danoeh.antennapod.core.util.IntentUtils;
 import de.danoeh.antennapod.core.util.LongList;
 import de.danoeh.antennapod.core.util.Permutor;
 import de.danoeh.antennapod.core.util.flattr.FlattrStatus;
@@ -755,6 +755,24 @@ public class DBWriter {
             PodDBAdapter adapter = PodDBAdapter.getInstance();
             adapter.open();
             adapter.setSingleBookmark(bookmark);
+            adapter.close();
+        });
+    }
+
+    public static Future<?> updateBookmark(final Bookmark bookmark){
+        return dbExec.submit(()-> {
+            PodDBAdapter adapter = PodDBAdapter.getInstance();
+            adapter.open();
+            adapter.updateSingleBookmark(bookmark);
+            adapter.close();
+        });
+    }
+
+    public static Future<?> deleteBookmark(final Bookmark bookmark){
+        return dbExec.submit(()-> {
+            PodDBAdapter adapter = PodDBAdapter.getInstance();
+            adapter.open();
+            adapter.deleteSingleBookmark(bookmark);
             adapter.close();
         });
     }
