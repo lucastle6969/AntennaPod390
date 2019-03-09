@@ -15,6 +15,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import de.danoeh.antennapod.core.feed.Bookmark;
 import de.danoeh.antennapod.core.feed.Feed;
 import de.danoeh.antennapod.core.feed.FeedItem;
 import de.danoeh.antennapod.core.feed.FeedMedia;
@@ -88,6 +89,25 @@ public class DBWriterTest extends InstrumentationTestCase {
         assertEquals(LAST_PLAYED_TIME, mediaFromDb.getLastPlayedTime());
         assertEquals(PLAYED_DURATION, mediaFromDb.getPlayedDuration());
         assertEquals(DURATION, mediaFromDb.getDuration());
+    }
+
+    public void testSetBookmark() {
+        final String title = "title";
+        final int timestamp = 123;
+        final String podcastTitle = "podcastTitle";
+        final String uid = "12456";
+
+        Bookmark bookmark = new Bookmark(0, title, timestamp, podcastTitle, uid);
+        DBWriter.setBookmark(bookmark);
+
+        List<Bookmark> bookmarksFromDb = DBReader.getBookmarksWithTitleAndUID(podcastTitle, uid);
+        Bookmark insertedBookmark = bookmarksFromDb.get(0);
+
+        assertNotNull(insertedBookmark);
+        assertEquals(title, insertedBookmark.getTitle());
+        assertEquals(timestamp, insertedBookmark.getTimestamp());
+        assertEquals(podcastTitle, insertedBookmark.getPodcastTitle());
+        assertEquals(uid, insertedBookmark.getUid());
     }
 
     public void testDeleteFeedMediaOfItemFileExists()

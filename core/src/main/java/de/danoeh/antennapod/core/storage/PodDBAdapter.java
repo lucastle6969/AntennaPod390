@@ -131,8 +131,8 @@ public class PodDBAdapter {
     private static final String TABLE_PRIMARY_KEY = KEY_ID
             + " INTEGER PRIMARY KEY AUTOINCREMENT ,";
 
-    static final String CREATE_TABLE_BOOKMARKS = "CREATE TABLE "
-            + TABLE_NAME_BOOKMARKS + "(" + KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+    private static final String CREATE_TABLE_BOOKMARKS = "CREATE TABLE "
+            + TABLE_NAME_BOOKMARKS + " (" + KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
             + KEY_BOOKMARK_TITLE + " VARCHAR," + KEY_BOOKMARK_TIMESTAMP + " INTEGER,"
             + KEY_BOOKMARK_UID + " VARCHAR," + KEY_BOOKMARK_PODCAST + " VARCHAR)";
 
@@ -1388,6 +1388,7 @@ public class PodDBAdapter {
         final String query = "SELECT * FROM " + TABLE_NAME_BOOKMARKS +
                              " WHERE " + KEY_BOOKMARK_PODCAST + " = " + podcastTitle +
                              " AND " + KEY_BOOKMARK_UID + " = " + uid;
+
         return db.rawQuery(query, null);
     }
 
