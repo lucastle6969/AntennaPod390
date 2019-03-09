@@ -53,6 +53,7 @@ import de.danoeh.antennapod.core.util.playback.Playable;
 import de.danoeh.antennapod.core.util.playback.PlaybackController;
 import de.danoeh.antennapod.dialog.RenameFeedDialog;
 import de.danoeh.antennapod.fragment.AddFeedFragment;
+import de.danoeh.antennapod.fragment.BookmarkFragment;
 import de.danoeh.antennapod.fragment.ChaptersFragment;
 import de.danoeh.antennapod.fragment.CoverFragment;
 import de.danoeh.antennapod.fragment.DownloadsFragment;
@@ -78,7 +79,8 @@ public abstract class MediaplayerInfoActivity extends MediaplayerActivity implem
     private static final int POS_COVER = 0;
     private static final int POS_DESCR = 1;
     private static final int POS_CHAPTERS = 2;
-    private static final int NUM_CONTENT_FRAGMENTS = 3;
+    private static final int POS_BOOKMARKS = 3;
+    private static final int NUM_CONTENT_FRAGMENTS = 4;
 
     private static final String PREFS = "AudioPlayerActivityPreferences";
     private static final String PREF_KEY_SELECTED_FRAGMENT_POSITION = "selectedFragmentPosition";
@@ -585,6 +587,7 @@ public abstract class MediaplayerInfoActivity extends MediaplayerActivity implem
         private CoverFragment coverFragment;
         private ItemDescriptionFragment itemDescriptionFragment;
         private ChaptersFragment chaptersFragment;
+        private BookmarkFragment bookmarkFragment;
 
         public void onMediaChanged(Playable media) {
             Log.d(TAG, "media changing to " + ((media != null) ? media.getEpisodeTitle() : "null"));
@@ -597,6 +600,9 @@ public abstract class MediaplayerInfoActivity extends MediaplayerActivity implem
             }
             if(chaptersFragment != null) {
                 chaptersFragment.onMediaChanged(media);
+            }
+            if(bookmarkFragment != null) {
+                bookmarkFragment.onMediaChanged(media);
             }
         }
 
@@ -632,6 +638,12 @@ public abstract class MediaplayerInfoActivity extends MediaplayerActivity implem
                         chaptersFragment.setController(controller);
                     }
                     return chaptersFragment;
+                case POS_BOOKMARKS:
+                    if(bookmarkFragment == null) {
+                        bookmarkFragment = BookmarkFragment.newInstance(media);
+                        bookmarkFragment.setController(controller);
+                    }
+                    return bookmarkFragment;
                 default:
                     return null;
             }
