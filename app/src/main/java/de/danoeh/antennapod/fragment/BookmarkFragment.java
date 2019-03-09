@@ -50,10 +50,10 @@ public class BookmarkFragment extends Fragment implements MediaplayerInfoContent
         }
 
         List<Bookmark> tempList = new ArrayList<>();
-        Bookmark bm1 = new Bookmark(1,"Joe Rogan Loses his mind.", 24, "JRE: Joe Rogan Experience", "2EDGF53D");
-        Bookmark bm2 = new Bookmark(2,"UFC is losing its touch.", 50, "JRE: Joe Rogan Experience", "2EDGF53D");
-        Bookmark bm3 = new Bookmark(3,"Eddie Bravo on his Jiu-Jistu.", 100, "JRE: Joe Rogan Experience", "2EDGF53D");
-        Bookmark bm4 = new Bookmark(4,"Schaub being Schaub", 98, "JRE: Joe Rogan Experience", "2EDGF53D");
+        Bookmark bm1 = new Bookmark(1,"Joe Rogan Loses his mind.", 24000, "JRE: Joe Rogan Experience", "2EDGF53D");
+        Bookmark bm2 = new Bookmark(2,"UFC is losing its touch.", 5000, "JRE: Joe Rogan Experience", "2EDGF53D");
+        Bookmark bm3 = new Bookmark(3,"Eddie Bravo on his Jiu-Jistu.", 100000, "JRE: Joe Rogan Experience", "2EDGF53D");
+        Bookmark bm4 = new Bookmark(4,"Schaub being Schaub", 9800000, "JRE: Joe Rogan Experience", "2EDGF53D");
         tempList.add(bm1);
         tempList.add(bm2);
         tempList.add(bm3);

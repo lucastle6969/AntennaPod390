@@ -11,6 +11,7 @@ import java.util.List;
 
 import de.danoeh.antennapod.R;
 import de.danoeh.antennapod.core.feed.Bookmark;
+import de.danoeh.antennapod.core.util.DateUtils;
 
 public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.MyViewHolder> {
     private List<Bookmark> bookmarkList;
@@ -46,7 +47,7 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.MyView
     public void onBindViewHolder(MyViewHolder holder, int position) {
         Bookmark bookmark = bookmarkList.get(position);
         holder.bookmarkTitle.setText(bookmark.getTitle());
-        holder.timestamp.setText(Integer.toString(bookmark.getTimestamp()));
+        holder.timestamp.setText(DateUtils.formatTimestamp(bookmark.getTimestamp()));
         holder.deleteImg.setImageResource(R.drawable.ic_delete_grey600_24dp);
         holder.editImg.setImageResource(R.drawable.ic_sort_grey600_24dp);
         holder.playImg.setImageResource(R.drawable.ic_play_arrow_grey600_24dp);
