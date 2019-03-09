@@ -10,9 +10,10 @@ import android.widget.TextView;
 import java.util.List;
 
 import de.danoeh.antennapod.R;
+import de.danoeh.antennapod.core.feed.Bookmark;
 
 public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.MyViewHolder> {
-    private List<String> bookmarkList;
+    private List<Bookmark> bookmarkList;
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
         public TextView timestamp, bookmarkTitle;
@@ -29,7 +30,7 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.MyView
     }
 
 
-    public BookmarkAdapter(List<String> bookmarkList) {
+    public BookmarkAdapter(List<Bookmark> bookmarkList) {
         this.bookmarkList = bookmarkList;
     }
 
@@ -43,8 +44,9 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.MyView
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
-        String bookmark = bookmarkList.get(position);
-        holder.bookmarkTitle.setText(bookmark);
+        Bookmark bookmark = bookmarkList.get(position);
+        holder.bookmarkTitle.setText(bookmark.getTitle());
+        holder.timestamp.setText(Integer.toString(bookmark.getTimestamp()));
         holder.deleteImg.setImageResource(R.drawable.ic_delete_grey600_24dp);
         holder.editImg.setImageResource(R.drawable.ic_sort_grey600_24dp);
         holder.playImg.setImageResource(R.drawable.ic_play_arrow_grey600_24dp);

@@ -19,6 +19,7 @@ import de.danoeh.antennapod.activity.MediaplayerInfoActivity.MediaplayerInfoCont
 import de.danoeh.antennapod.adapter.BookmarkAdapter;
 import de.danoeh.antennapod.core.util.playback.Playable;
 import de.danoeh.antennapod.core.util.playback.PlaybackController;
+import de.danoeh.antennapod.core.feed.Bookmark;
 
 public class BookmarkFragment extends Fragment implements MediaplayerInfoContentFragment {
 
@@ -33,7 +34,7 @@ public class BookmarkFragment extends Fragment implements MediaplayerInfoContent
     TextView emptyView;
     RecyclerView recyclerView;
     BookmarkAdapter bookmarkAdapter;
-    List<String> bookmarkList = new ArrayList<>();
+    List<Bookmark> bookmarkList;
 
     public static BookmarkFragment newInstance(Playable item) {
         BookmarkFragment bookmark = new BookmarkFragment();
@@ -47,6 +48,18 @@ public class BookmarkFragment extends Fragment implements MediaplayerInfoContent
         if (media == null) {
             Log.e(TAG, TAG + " was called without media");
         }
+
+        List<Bookmark> tempList = new ArrayList<>();
+        Bookmark bm1 = new Bookmark(1,"Joe Rogan Loses his mind.", 24, "JRE: Joe Rogan Experience", "2EDGF53D");
+        Bookmark bm2 = new Bookmark(2,"UFC is losing its touch.", 50, "JRE: Joe Rogan Experience", "2EDGF53D");
+        Bookmark bm3 = new Bookmark(3,"Eddie Bravo on his Jiu-Jistu.", 100, "JRE: Joe Rogan Experience", "2EDGF53D");
+        Bookmark bm4 = new Bookmark(4,"Schaub being Schaub", 98, "JRE: Joe Rogan Experience", "2EDGF53D");
+        tempList.add(bm1);
+        tempList.add(bm2);
+        tempList.add(bm3);
+        tempList.add(bm4);
+        // Shallow copy for testing, must be replaced with method that gets bookmarks from db
+        bookmarkList = tempList;
 
     }
 
@@ -64,6 +77,7 @@ public class BookmarkFragment extends Fragment implements MediaplayerInfoContent
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(bookmarkAdapter);
 
+        // If bookmark list is empty, display a message in the view.
         if (bookmarkList.isEmpty()) {
             recyclerView.setVisibility(View.GONE);
             emptyView.setVisibility(View.VISIBLE);
@@ -73,11 +87,10 @@ public class BookmarkFragment extends Fragment implements MediaplayerInfoContent
             emptyView.setVisibility(View.GONE);
         }
 
-        //bookmarkList.add("TEST 1");
-        //bookmarkList.add("TEST 2");
         return root;
     }
 
+    //For logging purposes (do not remove)
     private void loadMediaInfo() {
         if (media != null) {
             Log.d(TAG, "loadMediaInfo called normally");
