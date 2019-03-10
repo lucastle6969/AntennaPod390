@@ -48,7 +48,7 @@ public class BookmarkFragment extends Fragment implements MediaplayerInfoContent
         if (media == null) {
             Log.e(TAG, TAG + " was called without media");
         }
-        // TODO: The bookmarks must be presented in chronological order on load and on edit.
+// TODO: Remove temporary method to populate bookmark fragment later.
         List<Bookmark> tempList = new ArrayList<>();
         Bookmark bm1 = new Bookmark(1,"Joe Rogan Loses his mind.", 24000, "JRE: Joe Rogan Experience", "2EDGF53D");
         Bookmark bm2 = new Bookmark(2,"UFC is losing its touch.", 5000, "JRE: Joe Rogan Experience", "2EDGF53D");
