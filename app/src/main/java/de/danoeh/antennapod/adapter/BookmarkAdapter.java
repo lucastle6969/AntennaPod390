@@ -13,14 +13,14 @@ import de.danoeh.antennapod.R;
 import de.danoeh.antennapod.core.feed.Bookmark;
 import de.danoeh.antennapod.core.util.DateUtils;
 
-public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.MyViewHolder> {
+public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.BookmarkViewHolder> {
     private List<Bookmark> bookmarkList;
 
-    public class MyViewHolder extends RecyclerView.ViewHolder {
-        public TextView timestamp, bookmarkTitle;
-        public ImageView playImg, editImg, deleteImg;
+    public class BookmarkViewHolder extends RecyclerView.ViewHolder {
+        private TextView timestamp, bookmarkTitle;
+        private ImageView playImg, editImg, deleteImg;
 
-        public MyViewHolder(View view) {
+        public BookmarkViewHolder(View view) {
             super(view);
             timestamp = view.findViewById(R.id.txtvTimestamp);
             bookmarkTitle = view.findViewById(R.id.txtvBookmarkTitle);
@@ -36,15 +36,15 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.MyView
     }
 
     @Override
-    public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public BookmarkViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.bookmark_container, parent, false);
 
-        return new MyViewHolder(itemView);
+        return new BookmarkViewHolder(itemView);
     }
 
     @Override
-    public void onBindViewHolder(MyViewHolder holder, int position) {
+    public void onBindViewHolder(BookmarkViewHolder holder, int position) {
         Bookmark bookmark = bookmarkList.get(position);
         holder.bookmarkTitle.setText(bookmark.getTitle());
         holder.timestamp.setText(DateUtils.formatTimestamp(bookmark.getTimestamp()));
