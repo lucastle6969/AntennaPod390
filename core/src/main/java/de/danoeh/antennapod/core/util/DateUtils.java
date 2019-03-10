@@ -5,6 +5,7 @@ import android.util.Log;
 
 import org.apache.commons.lang3.StringUtils;
 
+import java.text.DateFormat;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -172,5 +173,13 @@ public class DateUtils {
             format |= android.text.format.DateUtils.FORMAT_NO_YEAR;
         }
         return android.text.format.DateUtils.formatDateTime(context, date.getTime(), format);
+    }
+
+    public static String formatTimestamp(int timestamp) {
+        Date date = new Date(timestamp);
+        DateFormat formatter = new SimpleDateFormat("HH:mm:ss");
+        formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
+        String dateFormatted = formatter.format(date);
+        return dateFormatted;
     }
 }
