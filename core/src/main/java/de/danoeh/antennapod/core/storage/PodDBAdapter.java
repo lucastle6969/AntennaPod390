@@ -756,6 +756,11 @@ public class PodDBAdapter {
         return bookmark.getId();
     }
 
+    /**
+     * Update Bookmark object in the TABLE_NAME_BOOKMARKS table of the database.
+     * @param bookmark  The Bookmark object
+     * @return the id of the entry
+     */
     private long updateBookmark(Bookmark bookmark) {
         ContentValues values = new ContentValues();
         values.put(KEY_BOOKMARK_TITLE, bookmark.getTitle());
@@ -767,6 +772,11 @@ public class PodDBAdapter {
         return bookmark.getId();
     }
 
+    /**
+     * Delete Bookmark object in the TABLE_NAME_BOOKMARKS table of the database
+     * @param bookmark  The Bookmark object
+     * @return the id of the entry
+     */
     private long deleteBookmark(Bookmark bookmark) {
         ContentValues values = new ContentValues();
         values.put(KEY_BOOKMARK_TITLE, bookmark.getTitle());

@@ -759,6 +759,12 @@ public class DBWriter {
         });
     }
 
+    /**
+     * Updates Bookmark object in the database. This method will save all attributes of the passed
+     * Bookmark object, overwriting both the changed and unchanged values.
+     *
+     * @param bookmark  The Bookmark object.
+     */
     public static Future<?> updateBookmark(final Bookmark bookmark){
         return dbExec.submit(()-> {
             PodDBAdapter adapter = PodDBAdapter.getInstance();
@@ -768,6 +774,12 @@ public class DBWriter {
         });
     }
 
+    /**
+     * Deletes Bookmark object in the database. Takes in a Bookmark object to be searched for in
+     * the database.
+     *
+     * @param bookmark  The Bookmark object.
+     */
     public static Future<?> deleteBookmark(final Bookmark bookmark){
         return dbExec.submit(()-> {
             PodDBAdapter adapter = PodDBAdapter.getInstance();
