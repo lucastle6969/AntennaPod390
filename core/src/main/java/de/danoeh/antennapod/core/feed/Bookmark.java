@@ -37,6 +37,12 @@ public class Bookmark {
         );
     }
 
+    @Override
+    public String toString(){
+        return "Id: " + String.valueOf(id) + " Title: " + title + " Timestamp: " +
+                String.valueOf(timestamp) + " Podcast: " + podcastTitle + " Uid: " + uid;
+    }
+
     public long getId(){
         return this.id;
     }
