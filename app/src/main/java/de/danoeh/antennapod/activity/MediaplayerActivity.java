@@ -90,6 +90,7 @@ public abstract class MediaplayerActivity extends CastEnabledActivity implements
     private ImageButton butFF;
     private TextView txtvFF;
     private ImageButton butSkip;
+    private ImageButton butBookmark;
 
     private boolean showTimeLeft = false;
 
@@ -833,18 +834,19 @@ public abstract class MediaplayerActivity extends CastEnabledActivity implements
             });
         }
 
-        butRev = (ImageButton) findViewById(R.id.butRev);
-        txtvRev = (TextView) findViewById(R.id.txtvRev);
+        butRev = findViewById(R.id.butRev);
+        txtvRev = findViewById(R.id.txtvRev);
         if (txtvRev != null) {
             txtvRev.setText(String.valueOf(UserPreferences.getRewindSecs()));
         }
-        butPlay = (ImageButton) findViewById(R.id.butPlay);
-        butFF = (ImageButton) findViewById(R.id.butFF);
-        txtvFF = (TextView) findViewById(R.id.txtvFF);
+        butPlay = findViewById(R.id.butPlay);
+        butFF = findViewById(R.id.butFF);
+        txtvFF = findViewById(R.id.txtvFF);
         if (txtvFF != null) {
             txtvFF.setText(String.valueOf(UserPreferences.getFastForwardSecs()));
         }
-        butSkip = (ImageButton) findViewById(R.id.butSkip);
+        butSkip = findViewById(R.id.butSkip);
+        butBookmark = findViewById(R.id.butBookmark);
 
         // SEEKBAR SETUP
 
@@ -874,6 +876,18 @@ public abstract class MediaplayerActivity extends CastEnabledActivity implements
             butSkip.setOnClickListener(v ->
                     IntentUtils.sendLocalBroadcast(MediaplayerActivity.this, PlaybackService.ACTION_SKIP_CURRENT_EPISODE));
         }
+
+        if(butBookmark != null){
+            butBookmark.setOnClickListener(v -> setNewBookmark());
+        }
+    }
+
+    void setNewBookmark() {
+        if(controller == null)
+            return;
+        // call to set new bookmark will go here
+        Log.d(TAG, "Bookmark: button was clicked.");
+
     }
 
     void onRewind() {
