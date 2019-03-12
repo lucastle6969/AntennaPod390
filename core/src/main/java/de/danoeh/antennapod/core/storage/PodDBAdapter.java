@@ -1445,6 +1445,12 @@ public class PodDBAdapter {
         return result;
     }
 
+    /**
+     * Returns a cursor pointing to the first bookmark item in the db given the title and episode id specified
+     * @param podcastTitle  Title of podcast
+     * @param uid           Podcast episode id
+     * @return              Cursor of first bookmark item
+     */
     public final Cursor getBookmarksCursor(String podcastTitle, String uid) {
         final String query = "SELECT * FROM " + TABLE_NAME_BOOKMARKS +
                              " WHERE " + KEY_BOOKMARK_PODCAST + " = '" + podcastTitle +
