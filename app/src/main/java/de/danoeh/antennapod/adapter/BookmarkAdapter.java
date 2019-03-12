@@ -1,7 +1,6 @@
 package de.danoeh.antennapod.adapter;
 
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +16,10 @@ import de.danoeh.antennapod.core.util.DateUtils;
 
 public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.BookmarkViewHolder> {
     private List<Bookmark> bookmarkList;
+
+    private BookmarkViewHolder view;
+
+    private boolean hideIcons = false;
 
     public class BookmarkViewHolder extends RecyclerView.ViewHolder {
         private TextView timestamp, bookmarkTitle;
@@ -37,7 +40,6 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.Bookma
                         @Override
                         public void onClick(View v) {
                             removeBookmark(getAdapterPosition());
-
                         }
                     });
         }
@@ -58,7 +60,9 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.Bookma
         View itemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.bookmark_container, parent, false);
 
-        return new BookmarkViewHolder(itemView);
+        view = new BookmarkViewHolder(itemView);
+
+        return view;
     }
 
     @Override
@@ -66,13 +70,29 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.Bookma
         Bookmark bookmark = bookmarkList.get(position);
         holder.bookmarkTitle.setText(bookmark.getTitle());
         holder.timestamp.setText(DateUtils.formatTimestamp(bookmark.getTimestamp()));
-        holder.deleteImg.setImageResource(R.drawable.ic_delete_grey600_24dp);
-        holder.editImg.setImageResource(R.drawable.ic_sort_grey600_24dp);
-        holder.playImg.setImageResource(R.drawable.ic_play_arrow_grey600_24dp);
+
+        //When clicking on the trashcan in the action bar, hide the icons and only show checkbox
+        if(!hideIcons) {
+            holder.deleteCheckbox.setVisibility(View.GONE);
+            holder.deleteImg.setImageResource(R.drawable.ic_delete_grey600_24dp);
+            holder.editImg.setImageResource(R.drawable.ic_sort_grey600_24dp);
+            holder.playImg.setImageResource(R.drawable.ic_play_arrow_grey600_24dp);
+        }
+        else{
+            holder.deleteCheckbox.setVisibility(View.VISIBLE);
+            holder.deleteImg.setVisibility(View.GONE);
+            holder.editImg.setVisibility(View.GONE);
+            holder.playImg.setVisibility(View.GONE);
+        }
     }
 
     @Override
     public int getItemCount() {
         return bookmarkList.size();
     }
+
+    public void showCheckBox(boolean bool){
+        hideIcons = bool;
+    }
+
 }

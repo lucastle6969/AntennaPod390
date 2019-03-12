@@ -353,6 +353,12 @@ public abstract class MediaplayerActivity extends CastEnabledActivity implements
 
         menu.findItem(R.id.add_to_favorites_item).setVisible(false);
         menu.findItem(R.id.remove_from_favorites_item).setVisible(false);
+
+        menu.findItem(R.id.confirmDelete).setVisible(false);
+        menu.findItem(R.id.cancelDelete).setVisible(false);
+        menu.findItem(R.id.delete_bookmarks).setVisible(true);
+
+
         if (isFeedMedia) {
             menu.findItem(R.id.add_to_favorites_item).setVisible(!isFavorite);
             menu.findItem(R.id.remove_from_favorites_item).setVisible(isFavorite);

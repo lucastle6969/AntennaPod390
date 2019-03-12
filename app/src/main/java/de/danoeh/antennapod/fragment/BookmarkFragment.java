@@ -7,6 +7,9 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ActionMode;
 import android.view.ViewGroup;
@@ -53,7 +56,7 @@ public class BookmarkFragment extends Fragment implements MediaplayerInfoContent
         if (media == null) {
             Log.e(TAG, TAG + " was called without media");
         }
-
+        setHasOptionsMenu(true);
         bookmarkList = retrieveBookmarks();
 
     }
@@ -141,5 +144,40 @@ public class BookmarkFragment extends Fragment implements MediaplayerInfoContent
 
     public void setController(PlaybackController controller) {
         this.controller = controller;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        if(!isAdded()) {
+            return;
+        }
+
+        super.onCreateOptionsMenu(menu, inflater);
+
+        MenuItem delete_button = menu.findItem(R.id.delete_bookmarks);
+
+        //Set a listener for when the user clicks on the trash can in the action bar
+        delete_button.setOnMenuItemClickListener(
+                new MenuItem.OnMenuItemClickListener() {
+
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        //Hide all icons in the action bar except for the trashcan and display confirm/delete icons
+                        menu.findItem(R.id.add_to_favorites_item).setVisible(false);
+                        menu.findItem(R.id.set_sleeptimer_item).setVisible(false);
+                        menu.findItem(R.id.audio_controls).setVisible(false);
+                        menu.findItem(R.id.confirmDelete).setVisible(true);
+                        menu.findItem(R.id.cancelDelete).setVisible(true);
+
+                        //Inform adapter to display checkboxes
+                        bookmarkAdapter.showCheckBox(true);
+
+                        //Notify adapter to update view
+                        bookmarkAdapter.notifyDataSetChanged();
+
+                        return true;
+                    }
+                });
+
     }
 }
