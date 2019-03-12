@@ -39,6 +39,7 @@ import java.util.Locale;
 
 import de.danoeh.antennapod.R;
 import de.danoeh.antennapod.core.event.ServiceEvent;
+import de.danoeh.antennapod.core.feed.Bookmark;
 import de.danoeh.antennapod.core.feed.FeedItem;
 import de.danoeh.antennapod.core.feed.FeedMedia;
 import de.danoeh.antennapod.core.feed.MediaType;
@@ -885,9 +886,13 @@ public abstract class MediaplayerActivity extends CastEnabledActivity implements
     void setNewBookmark() {
         if(controller == null)
             return;
-        // call to set new bookmark will go here
-        Log.d(TAG, "Bookmark: button was clicked.");
 
+        Playable media = controller.getMedia();
+        String podcastTitle = media.getFeedTitle();
+        int timestamp = controller.getPosition();
+        String episodeId = media.getIdentifier().toString();
+
+        DBWriter.setBookmark(new Bookmark(0, null, timestamp, podcastTitle, episodeId));
     }
 
     void onRewind() {
