@@ -8,15 +8,20 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ActionMode;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import de.danoeh.antennapod.R;
+import de.danoeh.antennapod.activity.MainActivity;
 import de.danoeh.antennapod.activity.MediaplayerInfoActivity.MediaplayerInfoContentFragment;
 import de.danoeh.antennapod.adapter.BookmarkAdapter;
+import de.danoeh.antennapod.core.storage.DBReader;
 import de.danoeh.antennapod.core.util.playback.Playable;
 import de.danoeh.antennapod.core.util.playback.PlaybackController;
 import de.danoeh.antennapod.core.feed.Bookmark;
@@ -48,19 +53,25 @@ public class BookmarkFragment extends Fragment implements MediaplayerInfoContent
         if (media == null) {
             Log.e(TAG, TAG + " was called without media");
         }
-// TODO: Remove temporary method to populate bookmark fragment later.
-        List<Bookmark> tempList = new ArrayList<>();
-        Bookmark bm1 = new Bookmark(1,"Joe Rogan Loses his mind.", 24000, "JRE: Joe Rogan Experience", "2EDGF53D");
-        Bookmark bm2 = new Bookmark(2,"UFC is losing its touch.", 5000, "JRE: Joe Rogan Experience", "2EDGF53D");
-        Bookmark bm3 = new Bookmark(3,"Eddie Bravo on his Jiu-Jistu.", 100000, "JRE: Joe Rogan Experience", "2EDGF53D");
-        Bookmark bm4 = new Bookmark(4,"Schaub being Schaub", 9800000, "JRE: Joe Rogan Experience", "2EDGF53D");
-        tempList.add(bm1);
-        tempList.add(bm2);
-        tempList.add(bm3);
-        tempList.add(bm4);
-        // Shallow copy for testing, must be replaced with method that gets bookmarks from db
-        bookmarkList = tempList;
 
+        bookmarkList = retrieveBookmarks();
+
+    }
+
+
+    public List<Bookmark> retrieveBookmarks(){
+        List<Bookmark> retrievedBookmarks = new ArrayList<>();
+        String podcastTitle = media.getFeedTitle();
+        String episodeId = media.getIdentifier().toString();
+
+        retrievedBookmarks = DBReader.getBookmarksWithTitleAndUID(podcastTitle, episodeId);
+
+        return retrievedBookmarks;
+    }
+
+    public void deleteSelectedBookmarks(){
+        //Retrieve the list of bookmarks to delete
+        //Loop through them and delete them
     }
 
     @Override
@@ -71,7 +82,6 @@ public class BookmarkFragment extends Fragment implements MediaplayerInfoContent
         emptyView = root.findViewById(R.id.empty_view);
 
         bookmarkAdapter = new BookmarkAdapter(bookmarkList);
-
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());

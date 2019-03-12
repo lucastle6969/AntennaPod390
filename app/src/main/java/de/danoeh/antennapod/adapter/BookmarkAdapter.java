@@ -1,9 +1,11 @@
 package de.danoeh.antennapod.adapter;
 
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -19,6 +21,7 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.Bookma
     public class BookmarkViewHolder extends RecyclerView.ViewHolder {
         private TextView timestamp, bookmarkTitle;
         private ImageView playImg, editImg, deleteImg;
+        private CheckBox deleteCheckbox;
 
         public BookmarkViewHolder(View view) {
             super(view);
@@ -26,7 +29,22 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.Bookma
             bookmarkTitle = view.findViewById(R.id.txtvBookmarkTitle);
             playImg = view.findViewById(R.id.imgBookmarkPlay);
             deleteImg = view.findViewById(R.id.imgBookmarkDelete);
+            deleteCheckbox = view.findViewById(R.id.bookmarkCheckBox);
             editImg = view.findViewById(R.id.imgBookmarkEdit);
+
+            deleteImg.setOnClickListener(
+                    new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            removeBookmark(getAdapterPosition());
+
+                        }
+                    });
+        }
+
+        public void removeBookmark(int id) {
+            bookmarkList.remove(id);
+            notifyItemRemoved(id);
         }
     }
 
