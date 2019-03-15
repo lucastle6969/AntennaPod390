@@ -956,12 +956,14 @@ public abstract class MediaplayerActivity extends CastEnabledActivity implements
             public void onClick(DialogInterface dialog, int which) {
                 String input_title = input.getText().toString();
                 setNewBookmark(input_title, timestamp, podcastTitle, episodeId);
+                onPlayPause();
             }
         });
         builder.setNegativeButton(R.string.cancel_label, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.cancel();
+                onPlayPause();
             }
         });
 
