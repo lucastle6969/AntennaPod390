@@ -120,6 +120,11 @@
         <item quantity="other">%d days after finishing</item>
     </plurals>
 
+    <!-- Bookmark labels -->
+    <string name="bookmark_label">Bookmark</string>
+    <string name="bookmark_alert_title">Set a bookmark</string>
+    <string name="no_bookmark_available">No bookmarks have been set for this episode.</string>
+
     <!-- 'Add Feed' Activity labels -->
     <string name="feedurl_label">Feed URL</string>
     <string name="etxtFeedurlHint">https://www.example.com/feed</string>
