@@ -11,24 +11,26 @@ import android.widget.TextView;
 import java.util.List;
 
 import de.danoeh.antennapod.R;
+import de.danoeh.antennapod.activity.MediaplayerActivity;
 import de.danoeh.antennapod.core.feed.Bookmark;
 import de.danoeh.antennapod.core.util.DateUtils;
 
 public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.BookmarkViewHolder> {
     private List<Bookmark> bookmarkList;
-
+    private MediaplayerActivity activity;
     private BookmarkViewHolder view;
 
     private boolean hideIcons = false;
 
     public class BookmarkViewHolder extends RecyclerView.ViewHolder {
-        private TextView timestamp, bookmarkTitle;
+        private TextView txtTimestamp, bookmarkTitle;
         private ImageView playImg, editImg, deleteImg;
         private CheckBox deleteCheckbox;
+        private int timestamp = 0;
 
         public BookmarkViewHolder(View view) {
             super(view);
-            timestamp = view.findViewById(R.id.txtvTimestamp);
+            txtTimestamp = view.findViewById(R.id.txtvTimestamp);
             bookmarkTitle = view.findViewById(R.id.txtvBookmarkTitle);
             playImg = view.findViewById(R.id.imgBookmarkPlay);
             deleteImg = view.findViewById(R.id.imgBookmarkDelete);
@@ -36,12 +38,10 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.Bookma
             editImg = view.findViewById(R.id.imgBookmarkEdit);
 
             deleteImg.setOnClickListener(
-                    new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            removeBookmark(getAdapterPosition());
-                        }
-                    });
+                    v -> removeBookmark(getAdapterPosition()));
+
+            playImg.setOnClickListener(
+                    v -> activity.onSelectBookmark(timestamp));
         }
 
         public void removeBookmark(int id) {
@@ -51,8 +51,9 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.Bookma
     }
 
 
-    public BookmarkAdapter(List<Bookmark> bookmarkList) {
+    public BookmarkAdapter(List<Bookmark> bookmarkList, MediaplayerActivity activity) {
         this.bookmarkList = bookmarkList;
+        this.activity = activity;
     }
 
     @Override
@@ -69,7 +70,8 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.Bookma
     public void onBindViewHolder(BookmarkViewHolder holder, int position) {
         Bookmark bookmark = bookmarkList.get(position);
         holder.bookmarkTitle.setText(bookmark.getTitle());
-        holder.timestamp.setText(DateUtils.formatTimestamp(bookmark.getTimestamp()));
+        holder.txtTimestamp.setText(DateUtils.formatTimestamp(bookmark.getTimestamp()));
+        holder.timestamp = bookmark.getTimestamp();
 
         //When clicking on the trashcan in the action bar, hide the icons and only show checkbox
         if(!hideIcons) {

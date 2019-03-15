@@ -901,6 +901,13 @@ public abstract class MediaplayerActivity extends CastEnabledActivity implements
         DBWriter.setBookmark(new Bookmark(0, null, timestamp, podcastTitle, episodeId));
     }
 
+    public void onSelectBookmark(int timestamp){
+        if (controller == null) {
+            return;
+        }
+        controller.seekTo(timestamp);
+    }
+
     void onRewind() {
         if (controller == null) {
             return;
