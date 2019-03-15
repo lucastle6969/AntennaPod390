@@ -100,6 +100,7 @@ public abstract class MediaplayerActivity extends CastEnabledActivity implements
     private TextView txtvFF;
     private ImageButton butSkip;
     private ImageButton butBookmark;
+    private int timestamp;
 
     private boolean showTimeLeft = false;
 
@@ -906,7 +907,12 @@ public abstract class MediaplayerActivity extends CastEnabledActivity implements
         Playable media = controller.getMedia();
         String podcastTitle = media.getFeedTitle();
         String episodeTitle = media.getEpisodeTitle();
-        int timestamp = controller.getPosition();
+        timestamp = controller.getPosition();
+        if(timestamp == PlaybackService.INVALID_TIME){
+            // Assign txtvPosition time value if controller was unable to get timestamp
+            timestamp = Converter.durationStringLongToMs(txtvPosition.getText().toString());
+        }
+
         String episodeId = media.getIdentifier().toString();
 
         // Create alert dialog
