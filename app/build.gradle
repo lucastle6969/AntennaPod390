@@ -231,6 +231,15 @@ task copyTextFiles(type: Copy) {
     }
 }
 
+tasks.withType(Test) {
+    testLogging {
+        exceptionFormat "full"
+        events "skipped", "passed", "failed"
+        showStandardStreams true
+        displayGranularity 2
+    }
+}
+
 preBuild.dependsOn filterAbout, copyTextFiles
 
 allprojects {
