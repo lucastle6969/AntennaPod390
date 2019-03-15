@@ -12,13 +12,13 @@ jobs:
       _JAVA_OPTIONS: "-Xms256m -Xmx1280m"
 
     steps:
-    - checkout
+      - checkout
 
-    - restore_cache:
-        keys:
-        - v1-android-{{ checksum "build.gradle" }}
-        # fallback to using the latest cache if no exact match is found
-        - v1-android-
+      - restore_cache:
+          keys:
+            - v1-android-{{ checksum "build.gradle" }}
+            # fallback to using the latest cache if no exact match is found
+            - v1-android-
 
       - run:
           Name: Core Tests
@@ -37,9 +37,9 @@ jobs:
           path: app/build/outputs/apk
           destination: apks
 
-    - save_cache:
-        paths:
-        - ~/.android
-        - ~/.gradle
-        - ~/android
-        key: v1-android-{{ checksum "build.gradle" }}
+      - save_cache:
+          paths:
+            - ~/.android
+            - ~/.gradle
+            - ~/android
+          key: v1-android-{{ checksum "build.gradle" }}
