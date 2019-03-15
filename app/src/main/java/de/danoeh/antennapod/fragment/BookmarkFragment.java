@@ -25,6 +25,7 @@ import de.danoeh.antennapod.activity.MainActivity;
 import de.danoeh.antennapod.activity.MediaplayerInfoActivity.MediaplayerInfoContentFragment;
 import de.danoeh.antennapod.adapter.BookmarkAdapter;
 import de.danoeh.antennapod.core.storage.DBReader;
+import de.danoeh.antennapod.core.storage.DBWriter;
 import de.danoeh.antennapod.core.util.playback.Playable;
 import de.danoeh.antennapod.core.util.playback.PlaybackController;
 import de.danoeh.antennapod.core.feed.Bookmark;
@@ -43,6 +44,7 @@ public class BookmarkFragment extends Fragment implements MediaplayerInfoContent
     RecyclerView recyclerView;
     BookmarkAdapter bookmarkAdapter;
     List<Bookmark> bookmarkList;
+    List<Bookmark> deletedBookmarkList;
 
     public static BookmarkFragment newInstance(Playable item) {
         BookmarkFragment bookmark = new BookmarkFragment();
@@ -72,9 +74,20 @@ public class BookmarkFragment extends Fragment implements MediaplayerInfoContent
         return retrievedBookmarks;
     }
 
-    public void deleteSelectedBookmarks(){
+    public void retrieveDeletedBookmarksFromAdapter(){
         //Retrieve the list of bookmarks to delete
         //Loop through them and delete them
+        if(bookmarkAdapter!= null && bookmarkAdapter.retrieveDeletedBookmarks() != null){
+            deletedBookmarkList = bookmarkAdapter.retrieveDeletedBookmarks();
+        }
+    }
+
+    public void deleteBookmarks(){
+        if(deletedBookmarkList!=null) {
+            for (Bookmark bookmark : deletedBookmarkList) {
+                DBWriter.deleteBookmark(bookmark);
+            }
+        }
     }
 
     @Override
@@ -85,6 +98,11 @@ public class BookmarkFragment extends Fragment implements MediaplayerInfoContent
         emptyView = root.findViewById(R.id.empty_view);
 
         bookmarkAdapter = new BookmarkAdapter(bookmarkList);
+
+//        retrieveDeletedBookmarksFromAdapter();
+//        deleteBookmarks();
+        bookmarkList = retrieveBookmarks();
+
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -179,5 +197,52 @@ public class BookmarkFragment extends Fragment implements MediaplayerInfoContent
                     }
                 });
 
+        MenuItem confirmCheck = menu.findItem(R.id.confirmDelete);
+        confirmCheck.setOnMenuItemClickListener(
+                new MenuItem.OnMenuItemClickListener() {
+
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        menu.findItem(R.id.add_to_favorites_item).setVisible(true);
+                        menu.findItem(R.id.audio_controls).setVisible(true);
+                        menu.findItem(R.id.confirmDelete).setVisible(false);
+                        menu.findItem(R.id.cancelDelete).setVisible(false);
+
+                        bookmarkAdapter.showCheckBox(false);
+
+//                        retrieveDeletedBookmarksFromAdapter();
+//                        deleteBookmarks();
+//                        bookmarkList = retrieveBookmarks();
+                        //Notify adapter to update view
+
+//                        bookmarkAdapter.updateLongDelete();
+                        bookmarkAdapter.notifyDataSetChanged();
+
+                        return true;
+                    }
+                });
+
+        MenuItem cancelDelete = menu.findItem(R.id.cancelDelete);
+        cancelDelete.setOnMenuItemClickListener(
+                new MenuItem.OnMenuItemClickListener() {
+
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        menu.findItem(R.id.add_to_favorites_item).setVisible(true);
+                        menu.findItem(R.id.audio_controls).setVisible(true);
+                        menu.findItem(R.id.confirmDelete).setVisible(false);
+                        menu.findItem(R.id.cancelDelete).setVisible(false);
+
+                        bookmarkAdapter.showCheckBox(false);
+
+//                        retrieveDeletedBookmarksFromAdapter();
+//                        deleteBookmarks();
+//                        bookmarkList = retrieveBookmarks();
+                        //Notify adapter to update view
+                        bookmarkAdapter.notifyDataSetChanged();
+
+                        return true;
+                    }
+                });
     }
 }
