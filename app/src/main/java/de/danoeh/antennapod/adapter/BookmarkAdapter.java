@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -64,13 +65,18 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.Bookma
                         }
                     });
 
-            deleteCheckbox.setOnClickListener(
-                    new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            addToDeletedBookmarkList(getAdapterPosition());
-                        }
-                    });
+            deleteCheckbox.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if(((CompoundButton) view).isChecked()){
+                        //If checkbox is selected, add the list of bookmarks to delete
+                        deletedBookmarkList.add(bookmarkList.get(getAdapterPosition()));
+                    } else {
+                        //If checkbox is unchecked, remove it from the list of bookmarks to delete
+                        deletedBookmarkList.remove(bookmarkList.get(getAdapterPosition()));
+                    }
+                }
+            });
 
         }
 
@@ -88,6 +94,7 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.Bookma
             }
 
             bookmarkList.removeAll(lstBookmark);
+            deletedBookmarkList.removeAll(lstBookmark);
         }
 
         public void addToDeletedBookmarkList(int id) {
@@ -213,11 +220,17 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.Bookma
         builder.setNegativeButton(R.string.cancel_label, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                showCheckBox(false);
+                notifyDataSetChanged();
                 dialog.cancel();
             }
         });
 
         builder.create().show();
+    }
+
+    public boolean hasBookmarksToDelete() {
+        return !deletedBookmarkList.isEmpty();
     }
 
     private void showEditBookmarkDialog(Bookmark bookmark, int position) {
