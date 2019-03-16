@@ -161,7 +161,7 @@ public class BookmarkFragment extends Fragment implements MediaplayerInfoContent
 
         super.onCreateOptionsMenu(menu, inflater);
 
-        MenuItem delete_button = menu.findItem(R.id.delete_bookmarks);
+        MenuItem delete_button = menu.findItem(R.id.deleteBookmarks);
 
         //Set a listener for when the user clicks on the trash can in the action bar
         delete_button.setOnMenuItemClickListener(

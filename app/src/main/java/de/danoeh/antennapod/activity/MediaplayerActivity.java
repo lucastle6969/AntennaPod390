@@ -365,7 +365,7 @@ public abstract class MediaplayerActivity extends CastEnabledActivity implements
 
         menu.findItem(R.id.confirmDelete).setVisible(false);
         menu.findItem(R.id.cancelDelete).setVisible(false);
-        menu.findItem(R.id.delete_bookmarks).setVisible(true);
+        menu.findItem(R.id.deleteBookmarks).setVisible(true);
 
 
         if (isFeedMedia) {
