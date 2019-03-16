@@ -420,22 +420,6 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
 
         assertTrue(solo.searchText("Internet"));
     }
-
-    public void testAddBookmark() {
-        openNavDrawer();
-        solo.clickOnText(solo.getString(R.string.podcast_of_the_day));
-        solo.waitForView(android.R.id.list);
-        solo.clickOnButton(solo.getString(R.string.go_to_podcast_page));
-        solo.waitForActivity(OnlineFeedViewActivity.class);
-        solo.waitForView(R.id.butSubscribe);
-        solo.waitForActivity(OnlineFeedViewActivity.class);
-        solo.clickOnButton(R.string.open_podcast);
-
-        solo.waitForView(R.id.gridView);
-
-        RecyclerView gridView = (RecyclerView) solo.getView(R.id.gridView);
-        ViewGroup viewGroup = (ViewGroup) gridView.getChildAt(0);
-
-    }
+    
 }
 
