@@ -11,23 +11,17 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ActionMode;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import de.danoeh.antennapod.R;
-import de.danoeh.antennapod.activity.MainActivity;
 import de.danoeh.antennapod.activity.MediaplayerInfoActivity.MediaplayerInfoContentFragment;
 import de.danoeh.antennapod.adapter.BookmarkAdapter;
 import de.danoeh.antennapod.core.storage.DBReader;
-import de.danoeh.antennapod.core.storage.DBWriter;
 import de.danoeh.antennapod.core.util.playback.Playable;
-import de.danoeh.antennapod.core.util.playback.PlaybackController;
 import de.danoeh.antennapod.core.feed.Bookmark;
 
 public class BookmarkFragment extends Fragment implements MediaplayerInfoContentFragment {
@@ -38,13 +32,11 @@ public class BookmarkFragment extends Fragment implements MediaplayerInfoContent
     private Playable media;
 
     private View root;
-    private PlaybackController controller;
 
     TextView emptyView;
     RecyclerView recyclerView;
     BookmarkAdapter bookmarkAdapter;
     List<Bookmark> bookmarkList;
-    List<Bookmark> deletedBookmarkList;
 
     public static BookmarkFragment newInstance(Playable item) {
         BookmarkFragment bookmark = new BookmarkFragment();
@@ -59,6 +51,8 @@ public class BookmarkFragment extends Fragment implements MediaplayerInfoContent
             Log.e(TAG, TAG + " was called without media");
         }
         setHasOptionsMenu(true);
+
+        //Retrieve bookmark from db
         bookmarkList = retrieveBookmarks();
 
     }
@@ -74,21 +68,6 @@ public class BookmarkFragment extends Fragment implements MediaplayerInfoContent
         return retrievedBookmarks;
     }
 
-    public void retrieveDeletedBookmarksFromAdapter(){
-        //Retrieve the list of bookmarks to delete
-        //Loop through them and delete them
-        if(bookmarkAdapter!= null && bookmarkAdapter.retrieveDeletedBookmarks() != null){
-            deletedBookmarkList = bookmarkAdapter.retrieveDeletedBookmarks();
-        }
-    }
-
-    public void deleteBookmarks(){
-        if(deletedBookmarkList!=null) {
-            for (Bookmark bookmark : deletedBookmarkList) {
-                DBWriter.deleteBookmark(bookmark);
-            }
-        }
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -99,8 +78,6 @@ public class BookmarkFragment extends Fragment implements MediaplayerInfoContent
 
         bookmarkAdapter = new BookmarkAdapter(bookmarkList);
 
-//        retrieveDeletedBookmarksFromAdapter();
-//        deleteBookmarks();
         bookmarkList = retrieveBookmarks();
 
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
@@ -160,10 +137,6 @@ public class BookmarkFragment extends Fragment implements MediaplayerInfoContent
         }
     }
 
-    public void setController(PlaybackController controller) {
-        this.controller = controller;
-    }
-
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         if(!isAdded()) {
@@ -180,17 +153,16 @@ public class BookmarkFragment extends Fragment implements MediaplayerInfoContent
 
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
-                        //Hide all icons in the action bar except for the trashcan and display confirm/delete icons
+                        //Hide all icons and only display confirm check or cancel button
                         menu.findItem(R.id.add_to_favorites_item).setVisible(false);
                         menu.findItem(R.id.set_sleeptimer_item).setVisible(false);
                         menu.findItem(R.id.audio_controls).setVisible(false);
                         menu.findItem(R.id.confirmDelete).setVisible(true);
                         menu.findItem(R.id.cancelDelete).setVisible(true);
 
-                        //Inform adapter to display checkboxes
                         bookmarkAdapter.showCheckBox(true);
 
-                        //Notify adapter to update view
+                        //Notify the adapter to update the view
                         bookmarkAdapter.notifyDataSetChanged();
 
                         return true;
@@ -200,7 +172,6 @@ public class BookmarkFragment extends Fragment implements MediaplayerInfoContent
         MenuItem confirmCheck = menu.findItem(R.id.confirmDelete);
         confirmCheck.setOnMenuItemClickListener(
                 new MenuItem.OnMenuItemClickListener() {
-
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
                         menu.findItem(R.id.add_to_favorites_item).setVisible(true);
@@ -209,13 +180,7 @@ public class BookmarkFragment extends Fragment implements MediaplayerInfoContent
                         menu.findItem(R.id.cancelDelete).setVisible(false);
 
                         bookmarkAdapter.showCheckBox(false);
-
-//                        retrieveDeletedBookmarksFromAdapter();
-//                        deleteBookmarks();
-//                        bookmarkList = retrieveBookmarks();
-                        //Notify adapter to update view
-
-//                        bookmarkAdapter.updateLongDelete();
+                        bookmarkAdapter.deleteCheckedBookmarks();
                         bookmarkAdapter.notifyDataSetChanged();
 
                         return true;
@@ -225,7 +190,6 @@ public class BookmarkFragment extends Fragment implements MediaplayerInfoContent
         MenuItem cancelDelete = menu.findItem(R.id.cancelDelete);
         cancelDelete.setOnMenuItemClickListener(
                 new MenuItem.OnMenuItemClickListener() {
-
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
                         menu.findItem(R.id.add_to_favorites_item).setVisible(true);
@@ -234,11 +198,6 @@ public class BookmarkFragment extends Fragment implements MediaplayerInfoContent
                         menu.findItem(R.id.cancelDelete).setVisible(false);
 
                         bookmarkAdapter.showCheckBox(false);
-
-//                        retrieveDeletedBookmarksFromAdapter();
-//                        deleteBookmarks();
-//                        bookmarkList = retrieveBookmarks();
-                        //Notify adapter to update view
                         bookmarkAdapter.notifyDataSetChanged();
 
                         return true;

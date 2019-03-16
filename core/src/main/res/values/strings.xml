@@ -112,7 +112,6 @@
     <string name="episode_cleanup_never">Never</string>
     <string name="episode_cleanup_queue_removal">When not in queue</string>
     <string name="episode_cleanup_after_listening">After finishing</string>
-    <string name="no_bookmark_available">No bookmarks have been set for this episode.</string>
     <string name="bookmark_header">Bookmark List</string>
     <string name="confirm_button">Confirm</string>
     <plurals name="episode_cleanup_days_after_listening">

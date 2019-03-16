@@ -1,7 +1,6 @@
 package de.danoeh.antennapod.adapter;
 
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,17 +13,14 @@ import java.util.List;
 
 import de.danoeh.antennapod.R;
 import de.danoeh.antennapod.core.feed.Bookmark;
+import de.danoeh.antennapod.core.storage.DBWriter;
 import de.danoeh.antennapod.core.util.DateUtils;
 
 public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.BookmarkViewHolder> {
     private List<Bookmark> bookmarkList;
     private List<Bookmark> deletedBookmarkList = new ArrayList<>();
-    private List<Integer> bookmarkToDelete = new ArrayList<>();
-
     private BookmarkViewHolder view;
-
     private boolean hideIcons = false;
-
 
     public class BookmarkViewHolder extends RecyclerView.ViewHolder {
         private TextView timestamp, bookmarkTitle;
@@ -44,7 +40,6 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.Bookma
                     new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-//                            Log.d("***********************", "Clicked!!!");
                             removeSingleBookmark(getAdapterPosition());
                         }
                     });
@@ -53,27 +48,32 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.Bookma
                     new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-//                            Log.d("***********************", "Clicked!!!");
-                            removeBookmarkList(getAdapterPosition());
-//                            notifyDataSetChanged();
+                            addToDeletedBookmarkList(getAdapterPosition());
                         }
                     });
 
         }
 
         public void removeSingleBookmark(int id) {
-//            Log.d("***********************", String.valueOf(id));
-//            Log.d("***********************", String.valueOf(bookmarkList.get(id).getTimestamp()));
-            deletedBookmarkList.add(bookmarkList.get(id));
+            Bookmark bookmarkToDelete = bookmarkList.get(id);
+            DBWriter.deleteBookmark(bookmarkToDelete);
+
+            //Remove the bookmark from list and notify adapter to update
             bookmarkList.remove(id);
             notifyItemRemoved(id);
         }
 
-        public void removeBookmarkList(int id) {
-            Log.d("***********************", String.valueOf(id));
+        public void removeCheckedBookmarks(List<Bookmark> lstBookmark){
+            for(Bookmark b: lstBookmark){
+                DBWriter.deleteBookmark(b);
+                notifyItemRemoved((int)b.getId());
+            }
+
+            bookmarkList.removeAll(lstBookmark);
+        }
+
+        public void addToDeletedBookmarkList(int id) {
             deletedBookmarkList.add(bookmarkList.get(id));
-            bookmarkToDelete.add(id);
-//            notifyItemRemoved(id);
         }
     }
 
@@ -114,12 +114,6 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.Bookma
             holder.editImg.setVisibility(View.GONE);
             holder.playImg.setVisibility(View.GONE);
         }
-
-//        if(bookmarkToDelete != null && bookmarkToDelete.contains(position)){
-//            Log.d("************* Deleting", String.valueOf(position));
-//            bookmarkList.remove(position);
-//            notifyItemRemoved(position);
-//        }
     }
 
     @Override
@@ -131,15 +125,7 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.Bookma
         hideIcons = bool;
     }
 
-    public List<Bookmark> retrieveDeletedBookmarks(){
-        Log.d("************", "retrieveDeletedBookmarks()");
-        return deletedBookmarkList;
-    }
-
-    public void updateLongDelete(){
-        for (Integer id: bookmarkToDelete){
-            bookmarkList.remove(id);
-            notifyItemRemoved(id);
-        }
+    public void deleteCheckedBookmarks(){
+        this.view.removeCheckedBookmarks(deletedBookmarkList);
     }
 }

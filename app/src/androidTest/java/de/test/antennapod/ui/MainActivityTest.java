@@ -2,6 +2,7 @@ package de.test.antennapod.ui;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.support.v7.widget.RecyclerView;
 import android.test.ActivityInstrumentationTestCase2;
 import android.test.FlakyTest;
 import android.view.View;
@@ -418,6 +419,23 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
         solo.waitForView(R.id.txtvEpisodes);
 
         assertTrue(solo.searchText("Internet"));
+    }
+
+    public void testAddBookmark() {
+        openNavDrawer();
+        solo.clickOnText(solo.getString(R.string.podcast_of_the_day));
+        solo.waitForView(android.R.id.list);
+        solo.clickOnButton(solo.getString(R.string.go_to_podcast_page));
+        solo.waitForActivity(OnlineFeedViewActivity.class);
+        solo.waitForView(R.id.butSubscribe);
+        solo.waitForActivity(OnlineFeedViewActivity.class);
+        solo.clickOnButton(R.string.open_podcast);
+
+        solo.waitForView(R.id.gridView);
+
+        RecyclerView gridView = (RecyclerView) solo.getView(R.id.gridView);
+        ViewGroup viewGroup = (ViewGroup) gridView.getChildAt(0);
+
     }
 }
 
