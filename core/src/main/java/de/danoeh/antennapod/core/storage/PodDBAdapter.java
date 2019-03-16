@@ -778,8 +778,13 @@ public class PodDBAdapter {
      * @return the id of the entry
      */
     private long deleteBookmark(Bookmark bookmark) {
-        db.delete(TABLE_NAME_BOOKMARKS, KEY_ID + "=?",
-                new String[]{String.valueOf(bookmark.getId())});
+        ContentValues values = new ContentValues();
+        values.put(KEY_BOOKMARK_TITLE, bookmark.getTitle());
+        values.put(KEY_BOOKMARK_TIMESTAMP, bookmark.getTimestamp());
+        values.put(KEY_BOOKMARK_UID, bookmark.getUid());
+        values.put(KEY_BOOKMARK_PODCAST, bookmark.getPodcastTitle());
+        db.delete(TABLE_NAME_BOOKMARKS,KEY_BOOKMARK_PODCAST + "=? AND " + KEY_BOOKMARK_UID + "=?",
+                new String[]{bookmark.getPodcastTitle(), bookmark.getUid()});
         return bookmark.getId();
     }
 

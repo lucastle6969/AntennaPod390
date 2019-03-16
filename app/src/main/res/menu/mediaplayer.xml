@@ -3,33 +3,11 @@
       xmlns:custom="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/deleteBookmarks"
-        android:icon="@drawable/ic_delete_grey600_24dp"
-        android:title="@string/delete_bookmarks"
-        custom:showAsAction="always">
-    </item>
-
-    <item
-        android:id="@+id/confirmDelete"
-        android:icon="@drawable/ic_done_grey600_24dp"
-        android:title="@string/delete_bookmarks"
-        custom:showAsAction="always">
-    </item>
-
-    <item
-        android:id="@+id/cancelDelete"
-        android:icon="@drawable/ic_dialog_close_light"
-        android:title="@string/delete_bookmarks"
-        custom:showAsAction="always">
-    </item>
-
-    <item
         android:id="@+id/add_to_favorites_item"
         android:icon="?attr/ic_fav"
         android:title="@string/add_to_favorite_label"
         custom:showAsAction="always">
     </item>
-
     <item
         android:id="@+id/remove_from_favorites_item"
         android:icon="?attr/ic_unfav"
