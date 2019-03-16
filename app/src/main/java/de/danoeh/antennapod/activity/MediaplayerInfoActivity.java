@@ -32,6 +32,7 @@ import android.widget.Toast;
 import com.viewpagerindicator.CirclePageIndicator;
 
 import java.util.List;
+import java.util.concurrent.Future;
 
 import de.danoeh.antennapod.R;
 import de.danoeh.antennapod.adapter.ChaptersListAdapter;
@@ -39,6 +40,7 @@ import de.danoeh.antennapod.adapter.NavListAdapter;
 import de.danoeh.antennapod.core.asynctask.FeedRemover;
 import de.danoeh.antennapod.core.dialog.ConfirmationDialog;
 import de.danoeh.antennapod.core.event.MessageEvent;
+import de.danoeh.antennapod.core.feed.Bookmark;
 import de.danoeh.antennapod.core.feed.EventDistributor;
 import de.danoeh.antennapod.core.feed.Feed;
 import de.danoeh.antennapod.core.feed.FeedMedia;
@@ -289,6 +291,14 @@ public abstract class MediaplayerInfoActivity extends MediaplayerActivity implem
         pager.onSaveInstanceState();
 
         navList.post(this::supportStartPostponedEnterTransition);
+    }
+
+    @Override
+    void setNewBookmark(String title, int timestamp, String podcastTitle, String episodeId) {
+        Future<?> task = DBWriter.setBookmark(new Bookmark(0, title, timestamp, podcastTitle, episodeId));
+        while(!task.isDone()) { /* Wait until the bookmark has been inserted into DB before updating adapter */ }
+        BookmarkFragment bookmarkFragment = (BookmarkFragment) pagerAdapter.getItem(POS_BOOKMARKS);
+        bookmarkFragment.updateAdapter();
     }
 
     @Override
