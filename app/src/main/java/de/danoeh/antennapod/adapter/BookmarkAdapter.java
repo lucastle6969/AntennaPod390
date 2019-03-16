@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.DialogInterface;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -58,9 +59,9 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.Bookma
                 @Override
                 public void onClick(View view) {
                     if(((CompoundButton) view).isChecked()){
-                        addToDeletedBookmarkList(getAdapterPosition());
+                        deletedBookmarkList.add(bookmarkList.get(getAdapterPosition()));
                     } else {
-                        removeFromDeletedBookmarkList(getAdapterPosition());
+                        deletedBookmarkList.remove(bookmarkList.get(getAdapterPosition()));
                     }
                 }
             });
@@ -83,13 +84,6 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.Bookma
             bookmarkList.removeAll(lstBookmark);
         }
 
-        public void addToDeletedBookmarkList(int id) {
-            deletedBookmarkList.add(bookmarkList.get(id));
-        }
-
-        public void removeFromDeletedBookmarkList(int id) {
-            deletedBookmarkList.remove(bookmarkList.get(id));
-        }
     }
 
     public void setContext(Activity context) {
@@ -208,7 +202,7 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.Bookma
         builder.create().show();
     }
 
-    public boolean manyBookmarksToDelete(){
-        return deletedBookmarkList.size() != 0;
+    public boolean hasBookmarksToDelete(){
+        return !deletedBookmarkList.isEmpty();
     }
 }
