@@ -82,7 +82,7 @@ public class BookmarkFragment extends Fragment implements MediaplayerInfoContent
         recyclerView = root.findViewById(R.id.bookmarkList);
         emptyView = root.findViewById(R.id.empty_view);
 
-        bookmarkAdapter = new BookmarkAdapter(bookmarkList);
+        bookmarkAdapter = new BookmarkAdapter(bookmarkList, controller);
         bookmarkAdapter.setContext(this.getActivity());
 
         bookmarkList = retrieveBookmarks();

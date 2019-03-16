@@ -2,6 +2,7 @@ package de.danoeh.antennapod.adapter;
 
 import android.app.Activity;
 import android.content.DialogInterface;
+import android.drm.DrmStore;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
@@ -21,6 +22,7 @@ import de.danoeh.antennapod.R;
 import de.danoeh.antennapod.core.feed.Bookmark;
 import de.danoeh.antennapod.core.storage.DBWriter;
 import de.danoeh.antennapod.core.util.DateUtils;
+import de.danoeh.antennapod.core.util.playback.PlaybackController;
 
 public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.BookmarkViewHolder> {
     private List<Bookmark> bookmarkList;
@@ -31,11 +33,13 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.Bookma
 
     private Activity context;
 
+    private PlaybackController controller;
+
     public class BookmarkViewHolder extends RecyclerView.ViewHolder {
         private TextView txtTimestamp, bookmarkTitle;
         private ImageView playImg, editImg, deleteImg;
         private CheckBox deleteCheckbox;
-        private int timestamp = 0;
+        private int timestamp;
 
         public BookmarkViewHolder(View view) {
             super(view);
@@ -45,6 +49,7 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.Bookma
             deleteImg = view.findViewById(R.id.imgBookmarkDelete);
             deleteCheckbox = view.findViewById(R.id.bookmarkCheckBox);
             editImg = view.findViewById(R.id.imgBookmarkEdit);
+            timestamp = 0;
 
             deleteImg.setOnClickListener(
                     new View.OnClickListener() {
@@ -64,6 +69,13 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.Bookma
                         //If checkbox is unchecked, remove it from the list of bookmarks to delete
                         deletedBookmarkList.remove(bookmarkList.get(getAdapterPosition()));
                     }
+                }
+            });
+
+            playImg.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    controller.seekTo(timestamp);
                 }
             });
 
@@ -93,8 +105,9 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.Bookma
     }
 
 
-    public BookmarkAdapter(List<Bookmark> bookmarkList) {
+    public BookmarkAdapter(List<Bookmark> bookmarkList, PlaybackController controller) {
         this.bookmarkList = bookmarkList;
+        this.controller = controller;
     }
 
     @Override
