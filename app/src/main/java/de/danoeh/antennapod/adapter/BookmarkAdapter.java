@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -53,13 +54,16 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.Bookma
                         }
                     });
 
-            deleteCheckbox.setOnClickListener(
-                    new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            addToDeletedBookmarkList(getAdapterPosition());
-                        }
-                    });
+            deleteCheckbox.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if(((CompoundButton) view).isChecked()){
+                        addToDeletedBookmarkList(getAdapterPosition());
+                    } else {
+                        removeFromDeletedBookmarkList(getAdapterPosition());
+                    }
+                }
+            });
 
         }
 
@@ -81,6 +85,10 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.Bookma
 
         public void addToDeletedBookmarkList(int id) {
             deletedBookmarkList.add(bookmarkList.get(id));
+        }
+
+        public void removeFromDeletedBookmarkList(int id) {
+            deletedBookmarkList.remove(bookmarkList.get(id));
         }
     }
 
@@ -198,5 +206,9 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.Bookma
         });
 
         builder.create().show();
+    }
+
+    public boolean manyBookmarksToDelete(){
+        return deletedBookmarkList.size() != 0;
     }
 }

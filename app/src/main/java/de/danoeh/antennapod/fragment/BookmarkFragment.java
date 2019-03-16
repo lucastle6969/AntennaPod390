@@ -196,8 +196,11 @@ public class BookmarkFragment extends Fragment implements MediaplayerInfoContent
                         menu.findItem(R.id.confirmDelete).setVisible(false);
                         menu.findItem(R.id.cancelDelete).setVisible(false);
 
-                        //Display a dialog to confirm
-                        showDeleteBookmarkDialog();
+                        //Only display the dialog if there are bookmarks to delete
+                        if(bookmarkAdapter.manyBookmarksToDelete()) {
+                            //Display a dialog to confirm
+                            showDeleteBookmarkDialog();
+                        }
 
                         return true;
                     }
