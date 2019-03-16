@@ -132,6 +132,10 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.Bookma
         return bookmarkList.size();
     }
 
+    public void setBookmarkList(List<Bookmark> bookmarkList) {
+        this.bookmarkList = bookmarkList;
+    }
+
     public void showCheckBox(boolean bool){
         hideIcons = bool;
     }

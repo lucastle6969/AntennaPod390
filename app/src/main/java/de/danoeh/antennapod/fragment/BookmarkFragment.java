@@ -104,6 +104,12 @@ public class BookmarkFragment extends Fragment implements MediaplayerInfoContent
         return root;
     }
 
+    public void updateAdapter() {
+        bookmarkList = DBReader.getBookmarksWithTitleAndUID(media.getFeedTitle(), media.getIdentifier().toString());
+        bookmarkAdapter.setBookmarkList(bookmarkList);
+        bookmarkAdapter.notifyDataSetChanged();
+    }
+
     //For logging purposes (do not remove)
     private void loadMediaInfo() {
         if (media != null) {
