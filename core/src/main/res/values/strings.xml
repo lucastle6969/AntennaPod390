@@ -126,6 +126,9 @@
     <string name="no_bookmark_available">No bookmarks have been set for this episode.</string>
     <string name="delete_single_bookmark_confirmation">Are you sure you want to delete this bookmark?</string>
     <string name="delete_multiple_bookmark_confirmation">Are you sure you want to delete these bookmarks?</string>
+    <string name="edit_bookmark_header">Edit Bookmark</string>
+    <string name="cancel_edit_bookmark_button">Cancel</string>
+    <string name="save_edit_bookmark_button">Save Changes</string>
 
     <!-- 'Add Feed' Activity labels -->
     <string name="feedurl_label">Feed URL</string>
