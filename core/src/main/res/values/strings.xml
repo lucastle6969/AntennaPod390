@@ -112,13 +112,20 @@
     <string name="episode_cleanup_never">Never</string>
     <string name="episode_cleanup_queue_removal">When not in queue</string>
     <string name="episode_cleanup_after_listening">After finishing</string>
-    <string name="no_bookmark_available">No bookmarks have been set for this episode.</string>
     <string name="bookmark_header">Bookmark List</string>
     <string name="confirm_button">Confirm</string>
     <plurals name="episode_cleanup_days_after_listening">
         <item quantity="one">1 day after finishing</item>
         <item quantity="other">%d days after finishing</item>
     </plurals>
+
+    <!-- Bookmark labels -->
+    <string name="bookmark_label">Bookmark</string>
+    <string name="bookmark_title">Bookmarks</string>
+    <string name="bookmark_alert_title">Set a bookmark</string>
+    <string name="no_bookmark_available">No bookmarks have been set for this episode.</string>
+    <string name="delete_single_bookmark_confirmation">Are you sure you want to delete this bookmark?</string>
+    <string name="delete_multiple_bookmark_confirmation">Are you sure you want to delete these bookmarks?</string>
 
     <!-- 'Add Feed' Activity labels -->
     <string name="feedurl_label">Feed URL</string>

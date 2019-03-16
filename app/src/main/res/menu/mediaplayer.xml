@@ -3,7 +3,7 @@
       xmlns:custom="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/delete_bookmarks"
+        android:id="@+id/deleteBookmarks"
         android:icon="@drawable/ic_delete_grey600_24dp"
         android:title="@string/delete_bookmarks"
         custom:showAsAction="always">
