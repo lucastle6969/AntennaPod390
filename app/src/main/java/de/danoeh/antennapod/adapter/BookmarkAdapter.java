@@ -1,11 +1,16 @@
 package de.danoeh.antennapod.adapter;
 
+import android.app.Activity;
+import android.content.DialogInterface;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -19,8 +24,12 @@ import de.danoeh.antennapod.core.util.DateUtils;
 public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.BookmarkViewHolder> {
     private List<Bookmark> bookmarkList;
     private List<Bookmark> deletedBookmarkList = new ArrayList<>();
+
     private BookmarkViewHolder view;
+
     private boolean hideIcons = false;
+
+    private Activity context;
 
     public class BookmarkViewHolder extends RecyclerView.ViewHolder {
         private TextView timestamp, bookmarkTitle;
@@ -54,13 +63,11 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.Bookma
 
         }
 
-        public void removeSingleBookmark(int id) {
-            Bookmark bookmarkToDelete = bookmarkList.get(id);
-            DBWriter.deleteBookmark(bookmarkToDelete);
+        public void removeSingleBookmark(int position) {
+            Bookmark bookmarkToDelete = bookmarkList.get(position);
 
-            //Remove the bookmark from list and notify adapter to update
-            bookmarkList.remove(id);
-            notifyItemRemoved(id);
+            //Display dialog to confirm deletion
+            showDeleteSingleBookmarkDialog(bookmarkToDelete, position);
         }
 
         public void removeCheckedBookmarks(List<Bookmark> lstBookmark){
@@ -75,6 +82,10 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.Bookma
         public void addToDeletedBookmarkList(int id) {
             deletedBookmarkList.add(bookmarkList.get(id));
         }
+    }
+
+    public void setContext(Activity context) {
+        this.context = context;
     }
 
 
@@ -127,5 +138,61 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.Bookma
 
     public void deleteCheckedBookmarks(){
         this.view.removeCheckedBookmarks(deletedBookmarkList);
+    }
+
+    private void showDeleteSingleBookmarkDialog(Bookmark bookmark, int position) {
+
+        //Get information to display
+        String podcastTitle = bookmark.getPodcastTitle();
+        String episodeTitle = bookmark.getTitle();
+        int timestamp = bookmark.getTimestamp();
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle(R.string.delete_single_bookmark_confirmation);
+
+        LinearLayout layout = new LinearLayout(context);
+        layout.setOrientation(LinearLayout.VERTICAL);
+        layout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.FILL_PARENT));
+
+        //Set podcast title
+        final TextView titleView = new TextView(context);
+        titleView.setText(podcastTitle);
+        titleView.setPadding(50, 50, 50, 10);
+        layout.addView(titleView);
+
+        //Set episode title
+        final TextView episodeTitleView = new TextView(context);
+        episodeTitleView.setText(episodeTitle);
+        episodeTitleView.setPadding(50, 10, 50, 50);
+        layout.addView(episodeTitleView);
+
+        //Set time
+        final TextView timestampView = new TextView(context);
+        timestampView.setGravity(Gravity.CENTER_HORIZONTAL);
+        timestampView.setText(DateUtils.formatTimestamp(timestamp));
+        timestampView.setPadding(50, 10, 50, 50);
+        layout.addView(timestampView);
+
+        builder.setView(layout);
+
+        builder.setPositiveButton(R.string.confirm_label, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                //Delete in the db
+                DBWriter.deleteBookmark(bookmark);
+
+                //Remove the bookmark from list and notify adapter to update
+                bookmarkList.remove(position);
+                notifyItemRemoved(position);
+            }
+        });
+        builder.setNegativeButton(R.string.cancel_label, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        builder.create().show();
     }
 }

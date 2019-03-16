@@ -1,7 +1,9 @@
 package de.danoeh.antennapod.fragment;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -12,6 +14,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -23,6 +26,7 @@ import de.danoeh.antennapod.adapter.BookmarkAdapter;
 import de.danoeh.antennapod.core.storage.DBReader;
 import de.danoeh.antennapod.core.util.playback.Playable;
 import de.danoeh.antennapod.core.feed.Bookmark;
+import de.danoeh.antennapod.core.util.playback.PlaybackController;
 
 public class BookmarkFragment extends Fragment implements MediaplayerInfoContentFragment {
 
@@ -32,6 +36,7 @@ public class BookmarkFragment extends Fragment implements MediaplayerInfoContent
     private Playable media;
 
     private View root;
+    private PlaybackController controller;
 
     TextView emptyView;
     RecyclerView recyclerView;
@@ -77,6 +82,7 @@ public class BookmarkFragment extends Fragment implements MediaplayerInfoContent
         emptyView = root.findViewById(R.id.empty_view);
 
         bookmarkAdapter = new BookmarkAdapter(bookmarkList);
+        bookmarkAdapter.setContext(this.getActivity());
 
         bookmarkList = retrieveBookmarks();
 
@@ -105,6 +111,10 @@ public class BookmarkFragment extends Fragment implements MediaplayerInfoContent
         } else {
             Log.w(TAG, "loadMediaInfo was called while media was null");
         }
+    }
+
+    public void setController(PlaybackController controller) {
+        this.controller = controller;
     }
 
     @Override
@@ -174,14 +184,14 @@ public class BookmarkFragment extends Fragment implements MediaplayerInfoContent
                 new MenuItem.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
+                        //Displays the other icons again
                         menu.findItem(R.id.add_to_favorites_item).setVisible(true);
                         menu.findItem(R.id.audio_controls).setVisible(true);
                         menu.findItem(R.id.confirmDelete).setVisible(false);
                         menu.findItem(R.id.cancelDelete).setVisible(false);
 
-                        bookmarkAdapter.showCheckBox(false);
-                        bookmarkAdapter.deleteCheckedBookmarks();
-                        bookmarkAdapter.notifyDataSetChanged();
+                        //Display a dialog to confirm
+                        showDeleteBookmarkDialog();
 
                         return true;
                     }
@@ -203,5 +213,35 @@ public class BookmarkFragment extends Fragment implements MediaplayerInfoContent
                         return true;
                     }
                 });
+    }
+
+    private void showDeleteBookmarkDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this.getActivity());
+        builder.setTitle(R.string.delete_multiple_bookmark_confirmation);
+
+        LinearLayout layout = new LinearLayout(this.getContext());
+        layout.setOrientation(LinearLayout.VERTICAL);
+        layout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.FILL_PARENT));
+
+        builder.setView(layout);
+
+        builder.setPositiveButton(R.string.confirm_label, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                bookmarkAdapter.showCheckBox(false);
+
+                //Notify adapter to delete the selection bookmarks and update view
+                bookmarkAdapter.deleteCheckedBookmarks();
+                bookmarkAdapter.notifyDataSetChanged();
+            }
+        });
+        builder.setNegativeButton(R.string.cancel_label, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        builder.create().show();
     }
 }
