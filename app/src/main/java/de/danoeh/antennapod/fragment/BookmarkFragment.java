@@ -196,8 +196,15 @@ public class BookmarkFragment extends Fragment implements MediaplayerInfoContent
                         menu.findItem(R.id.confirmDelete).setVisible(false);
                         menu.findItem(R.id.cancelDelete).setVisible(false);
 
-                        //Display a dialog to confirm
-                        showDeleteBookmarkDialog();
+                        //Only display the dialog if there are bookmarks to delete
+                        if(bookmarkAdapter.hasBookmarksToDelete()) {
+                            //Display a dialog to confirm
+                            showDeleteBookmarkDialog();
+                        }
+                        else{
+                            bookmarkAdapter.showCheckBox(false);
+                            bookmarkAdapter.notifyDataSetChanged();
+                        }
 
                         return true;
                     }
@@ -244,6 +251,8 @@ public class BookmarkFragment extends Fragment implements MediaplayerInfoContent
         builder.setNegativeButton(R.string.cancel_label, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                bookmarkAdapter.showCheckBox(false);
+                bookmarkAdapter.notifyDataSetChanged();
                 dialog.cancel();
             }
         });
