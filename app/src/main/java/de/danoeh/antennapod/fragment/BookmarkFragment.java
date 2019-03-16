@@ -201,6 +201,10 @@ public class BookmarkFragment extends Fragment implements MediaplayerInfoContent
                             //Display a dialog to confirm
                             showDeleteBookmarkDialog();
                         }
+                        else{
+                            bookmarkAdapter.showCheckBox(false);
+                            bookmarkAdapter.notifyDataSetChanged();
+                        }
 
                         return true;
                     }
@@ -247,6 +251,8 @@ public class BookmarkFragment extends Fragment implements MediaplayerInfoContent
         builder.setNegativeButton(R.string.cancel_label, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                bookmarkAdapter.showCheckBox(false);
+                bookmarkAdapter.notifyDataSetChanged();
                 dialog.cancel();
             }
         });

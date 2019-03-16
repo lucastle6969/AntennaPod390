@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.DialogInterface;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -59,8 +58,10 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.Bookma
                 @Override
                 public void onClick(View view) {
                     if(((CompoundButton) view).isChecked()){
+                        //If checkbox is selected, add the list of bookmarks to delete
                         deletedBookmarkList.add(bookmarkList.get(getAdapterPosition()));
                     } else {
+                        //If checkbox is unchecked, remove it from the list of bookmarks to delete
                         deletedBookmarkList.remove(bookmarkList.get(getAdapterPosition()));
                     }
                 }
@@ -82,6 +83,7 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.Bookma
             }
 
             bookmarkList.removeAll(lstBookmark);
+            deletedBookmarkList.removeAll(lstBookmark);
         }
 
     }
@@ -195,6 +197,8 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.Bookma
         builder.setNegativeButton(R.string.cancel_label, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                showCheckBox(false);
+                notifyDataSetChanged();
                 dialog.cancel();
             }
         });
