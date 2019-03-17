@@ -23,6 +23,7 @@ import java.util.List;
 import de.danoeh.antennapod.R;
 import de.danoeh.antennapod.core.feed.Bookmark;
 import de.danoeh.antennapod.core.storage.DBWriter;
+import de.danoeh.antennapod.core.util.Converter;
 import de.danoeh.antennapod.core.util.DateUtils;
 import de.danoeh.antennapod.core.util.playback.PlaybackController;
 
@@ -147,7 +148,7 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.Bookma
     public void onBindViewHolder(BookmarkViewHolder holder, int position) {
         Bookmark bookmark = bookmarkList.get(position);
         holder.bookmarkTitle.setText(bookmark.getTitle());
-        holder.txtTimestamp.setText(DateUtils.formatTimestamp(bookmark.getTimestamp()));
+        holder.txtTimestamp.setText(Converter.getDurationStringLong(bookmark.getTimestamp()));
         holder.timestamp = bookmark.getTimestamp();
 
         holder.deleteImg.setImageResource(R.drawable.ic_delete_grey600_24dp);
