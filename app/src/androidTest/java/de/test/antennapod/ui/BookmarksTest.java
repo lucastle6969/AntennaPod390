@@ -98,7 +98,8 @@ public class BookmarksTest extends ActivityInstrumentationTestCase2<MainActivity
         ImageButton AddBookmarkButton = (ImageButton) solo.getView("butBookmark");
         solo.clickOnView(AddBookmarkButton);
         solo.waitForDialogToOpen();
-
+        
+        assertTrue(solo.searchText("Set a bookmark", true));
 
     }
 
