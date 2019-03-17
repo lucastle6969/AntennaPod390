@@ -21,8 +21,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.danoeh.antennapod.R;
+import de.danoeh.antennapod.activity.MediaplayerActivity;
 import de.danoeh.antennapod.activity.MediaplayerInfoActivity.MediaplayerInfoContentFragment;
 import de.danoeh.antennapod.adapter.BookmarkAdapter;
+import de.danoeh.antennapod.core.feed.Bookmark;
 import de.danoeh.antennapod.core.storage.DBReader;
 import de.danoeh.antennapod.core.util.playback.Playable;
 import de.danoeh.antennapod.core.feed.Bookmark;
@@ -59,7 +61,6 @@ public class BookmarkFragment extends Fragment implements MediaplayerInfoContent
 
         //Retrieve bookmark from db
         bookmarkList = retrieveBookmarks();
-
     }
 
 
@@ -81,7 +82,7 @@ public class BookmarkFragment extends Fragment implements MediaplayerInfoContent
         recyclerView = root.findViewById(R.id.bookmarkList);
         emptyView = root.findViewById(R.id.empty_view);
 
-        bookmarkAdapter = new BookmarkAdapter(bookmarkList);
+        bookmarkAdapter = new BookmarkAdapter(bookmarkList, controller);
         bookmarkAdapter.setContext(this.getActivity());
 
         bookmarkList = retrieveBookmarks();
@@ -105,9 +106,13 @@ public class BookmarkFragment extends Fragment implements MediaplayerInfoContent
     }
 
     public void updateAdapter() {
-        bookmarkList = DBReader.getBookmarksWithTitleAndUID(media.getFeedTitle(), media.getIdentifier().toString());
-        bookmarkAdapter.setBookmarkList(bookmarkList);
-        bookmarkAdapter.notifyDataSetChanged();
+        bookmarkList = retrieveBookmarks();
+        if(bookmarkAdapter != null) {
+            recyclerView.setVisibility(View.VISIBLE);
+            emptyView.setVisibility(View.GONE);
+            bookmarkAdapter.setBookmarkList(bookmarkList);
+            bookmarkAdapter.notifyDataSetChanged();
+        }
     }
 
     //For logging purposes (do not remove)

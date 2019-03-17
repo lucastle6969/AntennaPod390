@@ -2,6 +2,7 @@ package de.danoeh.antennapod.adapter;
 
 import android.app.Activity;
 import android.content.DialogInterface;
+import android.drm.DrmStore;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
@@ -22,31 +23,36 @@ import java.util.List;
 import de.danoeh.antennapod.R;
 import de.danoeh.antennapod.core.feed.Bookmark;
 import de.danoeh.antennapod.core.storage.DBWriter;
+import de.danoeh.antennapod.core.util.Converter;
 import de.danoeh.antennapod.core.util.DateUtils;
+import de.danoeh.antennapod.core.util.playback.PlaybackController;
 
 public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.BookmarkViewHolder> {
     private List<Bookmark> bookmarkList;
     private List<Bookmark> deletedBookmarkList = new ArrayList<>();
-
     private BookmarkViewHolder view;
 
     private boolean hideIcons = false;
 
     private Activity context;
 
+    private PlaybackController controller;
+
     public class BookmarkViewHolder extends RecyclerView.ViewHolder {
-        private TextView timestamp, bookmarkTitle;
+        private TextView txtTimestamp, bookmarkTitle;
         private ImageView playImg, editImg, deleteImg;
         private CheckBox deleteCheckbox;
+        private int timestamp;
 
         public BookmarkViewHolder(View view) {
             super(view);
-            timestamp = view.findViewById(R.id.txtvTimestamp);
+            txtTimestamp = view.findViewById(R.id.txtvTimestamp);
             bookmarkTitle = view.findViewById(R.id.txtvBookmarkTitle);
             playImg = view.findViewById(R.id.imgBookmarkPlay);
             deleteImg = view.findViewById(R.id.imgBookmarkDelete);
             deleteCheckbox = view.findViewById(R.id.bookmarkCheckBox);
             editImg = view.findViewById(R.id.imgBookmarkEdit);
+            timestamp = 0;
 
             editImg.setOnClickListener(
                     new View.OnClickListener(){
@@ -75,6 +81,13 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.Bookma
                         //If checkbox is unchecked, remove it from the list of bookmarks to delete
                         deletedBookmarkList.remove(bookmarkList.get(getAdapterPosition()));
                     }
+                }
+            });
+
+            playImg.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    controller.seekTo(timestamp);
                 }
             });
 
@@ -116,8 +129,9 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.Bookma
     }
 
 
-    public BookmarkAdapter(List<Bookmark> bookmarkList) {
+    public BookmarkAdapter(List<Bookmark> bookmarkList, PlaybackController controller) {
         this.bookmarkList = bookmarkList;
+        this.controller = controller;
     }
 
     @Override
@@ -134,11 +148,12 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.Bookma
     public void onBindViewHolder(BookmarkViewHolder holder, int position) {
         Bookmark bookmark = bookmarkList.get(position);
         holder.bookmarkTitle.setText(bookmark.getTitle());
-        holder.timestamp.setText(DateUtils.formatTimestamp(bookmark.getTimestamp()));
+        holder.txtTimestamp.setText(Converter.getDurationStringLong(bookmark.getTimestamp()));
+        holder.timestamp = bookmark.getTimestamp();
 
         holder.deleteImg.setImageResource(R.drawable.ic_delete_grey600_24dp);
         holder.editImg.setImageResource(R.drawable.ic_sort_grey600_24dp);
-        holder.playImg.setImageResource(R.drawable.ic_play_arrow_grey600_24dp);
+        holder.playImg.setImageResource(R.drawable.ic_skip_grey600_36dp);
 
         if(!hideIcons) {
             holder.deleteCheckbox.setVisibility(View.GONE);
