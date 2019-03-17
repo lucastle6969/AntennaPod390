@@ -108,6 +108,8 @@ public class BookmarkFragment extends Fragment implements MediaplayerInfoContent
     public void updateAdapter() {
         bookmarkList = retrieveBookmarks();
         if(bookmarkAdapter != null) {
+            recyclerView.setVisibility(View.VISIBLE);
+            emptyView.setVisibility(View.GONE);
             bookmarkAdapter.setBookmarkList(bookmarkList);
             bookmarkAdapter.notifyDataSetChanged();
         }
