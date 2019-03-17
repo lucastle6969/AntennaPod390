@@ -31,7 +31,7 @@ public class BookmarksTest extends ActivityInstrumentationTestCase2<MainActivity
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        Context context = getInstrumentation().getTargetContext();
+        this.context = getInstrumentation().getTargetContext();
         uiTestUtils = new UITestUtils(context);
         uiTestUtils.setup();
 
@@ -70,6 +70,33 @@ public class BookmarksTest extends ActivityInstrumentationTestCase2<MainActivity
 
     private String getActionbarTitle() {
         return ((MainActivity) solo.getCurrentActivity()).getSupportActionBar().getTitle().toString();
+    }
+
+    public void testBookmarkButton() {
+        String query = "Hello Internet";
+
+        openNavDrawer();
+        solo.clickOnText("Add Podcast");
+        solo.waitForDialogToOpen();
+        solo.waitForView(R.id.sliding_tabs);
+        solo.enterText(0, query);
+        solo.sendKey(Solo.ENTER);
+        solo.waitForView(R.id.gridView);
+
+        solo.clickOnText("Educational");
+        solo.waitForDialogToOpen();
+        solo.clickOnText("Subscribe");
+        solo.sleep(5000);
+        solo.clickOnText("Open Podcast");
+        solo.waitForDialogToOpen();
+        solo.clickOnText("Twelve Drummers Drumming");
+        solo.waitForDialogToOpen();
+        solo.clickOnText("Stream");
+        solo.sleep(6000);
+        solo.clickOnButton(R.id.butBookmark);
+        solo.waitForDialogToOpen();
+
+
     }
 
 }
