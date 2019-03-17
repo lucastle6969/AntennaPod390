@@ -6,6 +6,8 @@ import android.test.ActivityInstrumentationTestCase2;
 
 import android.content.Context;
 import android.view.View;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.robotium.solo.Solo;
@@ -93,7 +95,8 @@ public class BookmarksTest extends ActivityInstrumentationTestCase2<MainActivity
         solo.waitForDialogToOpen();
         solo.clickOnText("Stream");
         solo.sleep(6000);
-        solo.clickOnButton(R.id.butBookmark);
+        ImageButton AddBookmarkButton = (ImageButton) solo.getView("butBookmark");
+        solo.clickOnView(AddBookmarkButton);
         solo.waitForDialogToOpen();
 
 
