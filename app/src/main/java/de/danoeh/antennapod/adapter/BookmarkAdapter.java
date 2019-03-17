@@ -153,7 +153,7 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.Bookma
 
         holder.deleteImg.setImageResource(R.drawable.ic_delete_grey600_24dp);
         holder.editImg.setImageResource(R.drawable.ic_sort_grey600_24dp);
-        holder.playImg.setImageResource(R.drawable.ic_play_arrow_grey600_24dp);
+        holder.playImg.setImageResource(R.drawable.ic_refresh_grey600_24dp);
 
         if(!hideIcons) {
             holder.deleteCheckbox.setVisibility(View.GONE);
