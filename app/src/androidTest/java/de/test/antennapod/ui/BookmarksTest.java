@@ -188,7 +188,7 @@ public class BookmarksTest extends ActivityInstrumentationTestCase2<MainActivity
     }
 
     public void testEditBookmark(){
-        selectAndAddBookmark();
+        selectAndClickOnBookmarkButton();
         solo.clickOnText("Confirm");
 
         scrollingToBookmarkTab();
