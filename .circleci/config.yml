@@ -21,6 +21,16 @@ jobs:
             - v1-android-
 
       - run:
+          Name: Static Analysis in Free Debug Build
+          command: |
+            ./gradlew lintFreeDebug
+
+      - run:
+          Name: Code Coverage in Free Debug Build
+          command: |
+            ./gradlew testFreeDebugUnitTestCoverage
+
+      - run:
           Name: Release Build Test
           # To build release, we need to create a temporary keystore that can be used to sign the app
           command: |
