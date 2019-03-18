@@ -7,7 +7,11 @@ import android.test.ActivityInstrumentationTestCase2;
 
 import android.content.Context;
 import android.view.Display;
+
+import android.widget.CheckBox;
+
 import android.widget.EditText;
+
 import android.widget.ImageButton;
 
 import com.robotium.solo.Solo;
@@ -71,13 +75,13 @@ public class BookmarksTest extends ActivityInstrumentationTestCase2<MainActivity
     }
 
     public void testBookmarkButton() {
-        selectAndAddBookmark();
+        selectAndClickOnBookmarkButton();
         assertTrue(solo.searchText("Set a bookmark", true));
 
     }
 
     public void testPlaybackButton() {
-        selectAndAddBookmark();
+        selectAndClickOnBookmarkButton();
         solo.clickOnText("Confirm");
 
         scrollingToBookmarkTab();
@@ -89,7 +93,55 @@ public class BookmarksTest extends ActivityInstrumentationTestCase2<MainActivity
         assertEquals(solo.getString(R.id.txtvTimestamp), solo.getString(R.id.txtvPosition));
     }
 
-    public void selectAndAddBookmark(){
+    public void testAddBookmark() {
+        selectAndClickOnBookmarkButton();
+        solo.clickOnText("Confirm");
+
+        scrollingToBookmarkTab();
+
+        //Verify if the first bookmark has been added
+        assertTrue(solo.searchText("Bookmark 1", true));
+    }
+
+    public void testSingleDeleteButton() {
+
+        selectAndClickOnBookmarkButton();
+        solo.clickOnText("Confirm");
+
+        scrollingToBookmarkTab();
+
+        ImageButton SingleDeleteBookmarkButton = (ImageButton) solo.getView("imgBookmarkDelete");
+        solo.clickOnView(SingleDeleteBookmarkButton);
+        solo.waitForDialogToOpen();
+        solo.clickOnText("Confirm");
+
+        //Verifies the bookmark has been deleted
+        assertFalse(solo.searchText("Bookmark 1", false));
+    }
+
+    public void testMultipleDeleteButton() {
+        selectAndClickOnBookmarkButton();
+
+        solo.clickOnText("Confirm");
+        solo.sleep(6000);
+        ImageButton AddBookmarkButton = (ImageButton) solo.getView("butBookmark");
+        solo.clickOnView(AddBookmarkButton);
+        solo.waitForDialogToOpen();
+        solo.clickOnText("Confirm");
+
+        scrollingToBookmarkTab();
+        solo.clickOnView(solo.getView(R.id.deleteBookmarks));
+        CheckBox deleteCheckbox = (CheckBox) solo.getView("bookmarkCheckBox");
+        solo.clickOnView(deleteCheckbox);
+        solo.clickOnView(solo.getView(R.id.confirmDelete));
+        solo.waitForDialogToOpen();
+        solo.clickOnText("Confirm");
+
+        assertFalse(solo.searchText("Bookmark 1", false));
+        assertTrue(solo.searchText("Bookmark 2", true));
+    }
+
+    public void selectAndClickOnBookmarkButton(){
         String query = "Hello Internet";
 
         openNavDrawer();
