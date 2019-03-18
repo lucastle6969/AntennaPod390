@@ -21,13 +21,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.danoeh.antennapod.R;
-import de.danoeh.antennapod.activity.MediaplayerActivity;
 import de.danoeh.antennapod.activity.MediaplayerInfoActivity.MediaplayerInfoContentFragment;
 import de.danoeh.antennapod.adapter.BookmarkAdapter;
 import de.danoeh.antennapod.core.feed.Bookmark;
 import de.danoeh.antennapod.core.storage.DBReader;
 import de.danoeh.antennapod.core.util.playback.Playable;
-import de.danoeh.antennapod.core.feed.Bookmark;
 import de.danoeh.antennapod.core.util.playback.PlaybackController;
 
 public class BookmarkFragment extends Fragment implements MediaplayerInfoContentFragment {
@@ -181,7 +179,7 @@ public class BookmarkFragment extends Fragment implements MediaplayerInfoContent
                         menu.findItem(R.id.confirmDelete).setVisible(true);
                         menu.findItem(R.id.cancelDelete).setVisible(true);
 
-                        bookmarkAdapter.showCheckBox(true);
+                        bookmarkAdapter.resetCheckbox(true);
 
                         //Notify the adapter to update the view
                         bookmarkAdapter.notifyDataSetChanged();
@@ -207,7 +205,7 @@ public class BookmarkFragment extends Fragment implements MediaplayerInfoContent
                             showDeleteBookmarkDialog();
                         }
                         else{
-                            bookmarkAdapter.showCheckBox(false);
+                            bookmarkAdapter.resetCheckbox(false);
                             bookmarkAdapter.notifyDataSetChanged();
                         }
 
@@ -225,7 +223,8 @@ public class BookmarkFragment extends Fragment implements MediaplayerInfoContent
                         menu.findItem(R.id.confirmDelete).setVisible(false);
                         menu.findItem(R.id.cancelDelete).setVisible(false);
 
-                        bookmarkAdapter.showCheckBox(false);
+                        bookmarkAdapter.resetCheckbox(false);
+                        bookmarkAdapter.clearDeletedBookmarkList();
                         bookmarkAdapter.notifyDataSetChanged();
 
                         return true;
@@ -246,7 +245,7 @@ public class BookmarkFragment extends Fragment implements MediaplayerInfoContent
         builder.setPositiveButton(R.string.confirm_label, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                bookmarkAdapter.showCheckBox(false);
+                bookmarkAdapter.resetCheckbox(false);
 
                 //Notify adapter to delete the selection bookmarks and update view
                 bookmarkAdapter.deleteCheckedBookmarks();
@@ -256,7 +255,8 @@ public class BookmarkFragment extends Fragment implements MediaplayerInfoContent
         builder.setNegativeButton(R.string.cancel_label, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                bookmarkAdapter.showCheckBox(false);
+                bookmarkAdapter.resetCheckbox(false);
+                bookmarkAdapter.clearDeletedBookmarkList();
                 bookmarkAdapter.notifyDataSetChanged();
                 dialog.cancel();
             }

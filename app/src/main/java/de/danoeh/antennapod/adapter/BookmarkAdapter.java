@@ -2,7 +2,6 @@ package de.danoeh.antennapod.adapter;
 
 import android.app.Activity;
 import android.content.DialogInterface;
-import android.drm.DrmStore;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
@@ -157,6 +156,7 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.Bookma
 
         if(!hideIcons) {
             holder.deleteCheckbox.setVisibility(View.GONE);
+            holder.deleteCheckbox.setChecked(false);
             holder.deleteImg.setVisibility(View.VISIBLE);
             holder.editImg.setVisibility(View.VISIBLE);
             holder.playImg.setVisibility(View.VISIBLE);
@@ -178,8 +178,13 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.Bookma
         this.bookmarkList = bookmarkList;
     }
 
-    public void showCheckBox(boolean bool){
+    public void resetCheckbox(boolean bool){
         hideIcons = bool;
+        this.view.deleteCheckbox.setChecked(false);
+    }
+
+    public void clearDeletedBookmarkList (){
+        this.deletedBookmarkList.clear();
     }
 
     public void deleteCheckedBookmarks(){
@@ -235,7 +240,7 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.Bookma
         builder.setNegativeButton(R.string.cancel_label, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                showCheckBox(false);
+                resetCheckbox(false);
                 notifyDataSetChanged();
                 dialog.cancel();
             }
