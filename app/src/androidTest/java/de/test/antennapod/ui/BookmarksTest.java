@@ -78,6 +78,25 @@ public class BookmarksTest extends ActivityInstrumentationTestCase2<MainActivity
     }
 
     public void testBookmarkButton() {
+        selectAndAddBookmark();
+        assertTrue(solo.searchText("Set a bookmark", true));
+
+    }
+
+    public void testPlaybackButton() {
+        selectAndAddBookmark();
+        solo.clickOnText("Confirm");
+
+        scrollingToBookmarkTab();
+
+        ImageButton PlaybackBookmarkButton = (ImageButton) solo.getView("imgBookmarkPlay");
+        solo.clickOnView(PlaybackBookmarkButton);
+        solo.waitForDialogToOpen();
+
+        assertEquals(solo.getString(R.id.txtvTimestamp), solo.getString(R.id.txtvPosition));
+    }
+
+    public void selectAndAddBookmark(){
         String query = "Hello Internet";
 
         openNavDrawer();
@@ -101,9 +120,26 @@ public class BookmarksTest extends ActivityInstrumentationTestCase2<MainActivity
         ImageButton AddBookmarkButton = (ImageButton) solo.getView("butBookmark");
         solo.clickOnView(AddBookmarkButton);
         solo.waitForDialogToOpen();
-        
-        assertTrue(solo.searchText("Set a bookmark", true));
+    }
 
+    public void scrollingToBookmarkTab(){
+        Display display = solo.getCurrentActivity().getWindowManager().getDefaultDisplay();
+        Point maxSize = new Point();
+        display.getSize(maxSize);
+        PointF startPoint1 = new PointF();
+        startPoint1.x = maxSize.x - 40;
+        startPoint1.y = maxSize.y/2;
+        PointF endPoint1 = new PointF();
+        endPoint1.x = 0;
+        endPoint1.y = maxSize.y/2;
+
+        solo.sleep(5000);
+        solo.drag(startPoint1.x, endPoint1.x, startPoint1.y, endPoint1.y, 4);
+        solo.sleep(5000);
+        solo.drag(startPoint1.x, endPoint1.x, startPoint1.y, endPoint1.y, 4);
+        solo.sleep(5000);
+        solo.drag(startPoint1.x, endPoint1.x, startPoint1.y, endPoint1.y, 4);
+        solo.sleep(5000);
     }
 
     public void testAddBookmark() {

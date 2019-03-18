@@ -294,8 +294,8 @@ public abstract class MediaplayerInfoActivity extends MediaplayerActivity implem
     }
 
     @Override
-    void setNewBookmark(String title, int timestamp, String podcastTitle, String episodeId) {
-        Future<?> task = DBWriter.setBookmark(new Bookmark(0, title, timestamp, podcastTitle, episodeId));
+    public void setNewBookmark(Bookmark bookmark) {
+        Future<?> task = DBWriter.setBookmark(bookmark);
         while(!task.isDone()) { /* Wait until the bookmark has been inserted into DB before updating adapter */ }
         BookmarkFragment bookmarkFragment = (BookmarkFragment) pagerAdapter.getItem(POS_BOOKMARKS);
         bookmarkFragment.updateAdapter();

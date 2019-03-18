@@ -69,6 +69,7 @@ import de.danoeh.antennapod.core.util.playback.MediaPlayerError;
 import de.danoeh.antennapod.core.util.playback.Playable;
 import de.danoeh.antennapod.core.util.playback.PlaybackController;
 import de.danoeh.antennapod.core.util.playback.PlaybackServiceStarter;
+import de.danoeh.antennapod.dialog.InsertBookmarkDialog;
 import de.danoeh.antennapod.dialog.SleepTimerDialog;
 import de.danoeh.antennapod.dialog.VariableSpeedDialog;
 import rx.Observable;
@@ -900,84 +901,23 @@ public abstract class MediaplayerActivity extends CastEnabledActivity implements
                     if (controller.getStatus() == PlayerStatus.PLAYING) {
                         onPlayPause();
                     }
-                    showSetBookmarkDialog();
+
+                    setupInsertDialog();
                 }
             });
         }
     }
 
-    private void showSetBookmarkDialog() {
+    private void setupInsertDialog() {
         if(controller == null)
             return;
 
-        Playable media = controller.getMedia();
-        String podcastTitle = media.getFeedTitle();
-        String episodeTitle = media.getEpisodeTitle();
-        timestamp = controller.getPosition();
-        if(timestamp == PlaybackService.INVALID_TIME){
-            // Assign txtvPosition time value if controller was unable to get timestamp
-            timestamp = Converter.durationStringLongToMs(txtvPosition.getText().toString());
-        }
-
-        String episodeId = media.getIdentifier().toString();
-
-        // Create alert dialog
-        AlertDialog.Builder builder = new AlertDialog.Builder(MediaplayerActivity.this);
-        builder.setTitle(R.string.bookmark_alert_title);
-
-        LinearLayout layout = new LinearLayout(this);
-        layout.setOrientation(LinearLayout.VERTICAL);
-        layout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.FILL_PARENT));
-
-        final TextView titleView = new TextView(this);
-        titleView.setText(podcastTitle);
-        titleView.setPadding(50, 50, 50, 10);
-        layout.addView(titleView);
-
-        final TextView episodeTitleView = new TextView(this);
-        episodeTitleView.setText(episodeTitle);
-        episodeTitleView.setPadding(50, 10, 50, 50);
-        layout.addView(episodeTitleView);
-
-        final TextView timestampView = new TextView(this);
-        timestampView.setGravity(Gravity.CENTER_HORIZONTAL);
-        timestampView.setText(DateUtils.formatTimestamp(timestamp));
-        timestampView.setPadding(50, 10, 50, 50);
-        layout.addView(timestampView);
-
-        List<Bookmark> bookmarks = DBReader.getBookmarksWithTitleAndUID(podcastTitle, episodeId);
-        String defaultBookmarkTitle = getString(R.string.bookmark_label) + " " + Integer.toString(bookmarks.size() + 1);
-
-        final EditText input = new EditText(this);
-        input.setGravity(Gravity.CENTER_HORIZONTAL);
-        input.setInputType(InputType.TYPE_CLASS_TEXT);
-        input.setText(defaultBookmarkTitle);
-        input.setSelection(input.getText().length());
-        layout.addView(input);
-
-        builder.setView(layout);
-
-        builder.setPositiveButton(R.string.confirm_label, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                String input_title = input.getText().toString();
-                setNewBookmark(input_title, timestamp, podcastTitle, episodeId);
-                onPlayPause();
-            }
-        });
-        builder.setNegativeButton(R.string.cancel_label, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
-                onPlayPause();
-            }
-        });
-
-        builder.create().show();
+        InsertBookmarkDialog insertDialog = new InsertBookmarkDialog(controller);
+        insertDialog.showSetBookmarkDialog(this, txtvPosition);
     }
 
-    void setNewBookmark(String title, int timestamp, String podcastTitle, String episodeId) {
-        DBWriter.setBookmark(new Bookmark(0, title, timestamp, podcastTitle, episodeId));
+    public void setNewBookmark(Bookmark bookmark) {
+        DBWriter.setBookmark(bookmark);
     }
 
     void onRewind() {
