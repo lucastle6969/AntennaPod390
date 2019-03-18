@@ -84,21 +84,6 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
         getInstrumentation().waitForIdleSync();
     }
 
-    public void testAddFeed() throws Exception {
-        uiTestUtils.addHostedFeedData();
-        final Feed feed = uiTestUtils.hostedFeeds.get(0);
-        openNavDrawer();
-        solo.clickOnText(solo.getString(R.string.add_feed_label));
-        solo.clickOnButton(0);
-        solo.enterText(0, feed.getDownload_url());
-        solo.clickOnButton(solo.getString(R.string.confirm_label));
-        solo.waitForActivity(OnlineFeedViewActivity.class);
-        solo.waitForView(R.id.butSubscribe);
-        assertEquals(solo.getString(R.string.subscribe_label), solo.getButton(0).getText().toString());
-        solo.clickOnButton(0);
-        solo.waitForText(solo.getString(R.string.subscribed_label));
-    }
-
     @FlakyTest(tolerance = 3)
     public void testClickNavDrawer() throws Exception {
         uiTestUtils.addLocalFeedData(false);
@@ -289,10 +274,8 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
 
         podcastOfTheDay = textView.getText().toString();
 
-        // This command is run twice to give robotium the time to click on the String.
-        // This might be because of the relative layout being too slow.
         solo.clickOnText(solo.getString(R.string.generate_new_podcast));
-        solo.clickOnText(solo.getString(R.string.generate_new_podcast));
+        solo.sleep(5000);
 
         RelativeLayout generatedRelativeLayout = (RelativeLayout) solo.getView(R.id.potdlayout);
         TextView generatedTextView = (TextView) generatedRelativeLayout.getChildAt(1);
