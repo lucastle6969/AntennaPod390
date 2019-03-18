@@ -78,35 +78,25 @@ public class BookmarksTest extends ActivityInstrumentationTestCase2<MainActivity
     }
 
     public void testBookmarkButton() {
-        String query = "Hello Internet";
-
-        openNavDrawer();
-        solo.clickOnText("Add Podcast");
-        solo.waitForDialogToOpen();
-        solo.waitForView(R.id.sliding_tabs);
-        solo.enterText(0, query);
-        solo.sendKey(Solo.ENTER);
-        solo.waitForView(R.id.gridView);
-
-        solo.clickOnText("Educational");
-        solo.waitForDialogToOpen();
-        solo.clickOnText("Subscribe");
-        solo.sleep(5000);
-        solo.clickOnText("Open Podcast");
-        solo.waitForDialogToOpen();
-        solo.clickOnText("Twelve Drummers Drumming");
-        solo.waitForDialogToOpen();
-        solo.clickOnText("Stream");
-        solo.sleep(6000);
-        ImageButton AddBookmarkButton = (ImageButton) solo.getView("butBookmark");
-        solo.clickOnView(AddBookmarkButton);
-        solo.waitForDialogToOpen();
-        
+        selectAndAddBookmark();
         assertTrue(solo.searchText("Set a bookmark", true));
 
     }
 
     public void testPlaybackButton() {
+        selectAndAddBookmark();
+        solo.clickOnText("Confirm");
+
+        scrollingToBookmarkTab();
+
+        ImageButton PlaybackBookmarkButton = (ImageButton) solo.getView("imgBookmarkPlay");
+        solo.clickOnView(PlaybackBookmarkButton);
+        solo.waitForDialogToOpen();
+
+        assertEquals(solo.getString(R.id.txtvTimestamp), solo.getString(R.id.txtvPosition));
+    }
+
+    public void selectAndAddBookmark(){
         String query = "Hello Internet";
 
         openNavDrawer();
@@ -130,8 +120,9 @@ public class BookmarksTest extends ActivityInstrumentationTestCase2<MainActivity
         ImageButton AddBookmarkButton = (ImageButton) solo.getView("butBookmark");
         solo.clickOnView(AddBookmarkButton);
         solo.waitForDialogToOpen();
-        solo.clickOnText("Confirm");
+    }
 
+    public void scrollingToBookmarkTab(){
         Display display = solo.getCurrentActivity().getWindowManager().getDefaultDisplay();
         Point maxSize = new Point();
         display.getSize(maxSize);
@@ -149,12 +140,6 @@ public class BookmarksTest extends ActivityInstrumentationTestCase2<MainActivity
         solo.sleep(5000);
         solo.drag(startPoint1.x, endPoint1.x, startPoint1.y, endPoint1.y, 4);
         solo.sleep(5000);
-
-        ImageButton PlaybackBookmarkButton = (ImageButton) solo.getView("imgBookmarkPlay");
-        solo.clickOnView(PlaybackBookmarkButton);
-        solo.waitForDialogToOpen();
-
-        assertEquals(solo.getString(R.id.txtvTimestamp), solo.getString(R.id.txtvPosition));
     }
 
 }
