@@ -3,6 +3,7 @@ package de.danoeh.antennapod.activity;
 import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -17,14 +18,18 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
+import android.text.InputType;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
@@ -35,19 +40,23 @@ import com.bumptech.glide.Glide;
 import com.joanzapata.iconify.IconDrawable;
 import com.joanzapata.iconify.fonts.FontAwesomeIcons;
 
+import java.util.List;
 import java.util.Locale;
 
 import de.danoeh.antennapod.R;
 import de.danoeh.antennapod.core.event.ServiceEvent;
+import de.danoeh.antennapod.core.feed.Bookmark;
 import de.danoeh.antennapod.core.feed.FeedItem;
 import de.danoeh.antennapod.core.feed.FeedMedia;
 import de.danoeh.antennapod.core.feed.MediaType;
 import de.danoeh.antennapod.core.preferences.UserPreferences;
 import de.danoeh.antennapod.core.service.playback.PlaybackService;
+import de.danoeh.antennapod.core.service.playback.PlayerStatus;
 import de.danoeh.antennapod.core.storage.DBReader;
 import de.danoeh.antennapod.core.storage.DBTasks;
 import de.danoeh.antennapod.core.storage.DBWriter;
 import de.danoeh.antennapod.core.util.Converter;
+import de.danoeh.antennapod.core.util.DateUtils;
 import de.danoeh.antennapod.core.util.FeedItemUtil;
 import de.danoeh.antennapod.core.util.Flavors;
 import de.danoeh.antennapod.core.util.IntentUtils;
@@ -60,6 +69,7 @@ import de.danoeh.antennapod.core.util.playback.MediaPlayerError;
 import de.danoeh.antennapod.core.util.playback.Playable;
 import de.danoeh.antennapod.core.util.playback.PlaybackController;
 import de.danoeh.antennapod.core.util.playback.PlaybackServiceStarter;
+import de.danoeh.antennapod.dialog.InsertBookmarkDialog;
 import de.danoeh.antennapod.dialog.SleepTimerDialog;
 import de.danoeh.antennapod.dialog.VariableSpeedDialog;
 import rx.Observable;
@@ -90,6 +100,8 @@ public abstract class MediaplayerActivity extends CastEnabledActivity implements
     private ImageButton butFF;
     private TextView txtvFF;
     private ImageButton butSkip;
+    private ImageButton butBookmark;
+    private int timestamp;
 
     private boolean showTimeLeft = false;
 
@@ -351,6 +363,12 @@ public abstract class MediaplayerActivity extends CastEnabledActivity implements
 
         menu.findItem(R.id.add_to_favorites_item).setVisible(false);
         menu.findItem(R.id.remove_from_favorites_item).setVisible(false);
+
+        menu.findItem(R.id.confirmDelete).setVisible(false);
+        menu.findItem(R.id.cancelDelete).setVisible(false);
+        menu.findItem(R.id.deleteBookmarks).setVisible(true);
+
+
         if (isFeedMedia) {
             menu.findItem(R.id.add_to_favorites_item).setVisible(!isFavorite);
             menu.findItem(R.id.remove_from_favorites_item).setVisible(isFavorite);
@@ -833,18 +851,19 @@ public abstract class MediaplayerActivity extends CastEnabledActivity implements
             });
         }
 
-        butRev = (ImageButton) findViewById(R.id.butRev);
-        txtvRev = (TextView) findViewById(R.id.txtvRev);
+        butRev = findViewById(R.id.butRev);
+        txtvRev = findViewById(R.id.txtvRev);
         if (txtvRev != null) {
             txtvRev.setText(String.valueOf(UserPreferences.getRewindSecs()));
         }
-        butPlay = (ImageButton) findViewById(R.id.butPlay);
-        butFF = (ImageButton) findViewById(R.id.butFF);
-        txtvFF = (TextView) findViewById(R.id.txtvFF);
+        butPlay = findViewById(R.id.butPlay);
+        butFF = findViewById(R.id.butFF);
+        txtvFF = findViewById(R.id.txtvFF);
         if (txtvFF != null) {
             txtvFF.setText(String.valueOf(UserPreferences.getFastForwardSecs()));
         }
-        butSkip = (ImageButton) findViewById(R.id.butSkip);
+        butSkip = findViewById(R.id.butSkip);
+        butBookmark = findViewById(R.id.butBookmark);
 
         // SEEKBAR SETUP
 
@@ -874,6 +893,31 @@ public abstract class MediaplayerActivity extends CastEnabledActivity implements
             butSkip.setOnClickListener(v ->
                     IntentUtils.sendLocalBroadcast(MediaplayerActivity.this, PlaybackService.ACTION_SKIP_CURRENT_EPISODE));
         }
+
+        if(butBookmark != null){
+            butBookmark.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    // Pause PlaybackController if it is currently playing
+                    if (controller.getStatus() == PlayerStatus.PLAYING) {
+                        onPlayPause();
+                    }
+
+                    setupInsertDialog();
+                }
+            });
+        }
+    }
+
+    private void setupInsertDialog() {
+        if(controller == null)
+            return;
+
+        InsertBookmarkDialog insertDialog = new InsertBookmarkDialog(controller);
+        insertDialog.showSetBookmarkDialog(this, txtvPosition);
+    }
+
+    public void setNewBookmark(Bookmark bookmark) {
+        DBWriter.setBookmark(bookmark);
     }
 
     void onRewind() {

@@ -15,13 +15,15 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import de.danoeh.antennapod.core.feed.Bookmark;
 import de.danoeh.antennapod.core.feed.Feed;
 import de.danoeh.antennapod.core.feed.FeedItem;
 import de.danoeh.antennapod.core.feed.FeedMedia;
-import de.danoeh.antennapod.core.feed.SimpleChapter;
 import de.danoeh.antennapod.core.storage.DBReader;
 import de.danoeh.antennapod.core.storage.DBWriter;
 import de.danoeh.antennapod.core.storage.PodDBAdapter;
+
+import static java.lang.Thread.sleep;
 
 /**
  * Test class for DBWriter
@@ -88,6 +90,66 @@ public class DBWriterTest extends InstrumentationTestCase {
         assertEquals(LAST_PLAYED_TIME, mediaFromDb.getLastPlayedTime());
         assertEquals(PLAYED_DURATION, mediaFromDb.getPlayedDuration());
         assertEquals(DURATION, mediaFromDb.getDuration());
+    }
+
+    public void testBookmarkCRUD() {
+        final String title = "title";
+        final int timestamp = 123;
+        final String podcastTitle = "podcastTitle";
+        final String uid = "12456";
+        Bookmark testingBookmark = new Bookmark(0, title, timestamp, podcastTitle, uid);
+        List<Bookmark> bookmarksFromDb = null;
+
+        //The db reading and writing methods must be synchronized, with a token time
+        //between to make sure that the processes run sequentially.
+        //The three tests must be run within the same method, due to testing database teardown after
+        //every separate test execution.
+
+        //Test to insert a new bookmark and make sure that it is retrieved properly.
+        synchronized (this){
+            try {
+                DBWriter.setBookmark(testingBookmark);
+                sleep(100);
+                bookmarksFromDb = DBReader.getBookmarksWithTitleAndUID(podcastTitle, uid);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        Bookmark retrievedBookmark = bookmarksFromDb.get(0);
+        assertNotNull(retrievedBookmark);
+        assertEquals(testingBookmark.getTitle(), retrievedBookmark.getTitle());
+        assertEquals(testingBookmark.getTimestamp(), retrievedBookmark.getTimestamp());
+        assertEquals(testingBookmark.getPodcastTitle(), retrievedBookmark.getPodcastTitle());
+        assertEquals(testingBookmark.getUid(), retrievedBookmark.getUid());
+
+        //Testing editing.
+        testingBookmark.setTimestamp(456);
+        synchronized (this){
+            try {
+                DBWriter.updateBookmark(testingBookmark);
+                sleep(100);
+                bookmarksFromDb = DBReader.getBookmarksWithTitleAndUID(podcastTitle, uid);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        retrievedBookmark = bookmarksFromDb.get(0);
+        assertEquals(testingBookmark.getTimestamp(), retrievedBookmark.getTimestamp());
+
+        //Testing deletion.
+        synchronized (this){
+            try {
+                DBWriter.deleteBookmark(testingBookmark);
+                sleep(100);
+                bookmarksFromDb = DBReader.getBookmarksWithTitleAndUID(podcastTitle, uid);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        assertEquals(0, bookmarksFromDb.size());
+
     }
 
     public void testDeleteFeedMediaOfItemFileExists()

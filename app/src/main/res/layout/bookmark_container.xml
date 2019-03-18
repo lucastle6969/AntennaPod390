@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<FrameLayout
+    android:id="@+id/container"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"/>
+
+    <LinearLayout
+        android:id="@+id/content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/selectableItemBackground"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/listitem_threeline_textleftpadding"
+            android:layout_marginEnd="@dimen/listitem_threeline_textrightpadding"
+            android:layout_marginBottom="@dimen/listitem_threeline_verticalpadding"
+            android:layout_marginLeft="@dimen/listitem_threeline_textleftpadding"
+            android:layout_marginRight="@dimen/listitem_threeline_textrightpadding"
+            android:layout_marginTop="@dimen/listitem_threeline_verticalpadding"
+            android:layout_weight="1">
+
+
+            <TextView
+                android:id="@+id/txtvBookmarkTitle"
+                style="@style/AntennaPod.TextView.ListItemPrimaryTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:layout_toLeftOf="@id/statusUnread"
+                android:layout_toStartOf="@id/statusUnread"
+                tools:text="@sample/episodes.json/data/title" />
+
+            <RelativeLayout
+                android:id="@+id/bottom_bar"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/txtvTitle"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentRight="true">
+
+                <TextView
+                    android:id="@+id/txtvTimestamp"
+                    style="@style/AntennaPod.TextView.ListItemSecondaryTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    tools:text="@sample/episodes.json/data/duration" />
+
+            </RelativeLayout>
+
+        </RelativeLayout>
+
+        <CheckBox
+            android:id="@+id/bookmarkCheckBox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <ImageButton
+            android:id="@+id/imgBookmarkDelete"
+            android:layout_height="32dp"
+            android:layout_width="32dp"
+            android:contentDescription="@string/cover_label"
+            android:background="@null"
+            android:src="@drawable/ic_delete_grey600_24dp"/>
+
+        <include layout="@layout/vertical_list_divider"/>
+
+        <ImageButton
+            android:id="@+id/imgBookmarkEdit"
+            android:layout_height="32dp"
+            android:layout_width="32dp"
+            android:contentDescription="@string/cover_label"
+            android:background="@null"
+            android:src="@drawable/ic_sort_grey600_24dp"/>
+
+        <include layout="@layout/vertical_list_divider"/>
+
+        <ImageButton
+            android:id="@+id/imgBookmarkPlay"
+            android:layout_height="32dp"
+            android:layout_width="32dp"
+            android:contentDescription="@string/cover_label"
+            android:background="@null"
+            android:src="@drawable/ic_skip_grey600_36dp" />
+
+    </LinearLayout>
+
+
+</FrameLayout>

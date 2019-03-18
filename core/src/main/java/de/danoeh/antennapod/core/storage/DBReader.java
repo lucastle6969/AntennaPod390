@@ -12,6 +12,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import de.danoeh.antennapod.core.feed.Bookmark;
 import de.danoeh.antennapod.core.feed.Chapter;
 import de.danoeh.antennapod.core.feed.Feed;
 import de.danoeh.antennapod.core.feed.FeedItem;
@@ -811,6 +812,33 @@ public final class DBReader {
         } finally {
             adapter.close();
         }
+    }
+
+    /**
+     * Returns the bookmarks placed by the user for a specific podcast episode
+     *
+     * @param podcastTitle      Name of podcast
+     * @param uid               Podcast episode identifier
+     * @return All bookmarks objects for the podcast episode requested
+     */
+    public static List<Bookmark> getBookmarksWithTitleAndUID(String podcastTitle, String uid) {
+        List<Bookmark> result = new ArrayList<>();
+        PodDBAdapter adapter = PodDBAdapter.getInstance();
+        adapter.open();
+        Cursor cursor;
+        try {
+            cursor = adapter.getBookmarksCursor(podcastTitle, uid);
+            if (cursor.moveToFirst()) {
+                do {
+                    result.add(Bookmark.fromCursor(cursor));
+                } while (cursor.moveToNext());
+            }
+            cursor.close();
+
+        } finally {
+            adapter.close();
+        }
+        return result;
     }
 
     /**

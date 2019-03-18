@@ -11,11 +11,21 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.media.MediaMetadataRetriever;
 import android.text.TextUtils;
 import android.util.Log;
+
+import org.apache.commons.io.FileUtils;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+
 import de.danoeh.antennapod.core.R;
 import de.danoeh.antennapod.core.event.ProgressEvent;
+import de.danoeh.antennapod.core.feed.Bookmark;
 import de.danoeh.antennapod.core.feed.Chapter;
 import de.danoeh.antennapod.core.feed.Feed;
 import de.danoeh.antennapod.core.feed.FeedItem;
@@ -26,14 +36,6 @@ import de.danoeh.antennapod.core.service.download.DownloadStatus;
 import de.danoeh.antennapod.core.util.LongIntMap;
 import de.danoeh.antennapod.core.util.flattr.FlattrStatus;
 import de.greenrobot.event.EventBus;
-import org.apache.commons.io.FileUtils;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
 
 // TODO Remove media column from feeditem table
 
@@ -110,6 +112,10 @@ public class PodDBAdapter {
     public static final String KEY_LAST_PLAYED_TIME = "last_played_time";
     public static final String KEY_INCLUDE_FILTER = "include_filter";
     public static final String KEY_EXCLUDE_FILTER = "exclude_filter";
+    public static final String KEY_BOOKMARK_TITLE = "title";
+    public static final String KEY_BOOKMARK_TIMESTAMP = "timestamp";
+    public static final String KEY_BOOKMARK_UID = "uid";
+    public static final String KEY_BOOKMARK_PODCAST = "podcast_title";
 
     // Table names
     static final String TABLE_NAME_FEEDS = "Feeds";
@@ -120,10 +126,16 @@ public class PodDBAdapter {
     static final String TABLE_NAME_QUEUE = "Queue";
     static final String TABLE_NAME_SIMPLECHAPTERS = "SimpleChapters";
     static final String TABLE_NAME_FAVORITES = "Favorites";
+    static final String TABLE_NAME_BOOKMARKS = "Bookmarks";
 
     // SQL Statements for creating new tables
     private static final String TABLE_PRIMARY_KEY = KEY_ID
             + " INTEGER PRIMARY KEY AUTOINCREMENT ,";
+
+    private static final String CREATE_TABLE_BOOKMARKS = "CREATE TABLE "
+            + TABLE_NAME_BOOKMARKS + " (" + KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+            + KEY_BOOKMARK_TITLE + " VARCHAR," + KEY_BOOKMARK_TIMESTAMP + " INTEGER,"
+            + KEY_BOOKMARK_UID + " VARCHAR," + KEY_BOOKMARK_PODCAST + " VARCHAR)";
 
     private static final String CREATE_TABLE_FEEDS = "CREATE TABLE "
             + TABLE_NAME_FEEDS + " (" + TABLE_PRIMARY_KEY + KEY_TITLE
@@ -275,7 +287,8 @@ public class PodDBAdapter {
             TABLE_NAME_DOWNLOAD_LOG,
             TABLE_NAME_QUEUE,
             TABLE_NAME_SIMPLECHAPTERS,
-            TABLE_NAME_FAVORITES
+            TABLE_NAME_FAVORITES,
+            TABLE_NAME_BOOKMARKS
     };
 
     /**
@@ -579,6 +592,48 @@ public class PodDBAdapter {
         return result;
     }
 
+    public long setSingleBookmark(Bookmark bookmark) {
+        long result = 0;
+        try {
+            db.beginTransactionNonExclusive();
+            result = setBookmark(bookmark);
+            db.setTransactionSuccessful();
+        } catch (SQLException e) {
+            Log.e(TAG, Log.getStackTraceString(e));
+        } finally {
+            db.endTransaction();
+        }
+        return result;
+    }
+
+    public long updateSingleBookmark(Bookmark bookmark) {
+        long result = 0;
+        try {
+            db.beginTransactionNonExclusive();
+            result = updateBookmark(bookmark);
+            db.setTransactionSuccessful();
+        } catch (SQLException e) {
+            Log.e(TAG, Log.getStackTraceString(e));
+        } finally {
+            db.endTransaction();
+        }
+        return result;
+    }
+
+    public long deleteSingleBookmark(Bookmark bookmark) {
+        long result = 0;
+        try {
+            db.beginTransactionNonExclusive();
+            result = deleteBookmark(bookmark);
+            db.setTransactionSuccessful();
+        } catch (SQLException e) {
+            Log.e(TAG, Log.getStackTraceString(e));
+        } finally {
+            db.endTransaction();
+        }
+        return result;
+    }
+
     /**
      * Update the flattr status of a FeedItem
      */
@@ -684,6 +739,48 @@ public class PodDBAdapter {
             setChapters(item);
         }
         return item.getId();
+    }
+
+    /**
+     * Insert Bookmark object into the TABLE_NAME_BOOKMARKS table of the database
+     * @param bookmark  The Bookmark object
+     * @return the id of the entry
+     */
+    private long setBookmark(Bookmark bookmark) {
+        ContentValues values = new ContentValues();
+        values.put(KEY_BOOKMARK_TITLE, bookmark.getTitle());
+        values.put(KEY_BOOKMARK_TIMESTAMP, bookmark.getTimestamp());
+        values.put(KEY_BOOKMARK_UID, bookmark.getUid());
+        values.put(KEY_BOOKMARK_PODCAST, bookmark.getPodcastTitle());
+        bookmark.setId(db.insert(TABLE_NAME_BOOKMARKS, null, values));
+        return bookmark.getId();
+    }
+
+    /**
+     * Update Bookmark object in the TABLE_NAME_BOOKMARKS table of the database.
+     * @param bookmark  The Bookmark object
+     * @return the id of the entry
+     */
+    private long updateBookmark(Bookmark bookmark) {
+        ContentValues values = new ContentValues();
+        values.put(KEY_BOOKMARK_TITLE, bookmark.getTitle());
+        values.put(KEY_BOOKMARK_TIMESTAMP, bookmark.getTimestamp());
+        values.put(KEY_BOOKMARK_UID, bookmark.getUid());
+        values.put(KEY_BOOKMARK_PODCAST, bookmark.getPodcastTitle());
+        db.update(TABLE_NAME_BOOKMARKS, values, KEY_ID + "=?",
+                new String[]{String.valueOf(bookmark.getId())});
+        return bookmark.getId();
+    }
+
+    /**
+     * Delete Bookmark object in the TABLE_NAME_BOOKMARKS table of the database
+     * @param bookmark  The Bookmark object
+     * @return the id of the entry
+     */
+    private long deleteBookmark(Bookmark bookmark) {
+        db.delete(TABLE_NAME_BOOKMARKS, KEY_ID + "=?",
+                new String[]{String.valueOf(bookmark.getId())});
+        return bookmark.getId();
     }
 
     public void setFeedItemRead(int played, long itemId, long mediaId,
@@ -1344,6 +1441,20 @@ public class PodDBAdapter {
     }
 
     /**
+     * Returns a cursor pointing to the first bookmark item in the db given the title and episode id specified
+     * @param podcastTitle  Title of podcast
+     * @param uid           Podcast episode id
+     * @return              Cursor of first bookmark item
+     */
+    public final Cursor getBookmarksCursor(String podcastTitle, String uid) {
+        final String query = "SELECT * FROM " + TABLE_NAME_BOOKMARKS +
+                             " WHERE " + KEY_BOOKMARK_PODCAST + " = '" + podcastTitle +
+                             "' AND " + KEY_BOOKMARK_UID + " = '" + uid + "'";
+
+        return db.rawQuery(query, null);
+    }
+
+    /**
      * Uses DatabaseUtils to escape a search query and removes ' at the
      * beginning and the end of the string returned by the escape method.
      */
@@ -1511,6 +1622,7 @@ public class PodDBAdapter {
         return db.rawQuery(FEED_STATISTICS_QUERY, null);
     }
 
+
     /**
      * Called when a database corruption happens
      */
@@ -1564,6 +1676,7 @@ public class PodDBAdapter {
             db.execSQL(CREATE_TABLE_QUEUE);
             db.execSQL(CREATE_TABLE_SIMPLECHAPTERS);
             db.execSQL(CREATE_TABLE_FAVORITES);
+            db.execSQL(CREATE_TABLE_BOOKMARKS);
 
             db.execSQL(CREATE_INDEX_FEEDITEMS_FEED);
             db.execSQL(CREATE_INDEX_FEEDITEMS_PUBDATE);
