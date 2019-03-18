@@ -3,15 +3,13 @@ package de.test.antennapod.ui;
 import android.content.SharedPreferences;
 import android.graphics.Point;
 import android.graphics.PointF;
-import android.test.FlakyTest;
 import android.test.ActivityInstrumentationTestCase2;
 
 import android.content.Context;
 import android.view.Display;
-import android.view.View;
-import android.widget.Button;
+import android.view.MenuItem;
+import android.widget.CheckBox;
 import android.widget.ImageButton;
-import android.widget.TextView;
 
 import com.robotium.solo.Solo;
 
@@ -73,18 +71,14 @@ public class BookmarksTest extends ActivityInstrumentationTestCase2<MainActivity
         getInstrumentation().waitForIdleSync();
     }
 
-    private String getActionbarTitle() {
-        return ((MainActivity) solo.getCurrentActivity()).getSupportActionBar().getTitle().toString();
-    }
-
     public void testBookmarkButton() {
-        selectAndAddBookmark();
+        selectAndClickOnBookmarkButton();
         assertTrue(solo.searchText("Set a bookmark", true));
 
     }
 
     public void testPlaybackButton() {
-        selectAndAddBookmark();
+        selectAndClickOnBookmarkButton();
         solo.clickOnText("Confirm");
 
         scrollingToBookmarkTab();
@@ -96,7 +90,55 @@ public class BookmarksTest extends ActivityInstrumentationTestCase2<MainActivity
         assertEquals(solo.getString(R.id.txtvTimestamp), solo.getString(R.id.txtvPosition));
     }
 
-    public void selectAndAddBookmark(){
+    public void testAddBookmark() {
+        selectAndClickOnBookmarkButton();
+        solo.clickOnText("Confirm");
+
+        scrollingToBookmarkTab();
+
+        //Verify if the first bookmark has been added
+        assertTrue(solo.searchText("Bookmark 1", true));
+    }
+
+    public void testSingleDeleteButton() {
+
+        selectAndClickOnBookmarkButton();
+        solo.clickOnText("Confirm");
+
+        scrollingToBookmarkTab();
+
+        ImageButton SingleDeleteBookmarkButton = (ImageButton) solo.getView("imgBookmarkDelete");
+        solo.clickOnView(SingleDeleteBookmarkButton);
+        solo.waitForDialogToOpen();
+        solo.clickOnText("Confirm");
+
+        //Verifies the bookmark has been deleted
+        assertFalse(solo.searchText("Bookmark 1", false));
+    }
+
+    public void testMultipleDeleteButton() {
+        selectAndClickOnBookmarkButton();
+
+        solo.clickOnText("Confirm");
+        solo.sleep(6000);
+        ImageButton AddBookmarkButton = (ImageButton) solo.getView("butBookmark");
+        solo.clickOnView(AddBookmarkButton);
+        solo.waitForDialogToOpen();
+        solo.clickOnText("Confirm");
+
+        scrollingToBookmarkTab();
+        solo.clickOnView(solo.getView(R.id.deleteBookmarks));
+        CheckBox deleteCheckbox = (CheckBox) solo.getView("bookmarkCheckBox");
+        solo.clickOnView(deleteCheckbox);
+        solo.clickOnView(solo.getView(R.id.confirmDelete));
+        solo.waitForDialogToOpen();
+        solo.clickOnText("Confirm");
+
+        assertFalse(solo.searchText("Bookmark 1", false));
+        assertTrue(solo.searchText("Bookmark 2", true));
+    }
+
+    public void selectAndClickOnBookmarkButton(){
         String query = "Hello Internet";
 
         openNavDrawer();
@@ -140,105 +182,6 @@ public class BookmarksTest extends ActivityInstrumentationTestCase2<MainActivity
         solo.sleep(5000);
         solo.drag(startPoint1.x, endPoint1.x, startPoint1.y, endPoint1.y, 4);
         solo.sleep(5000);
-    }
-
-    public void testAddBookmark() {
-        String query = "Hello Internet";
-
-        openNavDrawer();
-        solo.clickOnText("Add Podcast");
-        solo.waitForDialogToOpen();
-        solo.waitForView(R.id.sliding_tabs);
-        solo.enterText(0, query);
-        solo.sendKey(Solo.ENTER);
-        solo.waitForView(R.id.gridView);
-
-        solo.clickOnText("Educational");
-        solo.waitForDialogToOpen();
-        solo.clickOnText("Subscribe");
-        solo.sleep(5000);
-        solo.clickOnText("Open Podcast");
-        solo.waitForDialogToOpen();
-        solo.clickOnText("Twelve Drummers Drumming");
-        solo.waitForDialogToOpen();
-        solo.clickOnText("Stream");
-        solo.sleep(6000);
-        ImageButton AddBookmarkButton = (ImageButton) solo.getView("butBookmark");
-        solo.clickOnView(AddBookmarkButton);
-        solo.waitForDialogToOpen();
-        solo.clickOnText("Confirm");
-
-        Display display = solo.getCurrentActivity().getWindowManager().getDefaultDisplay();
-        Point maxSize = new Point();
-        display.getSize(maxSize);
-        PointF startPoint1 = new PointF();
-        startPoint1.x = maxSize.x - 40;
-        startPoint1.y = maxSize.y/2;
-        PointF endPoint1 = new PointF();
-        endPoint1.x = 0;
-        endPoint1.y = maxSize.y/2;
-
-        solo.sleep(5000);
-        solo.drag(startPoint1.x, endPoint1.x, startPoint1.y, endPoint1.y, 4);
-        solo.sleep(5000);
-        solo.drag(startPoint1.x, endPoint1.x, startPoint1.y, endPoint1.y, 4);
-        solo.sleep(5000);
-        solo.drag(startPoint1.x, endPoint1.x, startPoint1.y, endPoint1.y, 4);
-        solo.sleep(5000);
-
-        assertTrue(solo.searchText("Bookmark 1", true));
-    }
-
-    public void testSingleDeleteButton() {
-        String query = "Hello Internet";
-
-        openNavDrawer();
-        solo.clickOnText("Add Podcast");
-        solo.waitForDialogToOpen();
-        solo.waitForView(R.id.sliding_tabs);
-        solo.enterText(0, query);
-        solo.sendKey(Solo.ENTER);
-        solo.waitForView(R.id.gridView);
-
-        solo.clickOnText("Educational");
-        solo.waitForDialogToOpen();
-        solo.clickOnText("Subscribe");
-        solo.sleep(5000);
-        solo.clickOnText("Open Podcast");
-        solo.waitForDialogToOpen();
-        solo.clickOnText("Twelve Drummers Drumming");
-        solo.waitForDialogToOpen();
-        solo.clickOnText("Stream");
-        solo.sleep(6000);
-        ImageButton AddBookmarkButton = (ImageButton) solo.getView("butBookmark");
-        solo.clickOnView(AddBookmarkButton);
-        solo.waitForDialogToOpen();
-        solo.clickOnText("Confirm");
-
-        Display display = solo.getCurrentActivity().getWindowManager().getDefaultDisplay();
-        Point maxSize = new Point();
-        display.getSize(maxSize);
-        PointF startPoint1 = new PointF();
-        startPoint1.x = maxSize.x - 40;
-        startPoint1.y = maxSize.y/2;
-        PointF endPoint1 = new PointF();
-        endPoint1.x = 0;
-        endPoint1.y = maxSize.y/2;
-
-        solo.sleep(5000);
-        solo.drag(startPoint1.x, endPoint1.x, startPoint1.y, endPoint1.y, 4);
-        solo.sleep(5000);
-        solo.drag(startPoint1.x, endPoint1.x, startPoint1.y, endPoint1.y, 4);
-        solo.sleep(5000);
-        solo.drag(startPoint1.x, endPoint1.x, startPoint1.y, endPoint1.y, 4);
-        solo.sleep(5000);
-
-        ImageButton SingleDeleteBookmarkButton = (ImageButton) solo.getView("imgBookmarkDelete");
-        solo.clickOnView(SingleDeleteBookmarkButton);
-        solo.waitForDialogToOpen();
-        solo.clickOnText("Confirm");
-
-        assertFalse(solo.searchText("Bookmark 1", false));
     }
 
 }

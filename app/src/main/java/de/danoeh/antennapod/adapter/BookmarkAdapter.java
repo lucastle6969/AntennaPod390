@@ -178,8 +178,8 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.Bookma
         this.bookmarkList = bookmarkList;
     }
 
-    public void resetCheckbox(boolean bool){
-        hideIcons = bool;
+    public void resetCheckbox(boolean value){
+        hideIcons = value;
         this.view.deleteCheckbox.setChecked(false);
     }
 
