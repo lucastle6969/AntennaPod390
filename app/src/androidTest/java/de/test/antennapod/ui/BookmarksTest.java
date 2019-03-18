@@ -7,8 +7,11 @@ import android.test.ActivityInstrumentationTestCase2;
 
 import android.content.Context;
 import android.view.Display;
-import android.view.MenuItem;
+
 import android.widget.CheckBox;
+
+import android.widget.EditText;
+
 import android.widget.ImageButton;
 
 import com.robotium.solo.Solo;
@@ -182,6 +185,23 @@ public class BookmarksTest extends ActivityInstrumentationTestCase2<MainActivity
         solo.sleep(5000);
         solo.drag(startPoint1.x, endPoint1.x, startPoint1.y, endPoint1.y, 4);
         solo.sleep(5000);
+    }
+
+    public void testEditBookmark(){
+        selectAndAddBookmark();
+        solo.clickOnText("Confirm");
+
+        scrollingToBookmarkTab();
+        ImageButton EditButton = (ImageButton) solo.getView("imgBookmarkEdit");
+        solo.clickOnView(EditButton);
+        solo.waitForDialogToOpen();
+        solo.clearEditText(0);
+        solo.sleep(5000);
+        solo.enterText(0,"My renamed bookmark");
+        solo.sleep(5000);
+        solo.clickOnText("Save Changes");
+
+        assertTrue(solo.searchText("My renamed bookmark", true));
     }
 
 }
