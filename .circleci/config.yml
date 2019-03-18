@@ -36,13 +36,18 @@ jobs:
       - run:
           Name: UI Tests in Firebase
           command: |
-            if [ $CIRCLE_BRANCH == "master" ]; then
+            if [ $CIRCLE_BRANCH == "master" ] || [ $CIRCLE_BRANCH == "firebase" ]; then
+              ./gradlew clean
               ./gradlew :app:assembleFreeDebug
               ./gradlew :app:assembleFreeDebugAndroidTest
               echo $GCLOUD_SERVICE_KEY > ${HOME}/gcloud-service-key.json
               sudo gcloud auth activate-service-account --key-file=${HOME}/gcloud-service-key.json
               sudo gcloud --quiet config set project ${GOOGLE_PROJECT_ID}
-              sudo gcloud firebase test android run --test-targets "class de.test.antennapod.ui.MainActivityTest#testClickNavDrawer" --type instrumentation --app /home/circleci/AntennaPod390/app/build/outputs/apk/free/debug/app-free-debug.apk --test /home/circleci/AntennaPod390/app/build/outputs/apk/androidTest/free/debug/app-free-debug-androidTest.apk
+              sudo gcloud firebase test android run \
+              --test-targets "class de.test.antennapod.ui.MainActivityTest" \
+              --type instrumentation \
+              --app /home/circleci/AntennaPod390/app/build/outputs/apk/free/debug/app-free-debug.apk \
+              --test /home/circleci/AntennaPod390/app/build/outputs/apk/androidTest/free/debug/app-free-debug-androidTest.apk
             fi
 
       - store_artifacts:
