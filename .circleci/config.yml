@@ -54,11 +54,12 @@ jobs:
               sudo gcloud auth activate-service-account --key-file=${HOME}/gcloud-service-key.json
               sudo gcloud --quiet config set project ${GOOGLE_PROJECT_ID}
               sudo gcloud firebase test android run \
-              --test-targets "class de.test.antennapod.ui.MainActivityTest" \
+              --test-targets "class de.test.antennapod.ui.MainActivityTest, class de.test.antennapod.ui.BookmarksTest" \
               --type instrumentation \
               --app /home/circleci/AntennaPod390/app/build/outputs/apk/free/debug/app-free-debug.apk \
               --test /home/circleci/AntennaPod390/app/build/outputs/apk/androidTest/free/debug/app-free-debug-androidTest.apk
             fi
+          no_output_timeout: 30m
 
       - store_artifacts:
           path: app/build/outputs/apk
