@@ -148,7 +148,7 @@ public class PodDBAdapter {
 
     private static final String CREATE_TABLE_ASSOCIATION_FOR_CATEGORIES = "CREATE TABLE "
             + TABLE_NAME_ASSOCIATION_FOR_CATEGORIES + " (" + KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-            + KEY_FEEDITEM + " VARCHAR," + KEY_CATEGORY_FK + "INTEGER)" ;
+            + KEY_FEEDITEM + " INTEGER," + KEY_CATEGORY_FK + "INTEGER)" ;
 
     private static final String CREATE_TABLE_FEEDS = "CREATE TABLE "
             + TABLE_NAME_FEEDS + " (" + TABLE_PRIMARY_KEY + KEY_TITLE
