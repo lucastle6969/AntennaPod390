@@ -60,7 +60,6 @@ public class PodDBAdapter {
 
     // Key-constants
     public static final String KEY_ID = "id";
-    public static final String KEY_CATEGORIES = "categories_id";
     public static final String KEY_TITLE = "title";
     public static final String KEY_CUSTOM_TITLE = "custom_title";
     public static final String KEY_NAME = "name";
@@ -150,7 +149,7 @@ public class PodDBAdapter {
     private static final String CREATE_TABLE_ASSOCIATION_FOR_CATEGORIES = "CREATE TABLE "
             + TABLE_NAME_ASSOCIATION_FOR_CATEGORIES + " (" + KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
             + KEY_FEEDITEM + " INTEGER," + " CONSTRAINT " + KEY_CATEGORY_FK
-            + " FOREIGN KEY (" + KEY_CATEGORIES + ") REFERENCES " + TABLE_NAME_CATEGORIES + "(" + KEY_CATEGORIES + "))";
+            + " FOREIGN KEY (" + KEY_ID + ") REFERENCES " + TABLE_NAME_CATEGORIES + "(" + KEY_ID + "))";
 
     private static final String CREATE_TABLE_FEEDS = "CREATE TABLE "
             + TABLE_NAME_FEEDS + " (" + TABLE_PRIMARY_KEY + KEY_TITLE
