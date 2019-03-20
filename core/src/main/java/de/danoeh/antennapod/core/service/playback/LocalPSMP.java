@@ -276,7 +276,9 @@ public class LocalPSMP extends PlaybackServiceMediaPlayer {
             if (playerStatus == PlayerStatus.PLAYING) {
                 Log.d(TAG, "Pausing playback.");
                 mediaPlayer.pause();
-                setPlayerStatus(PlayerStatus.PAUSED, media, getPosition());
+                int posToSet = getPosition()-5000;
+                mediaPlayer.seekTo(posToSet);
+                setPlayerStatus(PlayerStatus.PAUSED, media, posToSet);
 
                 if (abandonFocus) {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
