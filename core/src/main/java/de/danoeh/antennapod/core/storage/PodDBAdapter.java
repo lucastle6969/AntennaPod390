@@ -26,6 +26,7 @@ import java.util.Set;
 import de.danoeh.antennapod.core.R;
 import de.danoeh.antennapod.core.event.ProgressEvent;
 import de.danoeh.antennapod.core.feed.Bookmark;
+import de.danoeh.antennapod.core.feed.Category;
 import de.danoeh.antennapod.core.feed.Chapter;
 import de.danoeh.antennapod.core.feed.Feed;
 import de.danoeh.antennapod.core.feed.FeedItem;
@@ -116,6 +117,8 @@ public class PodDBAdapter {
     public static final String KEY_BOOKMARK_TIMESTAMP = "timestamp";
     public static final String KEY_BOOKMARK_UID = "uid";
     public static final String KEY_BOOKMARK_PODCAST = "podcast_title";
+    public static final String KEY_CATEGORY_NAME = "category_name";
+    public static final String KEY_CATEGORY_FK = "category_fk";
 
     // Table names
     static final String TABLE_NAME_FEEDS = "Feeds";
@@ -127,6 +130,8 @@ public class PodDBAdapter {
     static final String TABLE_NAME_SIMPLECHAPTERS = "SimpleChapters";
     static final String TABLE_NAME_FAVORITES = "Favorites";
     static final String TABLE_NAME_BOOKMARKS = "Bookmarks";
+    static final String TABLE_NAME_CATEGORIES = "Categories";
+    static final String TABLE_NAME_ASSOCIATION_FOR_CATEGORIES = "AssociationForCategories";
 
     // SQL Statements for creating new tables
     private static final String TABLE_PRIMARY_KEY = KEY_ID
@@ -136,6 +141,15 @@ public class PodDBAdapter {
             + TABLE_NAME_BOOKMARKS + " (" + KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
             + KEY_BOOKMARK_TITLE + " VARCHAR," + KEY_BOOKMARK_TIMESTAMP + " INTEGER,"
             + KEY_BOOKMARK_UID + " VARCHAR," + KEY_BOOKMARK_PODCAST + " VARCHAR)";
+
+    private static final String CREATE_TABLE_CATEGORIES = "CREATE TABLE "
+            + TABLE_NAME_CATEGORIES + " (" + KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+            + KEY_CATEGORY_NAME + " VARCHAR)";
+
+    private static final String CREATE_TABLE_ASSOCIATION_FOR_CATEGORIES = "CREATE TABLE "
+            + TABLE_NAME_ASSOCIATION_FOR_CATEGORIES + " (" + KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+            + KEY_FEEDITEM + " INTEGER," + " CONSTRAINT " + KEY_CATEGORY_FK
+            + " FOREIGN KEY (" + KEY_ID + ") REFERENCES " + TABLE_NAME_CATEGORIES + "(" + KEY_ID + "))";
 
     private static final String CREATE_TABLE_FEEDS = "CREATE TABLE "
             + TABLE_NAME_FEEDS + " (" + TABLE_PRIMARY_KEY + KEY_TITLE
@@ -288,7 +302,9 @@ public class PodDBAdapter {
             TABLE_NAME_QUEUE,
             TABLE_NAME_SIMPLECHAPTERS,
             TABLE_NAME_FAVORITES,
-            TABLE_NAME_BOOKMARKS
+            TABLE_NAME_BOOKMARKS,
+            TABLE_NAME_CATEGORIES,
+            TABLE_NAME_ASSOCIATION_FOR_CATEGORIES
     };
 
     /**
@@ -1677,6 +1693,8 @@ public class PodDBAdapter {
             db.execSQL(CREATE_TABLE_SIMPLECHAPTERS);
             db.execSQL(CREATE_TABLE_FAVORITES);
             db.execSQL(CREATE_TABLE_BOOKMARKS);
+            db.execSQL(CREATE_TABLE_CATEGORIES);
+            db.execSQL(CREATE_TABLE_ASSOCIATION_FOR_CATEGORIES);
 
             db.execSQL(CREATE_INDEX_FEEDITEMS_FEED);
             db.execSQL(CREATE_INDEX_FEEDITEMS_PUBDATE);
