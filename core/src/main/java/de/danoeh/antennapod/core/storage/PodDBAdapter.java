@@ -651,6 +651,24 @@ public class PodDBAdapter {
     }
 
     /**
+     * Update a Category
+     */
+    public long updateSingleCategory(Category category) {
+        long result = 0;
+        try {
+            db.beginTransactionNonExclusive();
+            result = updateCategory(category);
+            db.setTransactionSuccessful();
+        } catch (SQLException e) {
+            Log.e(TAG, Log.getStackTraceString(e));
+        } finally {
+            db.endTransaction();
+        }
+        return result;
+    }
+
+
+    /**
      * Update the flattr status of a FeedItem
      */
     public void setFeedItemFlattrStatus(FeedItem feedItem) {
@@ -797,6 +815,19 @@ public class PodDBAdapter {
         db.delete(TABLE_NAME_BOOKMARKS, KEY_ID + "=?",
                 new String[]{String.valueOf(bookmark.getId())});
         return bookmark.getId();
+    }
+
+    /**
+     * Update a Category object in the TABLE_NAME_CATEGORIES table of the database
+     * @param category The Category object
+     * @return The id of that Category object
+     */
+    private long updateCategory(Category category) {
+        ContentValues values = new ContentValues();
+        values.put(KEY_CATEGORY_NAME, category.getName());
+        db.update(TABLE_NAME_CATEGORIES, values, KEY_ID + "=?",
+                new String[]{String.valueOf(category.getId())});
+        return category.getId();
     }
 
     public void setFeedItemRead(int played, long itemId, long mediaId,

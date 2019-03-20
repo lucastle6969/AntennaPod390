@@ -30,6 +30,7 @@ import de.danoeh.antennapod.core.event.FeedItemEvent;
 import de.danoeh.antennapod.core.event.MessageEvent;
 import de.danoeh.antennapod.core.event.QueueEvent;
 import de.danoeh.antennapod.core.feed.Bookmark;
+import de.danoeh.antennapod.core.feed.Category;
 import de.danoeh.antennapod.core.feed.EventDistributor;
 import de.danoeh.antennapod.core.feed.Feed;
 import de.danoeh.antennapod.core.feed.FeedEvent;
@@ -785,6 +786,20 @@ public class DBWriter {
             PodDBAdapter adapter = PodDBAdapter.getInstance();
             adapter.open();
             adapter.deleteSingleBookmark(bookmark);
+            adapter.close();
+        });
+    }
+
+    /**
+     * Updates Category object in the database by overwriting all changed and unchanged attribute
+     * values of the passed Category object.
+     * @param category The Category object used to overwrite the previous one.
+     */
+    public static Future<?> updateCategory(final Category category){
+        return dbExec.submit(()-> {
+            PodDBAdapter adapter = PodDBAdapter.getInstance();
+            adapter.open();
+            adapter.updateSingleCategory(category);
             adapter.close();
         });
     }
