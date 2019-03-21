@@ -60,6 +60,7 @@ public class PodDBAdapter {
 
     // Key-constants
     public static final String KEY_ID = "id";
+    public static final String KEY_CATEGORY_ID = "category_id";
     public static final String KEY_TITLE = "title";
     public static final String KEY_CUSTOM_TITLE = "custom_title";
     public static final String KEY_NAME = "name";
@@ -148,8 +149,8 @@ public class PodDBAdapter {
 
     private static final String CREATE_TABLE_ASSOCIATION_FOR_CATEGORIES = "CREATE TABLE "
             + TABLE_NAME_ASSOCIATION_FOR_CATEGORIES + " (" + KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-            + KEY_FEEDITEM + " INTEGER," + " CONSTRAINT " + KEY_CATEGORY_FK
-            + " FOREIGN KEY (" + KEY_ID + ") REFERENCES " + TABLE_NAME_CATEGORIES + "(" + KEY_ID + "))";
+            + KEY_FEEDITEM + " INTEGER," + KEY_CATEGORY_ID + " INTEGER," + " CONSTRAINT " + KEY_CATEGORY_FK
+            + " FOREIGN KEY (" + KEY_CATEGORY_ID + ") REFERENCES " + TABLE_NAME_CATEGORIES + "(" + KEY_ID + "))";
 
     private static final String CREATE_TABLE_FEEDS = "CREATE TABLE "
             + TABLE_NAME_FEEDS + " (" + TABLE_PRIMARY_KEY + KEY_TITLE
@@ -1713,6 +1714,12 @@ public class PodDBAdapter {
                     + newVersion + ".");
             DBUpgrader.upgrade(db, oldVersion, newVersion);
             EventBus.getDefault().post(ProgressEvent.end());
+        }
+
+        @Override
+        public void onOpen(SQLiteDatabase db){
+            super.onOpen(db);
+            db.execSQL("PRAGMA foreign_keys = ON;");
         }
     }
 }
