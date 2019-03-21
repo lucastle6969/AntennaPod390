@@ -821,15 +821,9 @@ public class PodDBAdapter {
      */
     private long setCategory(Category category) {
         ContentValues categoryValue = new ContentValues();
-        categoryValue.put(KEY_BOOKMARK_PODCAST, category.getName());
-        long categoryId = db.insert(TABLE_NAME_CATEGORIES, null, categoryValue);
-
-        ContentValues categoryAssociationValues = new ContentValues();
-        categoryAssociationValues.put(KEY_CATEGORY_ID , categoryId);
-        db.insert(TABLE_NAME_ASSOCIATION_FOR_CATEGORIES, null, categoryAssociationValues);
-
-        category.setId(categoryId);
-        return categoryId;
+        categoryValue.put(KEY_CATEGORY_NAME, category.getName());
+        category.setId(db.insert(TABLE_NAME_CATEGORIES, null, categoryValue));
+        return category.getId();
     }
 
     public void setFeedItemRead(int played, long itemId, long mediaId,
