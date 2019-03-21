@@ -1685,6 +1685,12 @@ public class PodDBAdapter {
         }
 
         @Override
+        public void onOpen(SQLiteDatabase db){
+            super.onOpen(db);
+            db.execSQL("PRAGMA foreign_keys = ON;");
+        }
+
+        @Override
         public void onCreate(final SQLiteDatabase db) {
             db.execSQL(CREATE_TABLE_FEEDS);
             db.execSQL(CREATE_TABLE_FEED_ITEMS);
@@ -1714,12 +1720,6 @@ public class PodDBAdapter {
                     + newVersion + ".");
             DBUpgrader.upgrade(db, oldVersion, newVersion);
             EventBus.getDefault().post(ProgressEvent.end());
-        }
-
-        @Override
-        public void onOpen(SQLiteDatabase db){
-            super.onOpen(db);
-            db.execSQL("PRAGMA foreign_keys = ON;");
         }
     }
 }
