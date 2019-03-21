@@ -650,6 +650,20 @@ public class PodDBAdapter {
         return result;
     }
 
+    public long setSingleCategory(Category category) {
+        long result = 0;
+        try {
+            db.beginTransactionNonExclusive();
+            result = setCategory(category);
+            db.setTransactionSuccessful();
+        } catch (SQLException e) {
+            Log.e(TAG, Log.getStackTraceString(e));
+        } finally {
+            db.endTransaction();
+        }
+        return result;
+    }
+
     /**
      * Update the flattr status of a FeedItem
      */
@@ -797,6 +811,24 @@ public class PodDBAdapter {
         db.delete(TABLE_NAME_BOOKMARKS, KEY_ID + "=?",
                 new String[]{String.valueOf(bookmark.getId())});
         return bookmark.getId();
+    }
+
+    /**
+     * Insert Category object into the TABLE_NAME_CATEGORIES table of the database
+     * @param category  The Category object
+     * @return the id of the entry
+     */
+    private long setCategory(Category category) {
+        ContentValues categoryValue = new ContentValues();
+        categoryValue.put(KEY_BOOKMARK_PODCAST, category.getName());
+        long categoryId = db.insert(TABLE_NAME_CATEGORIES, null, categoryValue);
+
+        ContentValues categoryAssociationValues = new ContentValues();
+        categoryAssociationValues.put(KEY_CATEGORY_ID , categoryId);
+        db.insert(TABLE_NAME_ASSOCIATION_FOR_CATEGORIES, null, categoryAssociationValues);
+
+        category.setId(categoryId);
+        return categoryId;
     }
 
     public void setFeedItemRead(int played, long itemId, long mediaId,
