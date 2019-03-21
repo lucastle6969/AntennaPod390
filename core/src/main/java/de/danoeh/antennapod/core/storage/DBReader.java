@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 import de.danoeh.antennapod.core.feed.Bookmark;
+import de.danoeh.antennapod.core.feed.Category;
 import de.danoeh.antennapod.core.feed.Chapter;
 import de.danoeh.antennapod.core.feed.Feed;
 import de.danoeh.antennapod.core.feed.FeedItem;
@@ -834,6 +835,31 @@ public final class DBReader {
                 } while (cursor.moveToNext());
             }
             cursor.close();
+
+        } finally {
+            adapter.close();
+        }
+        return result;
+    }
+
+    /**
+     * Returns all categories created by the user
+     * @return  returns a list of all categories
+     */
+    public static List<Category> getAllCategories() {
+        List<Category> result = new ArrayList<>();
+        PodDBAdapter adapter = PodDBAdapter.getInstance();
+        adapter.open();
+        Cursor categoryCursor;
+        Cursor categoryAssociationCursor;
+        try {
+            categoryAssociationCursor = adapter.getCategoryAssociationCursor();
+            if (categoryAssociationCursor.moveToFirst()) {
+                do {
+                    // TODO For each category association, get the associated podcasts
+                } while (categoryAssociationCursor.moveToNext());
+            }
+            categoryAssociationCursor.close();
 
         } finally {
             adapter.close();

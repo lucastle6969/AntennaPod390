@@ -1470,6 +1470,16 @@ public class PodDBAdapter {
         return db.rawQuery(query, null);
     }
 
+    public Cursor getCategory(long id) {
+        // TODO return the category to get the name
+        return null;
+    }
+
+    public final Cursor getCategoryAssociationCursor() {
+        // TODO return the cursor of the first category association
+        return null;
+    }
+
     /**
      * Uses DatabaseUtils to escape a search query and removes ' at the
      * beginning and the end of the string returned by the escape method.
