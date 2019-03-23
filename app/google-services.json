@@ -46,6 +46,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "642017191444-0jl1fi55tgq3ua7qs0qlp8nlij9484kb.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "de.danoeh.antennapod.debug",
+            "certificate_hash": "c72f5a6844eb818a205b7d436d124388885818d3"
+          }
+        },
+        {
           "client_id": "642017191444-67ivk17f6o35jq742bdvfevl4b8s5us2.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -60,8 +68,13 @@
           "status": 1
         },
         "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "642017191444-67ivk17f6o35jq742bdvfevl4b8s5us2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         },
         "ads_service": {
           "status": 2

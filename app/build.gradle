@@ -194,12 +194,13 @@ dependencies {
     implementation 'com.github.ByteHamster:SearchPreference:v1.0.8'
 
     implementation 'com.google.firebase:firebase-core:16.0.1'
+    implementation 'com.google.firebase:firebase-perf:16.2.3'
 
-    testImplementation  'junit:junit:4.12'
+    testImplementation 'junit:junit:4.12'
     testImplementation 'org.robolectric:robolectric:4.2'
 
     // required if you want to use Mockito for unit tests
-    testImplementation  "org.mockito:mockito-core:2.24.5"
+    testImplementation "org.mockito:mockito-core:2.24.5"
 
     // required if you want to use Mockito for Android tests
     androidTestImplementation 'org.mockito:mockito-android:2.7.22'
@@ -257,4 +258,5 @@ allprojects {
 }
 
 apply plugin: 'com.google.gms.google-services'
+apply plugin: 'com.google.firebase.firebase-perf'
 com.google.gms.googleservices.GoogleServicesPlugin.config.disableVersionCheck = true
