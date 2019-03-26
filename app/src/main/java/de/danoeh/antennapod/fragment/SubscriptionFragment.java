@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -30,6 +31,7 @@ import de.danoeh.antennapod.core.storage.DBReader;
 import de.danoeh.antennapod.core.storage.DBWriter;
 import de.danoeh.antennapod.core.util.FeedItemUtil;
 import de.danoeh.antennapod.core.util.IntentUtils;
+import de.danoeh.antennapod.dialog.CreateCategoryDialog;
 import de.danoeh.antennapod.dialog.RenameFeedDialog;
 import rx.Observable;
 import rx.Subscription;
@@ -74,6 +76,7 @@ public class SubscriptionFragment extends Fragment {
         View root = inflater.inflate(R.layout.fragment_subscriptions, container, false);
         subscriptionGridLayout = (GridView) root.findViewById(R.id.subscriptions_grid);
         registerForContextMenu(subscriptionGridLayout);
+
         return root;
     }
 
@@ -126,6 +129,27 @@ public class SubscriptionFragment extends Fragment {
             }
         }
     }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        if (!isAdded()) {
+            return;
+        }
+        getActivity().getMenuInflater().inflate(R.menu.subscription_menu, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.addCategory) {
+            CreateCategoryDialog categoryDialog = new CreateCategoryDialog();
+            categoryDialog.showCreateCategoryDialog(getActivity());
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
 
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {

@@ -130,6 +130,12 @@
     <string name="cancel_edit_bookmark_button">Cancel</string>
     <string name="save_edit_bookmark_button">Save Changes</string>
 
+    <!-- Category Labels -->
+    <string name="category_alert_title">Create new category</string>
+    <string name="category_hint">New category title</string>
+    <string name="category_error_toast">Please enter a category title</string>
+    <string name="category_success">Category Created:</string>
+
     <!-- 'Add Feed' Activity labels -->
     <string name="feedurl_label">Feed URL</string>
     <string name="etxtFeedurlHint">https://www.example.com/feed</string>
