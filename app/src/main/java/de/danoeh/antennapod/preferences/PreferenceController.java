@@ -170,6 +170,7 @@ public class PreferenceController implements SharedPreferences.OnSharedPreferenc
                 setupPlaybackScreen();
                 PreferenceControllerFlavorHelper.setupFlavoredUI(ui);
                 buildSmartMarkAsPlayedPreference();
+                buildAutomaticRewindPreference();
                 break;
             case R.xml.preferences_integrations:
                 setupIntegrationsScreen();
@@ -849,6 +850,28 @@ public class PreferenceController implements SharedPreferences.OnSharedPreferenc
             }
         }
         pref.setEntries(entries);
+    }
+
+    private void buildAutomaticRewindPreference() {
+        final Resources res = ui.getActivity().getResources();
+
+        ListPreference prefAutoRewind = (ListPreference) ui.findPreference(UserPreferences.PREF_AUTOMATIC_REWIND);
+        String[] values = res.getStringArray(R.array.automatic_rewind_values);
+        String[] entries = new String[values.length];
+
+        entries[0] = res.getString(R.string.pref_smart_mark_as_played_disabled);
+        for (int index = 1; index < values.length; index++) {
+            int value = Integer.parseInt(values[index]);
+            if(value < 60) {
+                entries[index] = res.getQuantityString(R.plurals.time_seconds_quantified, value, value);
+            } else {
+                value /= 60;
+                entries[index] = res.getQuantityString(R.plurals.time_minutes_quantified, value, value);
+            }
+        }
+        prefAutoRewind.setEntries(entries);
+
+        prefAutoRewind.setDefaultValue(prefAutoRewind.getEntryValues()[0]);
     }
 
     private void setSelectedNetworksEnabled(boolean b) {

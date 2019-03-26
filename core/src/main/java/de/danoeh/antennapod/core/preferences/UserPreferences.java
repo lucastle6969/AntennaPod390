@@ -69,6 +69,7 @@ public class UserPreferences {
     private static final String PREF_PAUSE_PLAYBACK_FOR_FOCUS_LOSS = "prefPauseForFocusLoss";
     private static final String PREF_RESUME_AFTER_CALL = "prefResumeAfterCall";
     public static final String PREF_VIDEO_BEHAVIOR = "prefVideoBehavior";
+    public static final String PREF_AUTOMATIC_REWIND = "prefAutomaticRewind";
 
     // Network
     private static final String PREF_ENQUEUE_DOWNLOADED = "prefEnqueueDownloaded";
