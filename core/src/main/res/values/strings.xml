@@ -138,6 +138,10 @@
     <string name="move_to_category_dialog_title">Move to Category</string>
     <string name="save_move_to_category_button">Save Changes</string>
     <string name="cancel_move_to_category_button">Cancel</string>
+    <string name="delete_from_category_button">Delete Category</string>
+    <string name="delete_from_category_message">Are you sure you want to delete this category?</string>
+    <string name="remove_from_category_message">Are you sure you want to remove this feed?</string>
+    <string name="remove_from_category_button">Remove from Category</string>
 
     <!-- 'Add Feed' Activity labels -->
     <string name="feedurl_label">Feed URL</string>
