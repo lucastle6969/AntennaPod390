@@ -78,6 +78,13 @@ public abstract class PlaybackController {
      */
     private final boolean reinitOnPause;
 
+    private int autoRewindSeconds = 0;
+
+    public PlaybackController(@NonNull Activity activity, boolean reinitOnPause, int autoRewindSeconds) {
+        this(activity,reinitOnPause);
+        this.autoRewindSeconds = autoRewindSeconds;
+    }
+
     public PlaybackController(@NonNull Activity activity, boolean reinitOnPause) {
 
         this.activity = activity;
@@ -579,6 +586,10 @@ public abstract class PlaybackController {
 
     }
 
+    public void setAutomaticRewindSeconds(int autoRewindSeconds){
+        this.autoRewindSeconds = autoRewindSeconds;
+    }
+
     public void playPause() {
         if (playbackService == null) {
             new PlaybackServiceStarter(activity, media)
@@ -592,7 +603,10 @@ public abstract class PlaybackController {
             case PLAYING:
                 int curr = playbackService.getCurrentPosition();
                 playbackService.pause(true, reinitOnPause);
-                playbackService.seekTo(curr - 5000);
+                int autoRewindSeconds = UserPreferences.getAutomaticRewindSecs();
+                if(autoRewindSeconds > 0){
+                    playbackService.seekTo(curr - (autoRewindSeconds * 1000));
+                }
                 break;
             case PAUSED:
             case PREPARED:

@@ -425,6 +425,9 @@ public class UserPreferences {
         return prefs.getInt(PREF_REWIND_SECS, 30);
     }
 
+    public static int getAutomaticRewindSecs() {
+        return Integer.parseInt(prefs.getString(PREF_AUTOMATIC_REWIND, "0"));
+    }
 
     /**
      * Returns the time after which an episode should be auto-flattr'd in percent of the episode's
