@@ -804,6 +804,19 @@ public class DBWriter {
         });
     }
 
+    /**
+     * Add new Feed (subscription) to uncategorized category in db
+     *
+     * @param feedId  Feed (Subscription) id.
+     */
+    public static Future<?> addFeedToUncategorized(final long feedId){
+        return dbExec.submit(()-> {
+            PodDBAdapter adapter = PodDBAdapter.getInstance();
+            adapter.open();
+            adapter.addFeedIntoUncategorizedCategory(feedId);
+            adapter.close();
+        });
+    }
 
     /**
      * Updates download URL of a feed

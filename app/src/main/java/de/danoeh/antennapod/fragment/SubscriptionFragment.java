@@ -14,6 +14,8 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
 
+import java.util.List;
+
 import de.danoeh.antennapod.R;
 import de.danoeh.antennapod.activity.MainActivity;
 import de.danoeh.antennapod.activity.MediaplayerInfoActivity;
@@ -111,7 +113,18 @@ public class SubscriptionFragment extends Fragment {
                 .subscribe(result -> {
                     navDrawerData = result;
                     subscriptionAdapter.notifyDataSetChanged();
+                    categorizeSubscriptions();
                 }, error -> Log.e(TAG, Log.getStackTraceString(error)));
+    }
+
+    private void categorizeSubscriptions() {
+        List<Long> feedIdsInCategories = DBReader.getAllFeedIdsInCategories();
+        for (Feed f : navDrawerData.feeds) {
+            if(!feedIdsInCategories.contains(f.getId())) {
+                // Insert new subscriptions into uncategorized category
+                DBWriter.addFeedToUncategorized(f.getId());
+            }
+        }
     }
 
     @Override
