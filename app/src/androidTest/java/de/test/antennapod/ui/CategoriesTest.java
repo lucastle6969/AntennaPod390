@@ -4,8 +4,10 @@ import android.content.SharedPreferences;
 import android.test.ActivityInstrumentationTestCase2;
 
 import android.content.Context;
+
 import com.robotium.solo.Solo;
 
+import de.danoeh.antennapod.R;
 import de.danoeh.antennapod.activity.MainActivity;
 import de.danoeh.antennapod.core.storage.PodDBAdapter;
 
@@ -55,13 +57,30 @@ public class CategoriesTest extends ActivityInstrumentationTestCase2<MainActivit
 
         // reset preferences
         prefs.edit().clear().commit();
-
         super.tearDown();
     }
 
     private void openNavDrawer() {
         solo.clickOnImageButton(0);
         getInstrumentation().waitForIdleSync();
+    }
+
+    private String getActionbarTitle() {
+        return ((MainActivity) solo.getCurrentActivity()).getSupportActionBar().getTitle().toString();
+    }
+
+    public void testGoToSubscriptionsPage() throws Exception{
+        //Will use this test to try and retrieve the added subscriptions
+
+        uiTestUtils.addLocalFeedData(true);
+
+        openNavDrawer();
+        solo.clickOnText(solo.getString(R.string.subscriptions_label));
+        solo.waitForView(android.R.id.list);
+        assertEquals(solo.getString(R.string.subscriptions_label), getActionbarTitle());
+
+        solo.sleep(4000);
+
     }
 
 
