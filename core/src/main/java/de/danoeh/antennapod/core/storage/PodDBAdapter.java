@@ -134,6 +134,9 @@ public class PodDBAdapter {
     static final String TABLE_NAME_CATEGORIES = "Categories";
     static final String TABLE_NAME_ASSOCIATION_FOR_CATEGORIES = "AssociationForCategories";
 
+    // Default strings
+    public static final String UNCATEGORIZED_CATEGORY_NAME = "Uncategorized Section";
+
     // SQL Statements for creating new tables
     private static final String TABLE_PRIMARY_KEY = KEY_ID
             + " INTEGER PRIMARY KEY AUTOINCREMENT ,";
@@ -238,6 +241,11 @@ public class PodDBAdapter {
     static final String CREATE_TABLE_FAVORITES = "CREATE TABLE "
             + TABLE_NAME_FAVORITES + "(" + KEY_ID + " INTEGER PRIMARY KEY,"
             + KEY_FEEDITEM + " INTEGER," + KEY_FEED + " INTEGER)";
+
+
+    // Additional sql statements
+    private static final String INSERT_UNCATEGORIZED_CATEGORY = "INSERT INTO " + TABLE_NAME_CATEGORIES
+            + " (" + KEY_ID + ", " + KEY_CATEGORY_NAME + ") VALUES (0, '" + UNCATEGORIZED_CATEGORY_NAME + "')";
 
     /**
      * Select all columns from the feed-table
@@ -1727,6 +1735,7 @@ public class PodDBAdapter {
             db.execSQL(CREATE_TABLE_FAVORITES);
             db.execSQL(CREATE_TABLE_BOOKMARKS);
             db.execSQL(CREATE_TABLE_CATEGORIES);
+            db.execSQL(INSERT_UNCATEGORIZED_CATEGORY);
             db.execSQL(CREATE_TABLE_ASSOCIATION_FOR_CATEGORIES);
 
             db.execSQL(CREATE_INDEX_FEEDITEMS_FEED);
