@@ -69,17 +69,19 @@ public class CategoriesTest extends ActivityInstrumentationTestCase2<MainActivit
         return ((MainActivity) solo.getCurrentActivity()).getSupportActionBar().getTitle().toString();
     }
 
-    public void testGoToSubscriptionsPage() throws Exception{
-        //Will use this test to try and retrieve the added subscriptions
-
+    private void goingToSubscriptionPage() throws Exception{
         uiTestUtils.addLocalFeedData(true);
-
         openNavDrawer();
         solo.clickOnText(solo.getString(R.string.subscriptions_label));
         solo.waitForView(android.R.id.list);
         assertEquals(solo.getString(R.string.subscriptions_label), getActionbarTitle());
 
         solo.sleep(4000);
+    }
+
+    public void testGoToSubscriptionsPage() throws Exception{
+        
+      goingToSubscriptionPage();
 
     }
 
