@@ -130,11 +130,18 @@
     <string name="cancel_edit_bookmark_button">Cancel</string>
     <string name="save_edit_bookmark_button">Save Changes</string>
 
-    <!-- Category Labels -->
+    <!-- Categories labels -->
+    <string name="edit_category_dialog_title">Edit Category</string>
+    <string name="rename_category_hint">Change category name:</string>
+    <string name="save_rename_category_button">Save Changes</string>
+    <string name="cancel_rename_category_button">Cancel</string>
+    <string name="move_to_category_dialog_title">Move to Category</string>
+    <string name="save_move_to_category_button">Save Changes</string>
+    <string name="cancel_move_to_category_button">Cancel</string>
     <string name="category_alert_title">Create new category</string>
     <string name="category_hint">New category title</string>
     <string name="category_error_toast">Please enter a category title</string>
-    <string name="category_success">Category Created:</string>
+    <string name="category_success">Category Created: </string>
 
     <!-- 'Add Feed' Activity labels -->
     <string name="feedurl_label">Feed URL</string>

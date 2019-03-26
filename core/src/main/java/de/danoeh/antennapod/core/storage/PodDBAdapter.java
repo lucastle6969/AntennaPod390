@@ -153,7 +153,7 @@ public class PodDBAdapter {
 
     private static final String CREATE_TABLE_ASSOCIATION_FOR_CATEGORIES = "CREATE TABLE "
             + TABLE_NAME_ASSOCIATION_FOR_CATEGORIES + " (" + KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-            + KEY_FEEDITEM + " INTEGER," + KEY_CATEGORY_ID + " INTEGER," + " CONSTRAINT " + KEY_CATEGORY_FK
+            + KEY_FEED + " INTEGER," + KEY_CATEGORY_ID + " INTEGER," + " CONSTRAINT " + KEY_CATEGORY_FK
             + " FOREIGN KEY (" + KEY_CATEGORY_ID + ") REFERENCES " + TABLE_NAME_CATEGORIES + "(" + KEY_ID + "))";
 
     private static final String CREATE_TABLE_FEEDS = "CREATE TABLE "
@@ -852,7 +852,7 @@ public class PodDBAdapter {
 
     private long addToUncategorizedCategory(long feedId) {
         ContentValues associationValue = new ContentValues();
-        associationValue.put(KEY_FEEDITEM, feedId);
+        associationValue.put(KEY_FEED, feedId);
         associationValue.put(KEY_CATEGORY_ID, UNCATEGORIZED_CATEGORY_ID);
         return db.insert(TABLE_NAME_ASSOCIATION_FOR_CATEGORIES, null, associationValue);
     }
@@ -1533,7 +1533,7 @@ public class PodDBAdapter {
      * @return Cursor of the first categorized feed
      */
     public final Cursor getAllFeedIdsInCategories() {
-        final String query = "SELECT " + KEY_FEEDITEM + " FROM " + TABLE_NAME_ASSOCIATION_FOR_CATEGORIES;
+        final String query = "SELECT " + KEY_FEED + " FROM " + TABLE_NAME_ASSOCIATION_FOR_CATEGORIES;
         return db.rawQuery(query, null);
     }
 
