@@ -134,6 +134,10 @@ public class PodDBAdapter {
     static final String TABLE_NAME_CATEGORIES = "Categories";
     static final String TABLE_NAME_ASSOCIATION_FOR_CATEGORIES = "AssociationForCategories";
 
+    // Default values
+    public static final int UNCATEGORIZED_CATEGORY_ID = 0;
+    public static final String UNCATEGORIZED_CATEGORY_NAME = "Uncategorized Section";
+
     // SQL Statements for creating new tables
     private static final String TABLE_PRIMARY_KEY = KEY_ID
             + " INTEGER PRIMARY KEY AUTOINCREMENT ,";
@@ -238,6 +242,12 @@ public class PodDBAdapter {
     static final String CREATE_TABLE_FAVORITES = "CREATE TABLE "
             + TABLE_NAME_FAVORITES + "(" + KEY_ID + " INTEGER PRIMARY KEY,"
             + KEY_FEEDITEM + " INTEGER," + KEY_FEED + " INTEGER)";
+
+
+    // Additional sql statements
+    private static final String INSERT_UNCATEGORIZED_CATEGORY = "INSERT INTO " + TABLE_NAME_CATEGORIES
+            + " (" + KEY_ID + ", " + KEY_CATEGORY_NAME + ") VALUES (" + UNCATEGORIZED_CATEGORY_ID
+            + ", '" + UNCATEGORIZED_CATEGORY_NAME + "')";
 
     /**
      * Select all columns from the feed-table
@@ -651,6 +661,34 @@ public class PodDBAdapter {
         return result;
     }
 
+    public long setSingleCategory(Category category) {
+        long result = 0;
+        try {
+            db.beginTransactionNonExclusive();
+            result = setCategory(category);
+            db.setTransactionSuccessful();
+        } catch (SQLException e) {
+            Log.e(TAG, Log.getStackTraceString(e));
+        } finally {
+            db.endTransaction();
+        }
+        return result;
+    }
+
+    public long addFeedIntoUncategorizedCategory(long feedId) {
+        long result = 0;
+        try {
+            db.beginTransactionNonExclusive();
+            result = addToUncategorizedCategory(feedId);
+            db.setTransactionSuccessful();
+        } catch (SQLException e) {
+            Log.e(TAG, Log.getStackTraceString(e));
+        } finally {
+            db.endTransaction();
+        }
+        return result;
+    }
+
     /**
      * Update the flattr status of a FeedItem
      */
@@ -798,6 +836,25 @@ public class PodDBAdapter {
         db.delete(TABLE_NAME_BOOKMARKS, KEY_ID + "=?",
                 new String[]{String.valueOf(bookmark.getId())});
         return bookmark.getId();
+    }
+
+    /**
+     * Insert Category object into the TABLE_NAME_CATEGORIES table of the database
+     * @param category  The Category object
+     * @return the id of the entry
+     */
+    private long setCategory(Category category) {
+        ContentValues categoryValue = new ContentValues();
+        categoryValue.put(KEY_CATEGORY_NAME, category.getName());
+        category.setId(db.insert(TABLE_NAME_CATEGORIES, null, categoryValue));
+        return category.getId();
+    }
+
+    private long addToUncategorizedCategory(long feedId) {
+        ContentValues associationValue = new ContentValues();
+        associationValue.put(KEY_FEED, feedId);
+        associationValue.put(KEY_CATEGORY_ID, UNCATEGORIZED_CATEGORY_ID);
+        return db.insert(TABLE_NAME_ASSOCIATION_FOR_CATEGORIES, null, associationValue);
     }
 
     public void setFeedItemRead(int played, long itemId, long mediaId,
@@ -1472,6 +1529,15 @@ public class PodDBAdapter {
     }
 
     /**
+     * Get a cursor to all the feed ids that are categorized
+     * @return Cursor of the first categorized feed
+     */
+    public final Cursor getAllFeedIdsInCategories() {
+        final String query = "SELECT " + KEY_FEED + " FROM " + TABLE_NAME_ASSOCIATION_FOR_CATEGORIES;
+        return db.rawQuery(query, null);
+    }
+
+    /**
      * Uses DatabaseUtils to escape a search query and removes ' at the
      * beginning and the end of the string returned by the escape method.
      */
@@ -1701,6 +1767,8 @@ public class PodDBAdapter {
             db.execSQL(CREATE_TABLE_FAVORITES);
             db.execSQL(CREATE_TABLE_BOOKMARKS);
             db.execSQL(CREATE_TABLE_CATEGORIES);
+            db.execSQL(INSERT_UNCATEGORIZED_CATEGORY);
+
             db.execSQL(CREATE_TABLE_ASSOCIATION_FOR_CATEGORIES);
 
             db.execSQL(CREATE_INDEX_FEEDITEMS_FEED);

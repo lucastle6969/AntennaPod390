@@ -138,6 +138,10 @@
     <string name="move_to_category_dialog_title">Move to Category</string>
     <string name="save_move_to_category_button">Save Changes</string>
     <string name="cancel_move_to_category_button">Cancel</string>
+    <string name="category_alert_title">Create new category</string>
+    <string name="category_hint">New category title</string>
+    <string name="category_error_toast">Please enter a category title</string>
+    <string name="category_success">Category Created: </string>
 
     <!-- 'Add Feed' Activity labels -->
     <string name="feedurl_label">Feed URL</string>
