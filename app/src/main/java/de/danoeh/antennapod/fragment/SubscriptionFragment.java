@@ -10,6 +10,7 @@ import android.util.TypedValue;
 import android.view.ContextMenu;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -22,6 +23,8 @@ import android.widget.TableRow;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.List;
+
 import java.util.List;
 
 import de.danoeh.antennapod.R;
@@ -38,6 +41,7 @@ import de.danoeh.antennapod.core.storage.DBReader;
 import de.danoeh.antennapod.core.storage.DBWriter;
 import de.danoeh.antennapod.core.util.FeedItemUtil;
 import de.danoeh.antennapod.core.util.IntentUtils;
+import de.danoeh.antennapod.dialog.CreateCategoryDialog;
 import de.danoeh.antennapod.dialog.RenameFeedDialog;
 import rx.Observable;
 import rx.Subscription;
@@ -109,7 +113,7 @@ public class SubscriptionFragment extends Fragment {
 
         categoryTitles.add("uncategorized subscriptions");
         categoryTitles.add("Category 1");
-        categoryTitles.add("Category 2");
+        //categoryTitles.add("Category 2");
 
         return categoryTitles;
     }
@@ -135,7 +139,7 @@ public class SubscriptionFragment extends Fragment {
         //          numberOfFeeds++;
         // }
         // return numberOfFeeds;
-        return 2;
+        return 1;
     }
 
     public TableRow addRowTitle(String categoryTitle){
@@ -256,33 +260,65 @@ public class SubscriptionFragment extends Fragment {
                     for(SubscriptionsAdapter adapter: subscriptionsAdapterList){
                         adapter.notifyDataSetChanged();
                     }
-
+                    categorizeSubscriptions();
                 }, error -> Log.e(TAG, Log.getStackTraceString(error)));
+    }
+
+    private void categorizeSubscriptions() {
+        List<Long> feedIdsInCategories = DBReader.getAllFeedIdsInCategories();
+        for (Feed f : navDrawerData.feeds) {
+            if(!feedIdsInCategories.contains(f.getId())) {
+                // Insert new subscriptions into uncategorized category
+                DBWriter.addFeedToUncategorized(f.getId());
+            }
+        }
     }
 
     private void updateFeeds(){
 
-        ArrayList<String> categoryTitles = getCategoryTitles();
+      ArrayList<String> categoryTitles = getCategoryTitles();
 
-        for(int rowNumber=0; rowNumber<categoryTitles.size(); rowNumber++) {
+      for(int rowNumber=0; rowNumber<categoryTitles.size(); rowNumber++) {
 
-            int navDrawerPositionOffset = getNavDrawerPositionOffset(rowNumber);
-            int numberOfFeeds = getNumberOfFeeds(rowNumber);
+          int navDrawerPositionOffset = getNavDrawerPositionOffset(rowNumber);
+          int numberOfFeeds = getNumberOfFeeds(rowNumber);
 
-            List<Feed> feedList = new ArrayList<>();
-            List<Integer> counterList = new ArrayList<>();
-            if (navDrawerData != null) {
-                for (int i = 0; i < numberOfFeeds; i++) {
-                    feedList.add(navDrawerData.feeds.get(i + navDrawerPositionOffset));
-                    counterList.add(navDrawerData.feedCounters.get(navDrawerData.feeds.get(i + navDrawerPositionOffset).getId()));
-                }
-            } else {
-                Log.d("ITEM_ACCESS", "navDrawerData was null in updateFeeds");
-            }
-            subscriptionsAdapterList.get(rowNumber).updateFeeds(feedList, counterList);
-        }
+          List<Feed> feedList = new ArrayList<>();
+          List<Integer> counterList = new ArrayList<>();
+          if (navDrawerData != null) {
+              for (int i = 0; i < numberOfFeeds; i++) {
+                  feedList.add(navDrawerData.feeds.get(i + navDrawerPositionOffset));
+                  counterList.add(navDrawerData.feedCounters.get(navDrawerData.feeds.get(i + navDrawerPositionOffset).getId()));
+              }
+          } else {
+              Log.d("ITEM_ACCESS", "navDrawerData was null in updateFeeds");
+          }
+          subscriptionsAdapterList.get(rowNumber).updateFeeds(feedList, counterList);
+      }
 
     }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        if (!isAdded()) {
+            return;
+        }
+        getActivity().getMenuInflater().inflate(R.menu.subscription_menu, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.addCategory) {
+            CreateCategoryDialog categoryDialog = new CreateCategoryDialog();
+            categoryDialog.showCreateCategoryDialog(getActivity());
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+
 
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
