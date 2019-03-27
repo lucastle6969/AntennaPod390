@@ -842,6 +842,27 @@ public final class DBReader {
         return result;
     }
 
+    public static List<Long> getAllFeedIdsInCategories() {
+        List<Long> result = new ArrayList<>();
+        PodDBAdapter adapter = PodDBAdapter.getInstance();
+        adapter.open();
+        Cursor cursor;
+        try {
+            cursor = adapter.getAllFeedIdsInCategories();
+            if (cursor.moveToFirst()) {
+                do {
+                    int feedItemId = cursor.getColumnIndex(PodDBAdapter.KEY_FEEDITEM);
+                    result.add(cursor.getLong(feedItemId));
+                } while (cursor.moveToNext());
+            }
+            cursor.close();
+
+        } finally {
+            adapter.close();
+        }
+        return result;
+    }
+
     /**
      * Returns all categories created by the user
      * @return  returns a list of all categories
