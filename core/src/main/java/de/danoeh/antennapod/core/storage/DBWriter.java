@@ -30,6 +30,7 @@ import de.danoeh.antennapod.core.event.FeedItemEvent;
 import de.danoeh.antennapod.core.event.MessageEvent;
 import de.danoeh.antennapod.core.event.QueueEvent;
 import de.danoeh.antennapod.core.feed.Bookmark;
+import de.danoeh.antennapod.core.feed.Category;
 import de.danoeh.antennapod.core.feed.EventDistributor;
 import de.danoeh.antennapod.core.feed.Feed;
 import de.danoeh.antennapod.core.feed.FeedEvent;
@@ -785,6 +786,34 @@ public class DBWriter {
             PodDBAdapter adapter = PodDBAdapter.getInstance();
             adapter.open();
             adapter.deleteSingleBookmark(bookmark);
+            adapter.close();
+        });
+    }
+
+    /**
+     * Saves a Category object in the database. This method will save all attributes of Category object.
+     *
+     * @param category  The Category object.
+     */
+    public static Future<?> setCategory(final Category category){
+        return dbExec.submit(()-> {
+            PodDBAdapter adapter = PodDBAdapter.getInstance();
+            adapter.open();
+            adapter.setSingleCategory(category);
+            adapter.close();
+        });
+    }
+
+    /**
+     * Add new Feed (subscription) to uncategorized category in db
+     *
+     * @param feedId  Feed (Subscription) id.
+     */
+    public static Future<?> addFeedToUncategorized(final long feedId){
+        return dbExec.submit(()-> {
+            PodDBAdapter adapter = PodDBAdapter.getInstance();
+            adapter.open();
+            adapter.addFeedIntoUncategorizedCategory(feedId);
             adapter.close();
         });
     }
