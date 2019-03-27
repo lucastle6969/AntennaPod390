@@ -59,6 +59,7 @@ public class SubscriptionFragment extends Fragment {
     private DBReader.NavDrawerData navDrawerData;
 
     private ArrayList<SubscriptionsAdapter> subscriptionsAdapterList = new ArrayList<>();
+    private ArrayList<GridView> gridViewList = new ArrayList<>();
 
     private int mPosition = -1;
     private int aPosition = -1;
@@ -91,6 +92,7 @@ public class SubscriptionFragment extends Fragment {
         View root = inflater.inflate(R.layout.fragment_subscriptions, container, false);
 
         subscriptionsAdapterList = new ArrayList<>();
+        gridViewList = new ArrayList<>();
         TableLayout table = root.findViewById(R.id.tableLayout);
         table.setStretchAllColumns(true);
         table.setShrinkAllColumns(true);
@@ -174,6 +176,7 @@ public class SubscriptionFragment extends Fragment {
         gridView.setOnItemClickListener(subscriptionsAdapterList.get(0));
 
         registerForContextMenu(gridView);
+        
         gridRow.addView(gridView);
         setGridViewHeightBasedOnChildren(gridView, GRID_COL_NUM);
 
@@ -189,6 +192,12 @@ public class SubscriptionFragment extends Fragment {
         title.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 18);
         title.setGravity(Gravity.CENTER);
         title.setTypeface(Typeface.SANS_SERIF, Typeface.BOLD);
+        title.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                toggle_contents(v);
+            }
+        });
 
         TableRow.LayoutParams params = new TableRow.LayoutParams();
         params.span = 6;
@@ -229,6 +238,7 @@ public class SubscriptionFragment extends Fragment {
         gridView.setOnItemClickListener(subscriptionsAdapterList.get(rowNumber));
 
         registerForContextMenu(gridView);
+        gridViewList.add(gridView);
         gridRow.addView(gridView);
         setGridViewHeightBasedOnChildren(gridView, GRID_COL_NUM);
 
@@ -259,6 +269,24 @@ public class SubscriptionFragment extends Fragment {
         ViewGroup.LayoutParams params = gridView.getLayoutParams();
         params.height = totalHeight;
         gridView.setLayoutParams(params);
+    }
+
+    private void toggle_contents(View v){
+        TextView title = (TextView) v;
+        List<String> categoryTitles = getCategoryTitles();
+        String currentText = title.getText().toString();
+
+        for(int i = 0; i<categoryTitles.size(); i++){
+            if(categoryTitles.get(i).equals(currentText)){
+                GridView currentView = gridViewList.get(i);
+                if(currentView.isShown()){
+                    currentView.setVisibility(View.GONE);
+                }else{
+                    currentView.setVisibility(View.VISIBLE);
+                }
+                break;
+            }
+        }
     }
 
     @Override
