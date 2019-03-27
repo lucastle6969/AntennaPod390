@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.support.v7.app.AlertDialog;
 import android.view.Gravity;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import de.danoeh.antennapod.R;
 import de.danoeh.antennapod.core.feed.Category;
@@ -28,7 +29,8 @@ public class RemoveFromCategoryDialog {
         builder.setPositiveButton(R.string.confirm_label, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                //TODO: code to remove selected feed from category
+                //TODO: code to remove selected feed from category to uncategorized
+                Toast.makeText(activity, activity.getString(R.string.successfully_removed_from_category), Toast.LENGTH_LONG).show();
             }
         });
         builder.setNegativeButton(R.string.cancel_label, new DialogInterface.OnClickListener() {

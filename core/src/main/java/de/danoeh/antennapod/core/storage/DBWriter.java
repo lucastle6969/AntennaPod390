@@ -805,6 +805,20 @@ public class DBWriter {
     }
 
     /**
+     * Delete a Feed from a category in db
+     *
+     * @param category  Category to be deleted.
+     */
+    public static Future<?> deleteCategory(final Category category){
+        return dbExec.submit(()-> {
+            PodDBAdapter adapter = PodDBAdapter.getInstance();
+            adapter.open();
+            adapter.deleteACategory(category);
+            adapter.close();
+        });
+    }
+
+    /**
      * Add new Feed (subscription) to uncategorized category in db
      *
      * @param feedId  Feed (Subscription) id.
