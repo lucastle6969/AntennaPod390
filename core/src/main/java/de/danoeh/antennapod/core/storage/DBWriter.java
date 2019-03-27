@@ -791,12 +791,40 @@ public class DBWriter {
     }
 
     /**
+     * Saves a Category object in the database. This method will save all attributes of Category object.
+     *
+     * @param category  The Category object.
+     */
+    public static Future<?> setCategory(final Category category){
+        return dbExec.submit(()-> {
+            PodDBAdapter adapter = PodDBAdapter.getInstance();
+            adapter.open();
+            adapter.setSingleCategory(category);
+            adapter.close();
+        });
+    }
+
+    /**
+     * Add new Feed (subscription) to uncategorized category in db
+     *
+     * @param feedId  Feed (Subscription) id.
+     */
+    public static Future<?> addFeedToUncategorized(final long feedId){
+        return dbExec.submit(()-> {
+            PodDBAdapter adapter = PodDBAdapter.getInstance();
+            adapter.open();
+            adapter.addFeedIntoUncategorizedCategory(feedId);
+            adapter.close();
+        });
+    }
+
+    /**
      * Updates Category object in the database by overwriting all changed and unchanged attribute
      * values of the passed Category object.
      * @param category The Category object used to overwrite the previous one.
      */
-    public static Future<?> updateCategory(final Category category){
-        return dbExec.submit(()-> {
+    public static Future<?> updateCategory(final Category category) {
+        return dbExec.submit(() -> {
             PodDBAdapter adapter = PodDBAdapter.getInstance();
             adapter.open();
             adapter.updateSingleCategory(category);
