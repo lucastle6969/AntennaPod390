@@ -690,7 +690,9 @@ public class PodDBAdapter {
     }
 
     /**
-     * Update a Category
+     * Update a category
+     * @param category the category to be updated
+     * @return
      */
     public long updateSingleCategory(Category category) {
         long result = 0;
@@ -706,6 +708,25 @@ public class PodDBAdapter {
         return result;
     }
 
+    /**
+     * Update a feed and category association
+     * @param feedId
+     * @param categoryId
+     * @return
+     */
+    public long updateFeedCategory(long feedId, long categoryId) {
+        long result = 0;
+        try {
+            db.beginTransactionNonExclusive();
+            result = updateFeedCategoryAssociation(feedId, categoryId);
+            db.setTransactionSuccessful();
+        }catch(SQLException e) {
+            Log.e(TAG, Log.getStackTraceString(e));
+        } finally {
+            db.endTransaction();
+        }
+        return result;
+    }
 
     /**
      * Update the flattr status of a FeedItem
@@ -881,11 +902,19 @@ public class PodDBAdapter {
      * @return The id of that Category object
      */
     private long updateCategory(Category category) {
-        ContentValues values = new ContentValues();
-        values.put(KEY_CATEGORY_NAME, category.getName());
-        db.update(TABLE_NAME_CATEGORIES, values, KEY_ID + "=?",
+        ContentValues categoryValue = new ContentValues();
+        categoryValue.put(KEY_CATEGORY_NAME, category.getName());
+        db.update(TABLE_NAME_CATEGORIES, categoryValue, KEY_ID + "=?",
                 new String[]{String.valueOf(category.getId())});
         return category.getId();
+    }
+
+    private long updateFeedCategoryAssociation(long feedId, long categoryId) {
+        ContentValues associationValue = new ContentValues();
+        associationValue.put(KEY_FEED, feedId);
+        associationValue.put(KEY_CATEGORY_ID, categoryId);
+        return db.update(TABLE_NAME_ASSOCIATION_FOR_CATEGORIES, associationValue,KEY_FEED
+                + "=?", new String[]{String.valueOf(feedId)});
     }
 
 
