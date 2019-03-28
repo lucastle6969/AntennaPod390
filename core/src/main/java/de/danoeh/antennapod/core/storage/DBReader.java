@@ -48,7 +48,6 @@ public final class DBReader {
      */
     private static final int DOWNLOAD_LOG_SIZE = 200;
 
-
     private DBReader() {
     }
 
@@ -864,24 +863,40 @@ public final class DBReader {
     }
 
     /**
-     * Returns all categories created by the user
+     * Returns all categories containing their feedIds
      * @return  returns a list of all categories
      */
     public static List<Category> getAllCategories() {
         List<Category> result = new ArrayList<>();
+
+        Category category = null;
+        long tempId = -1;
+
         PodDBAdapter adapter = PodDBAdapter.getInstance();
         adapter.open();
-        Cursor categoryCursor;
-        Cursor categoryAssociationCursor;
+        Cursor cursor;
         try {
-            categoryAssociationCursor = adapter.getCategoryAssociationCursor();
-            if (categoryAssociationCursor.moveToFirst()) {
+            cursor = adapter.getAllCategories();
+            if (cursor.moveToFirst()) {
                 do {
-                    // TODO For each category association, get the associated podcasts
-                } while (categoryAssociationCursor.moveToNext());
+                    int indexId = cursor.getColumnIndex(PodDBAdapter.KEY_CATEGORY_ID);
+                    long categoryId = cursor.getLong(indexId);
+                    if (categoryId != tempId) {
+                        tempId = categoryId;
+                        if (category != null) {
+                            result.add(category);
+                        }
+                        int indexName = cursor.getColumnIndex(PodDBAdapter.KEY_CATEGORY_NAME);
+                        String categoryName = cursor.getString(indexName);
+                        category = new Category(categoryId, categoryName);
+                    }
+                    int indexFeedId = cursor.getColumnIndex(PodDBAdapter.KEY_FEED);
+                    long feedId = cursor.getLong(indexFeedId);
+                    category.addFeedId(feedId);
+                } while (cursor.moveToNext());
             }
-            categoryAssociationCursor.close();
-
+            result.add(category);
+            cursor.close();
         } finally {
             adapter.close();
         }
