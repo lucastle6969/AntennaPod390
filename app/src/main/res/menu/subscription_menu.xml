@@ -6,4 +6,9 @@
         android:icon="@drawable/ic_add_grey600_24dp"
         android:title="@string/category_alert_title"
         app:showAsAction="always" />
+    <item
+        android:id="@+id/toggleCategoryView"
+        android:icon="@drawable/ic_swap_vertical_grey600_24dp"
+        android:title="Toggle Category View"
+        app:showAsAction="always" />
 </menu>
