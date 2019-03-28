@@ -5,6 +5,8 @@ import android.database.Cursor;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.danoeh.antennapod.core.storage.PodDBAdapter;
+
 public class Category {
 
     private long id;
@@ -18,8 +20,13 @@ public class Category {
     }
 
     public static Category fromCursor(Cursor cursor) {
-        // TODO create category objects using the cursor returned from the db
-        return null;
+        int indexId = cursor.getColumnIndex(PodDBAdapter.KEY_CATEGORY_ID);
+        int indexName = cursor.getColumnIndex(PodDBAdapter.KEY_CATEGORY_NAME);
+
+        return new Category(
+            cursor.getLong(indexId),
+            cursor.getString(indexName)
+        );
     }
 
     public void addFeedId(long id) {

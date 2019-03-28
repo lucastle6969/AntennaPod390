@@ -868,35 +868,27 @@ public final class DBReader {
      */
     public static List<Category> getAllCategories() {
         List<Category> result = new ArrayList<>();
-
-        Category category = null;
-        long tempId = -1;
-
+        Category category;
         PodDBAdapter adapter = PodDBAdapter.getInstance();
         adapter.open();
-        Cursor cursor;
+        Cursor categoryCursor;
+        Cursor associationCursor;
         try {
-            cursor = adapter.getAllCategories();
-            if (cursor.moveToFirst()) {
+            categoryCursor = adapter.getAllCategories1();
+            if (categoryCursor.moveToFirst()) {
                 do {
-                    int indexId = cursor.getColumnIndex(PodDBAdapter.KEY_CATEGORY_ID);
-                    long categoryId = cursor.getLong(indexId);
-                    if (categoryId != tempId) {
-                        tempId = categoryId;
-                        if (category != null) {
-                            result.add(category);
-                        }
-                        int indexName = cursor.getColumnIndex(PodDBAdapter.KEY_CATEGORY_NAME);
-                        String categoryName = cursor.getString(indexName);
-                        category = new Category(categoryId, categoryName);
+                    category = Category.fromCursor(categoryCursor);
+                    associationCursor = adapter.getFeedIdsForCategory(category.getId());
+                    if (associationCursor.moveToFirst()) {
+                        do {
+                            int indexFeedId = associationCursor.getColumnIndex(PodDBAdapter.KEY_FEED);
+                            long feedId = associationCursor.getLong(indexFeedId);
+                            category.addFeedId(feedId);
+                        } while (associationCursor.moveToNext());
                     }
-                    int indexFeedId = cursor.getColumnIndex(PodDBAdapter.KEY_FEED);
-                    long feedId = cursor.getLong(indexFeedId);
-                    category.addFeedId(feedId);
-                } while (cursor.moveToNext());
+                    result.add(category);
+                } while (categoryCursor.moveToNext());
             }
-            result.add(category);
-            cursor.close();
         } finally {
             adapter.close();
         }
