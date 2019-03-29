@@ -190,9 +190,12 @@ public class SubscriptionFragment extends Fragment {
         List<Integer> counterList = new ArrayList<>();
         if(navDrawerData!=null){
             List<Long> categoryFeedIds = category.getFeedIds();
-            for(int i=0; i<categoryFeedIds.size(); i++){
-                feedList.add(navDrawerData.getFeedById(categoryFeedIds.get(i)));
-                counterList.add(navDrawerData.feedCounters.get(categoryFeedIds.get(i)));
+            for(Long feedId:categoryFeedIds){
+                Feed feedToAdd = navDrawerData.getFeedById(feedId);
+                if(feedToAdd != null){
+                    feedList.add(feedToAdd);
+                    counterList.add(navDrawerData.feedCounters.get(feedId));
+                }
             }
         }else{
             Log.d("ITEM_ACCESS", "navDrawerData was null in addGridRow");
@@ -325,9 +328,12 @@ public class SubscriptionFragment extends Fragment {
 
             List<Long> categoryFeedIds = category.getFeedIds();
           if (navDrawerData != null) {
-              for (int i = 0; i < categoryFeedIds.size(); i++) {
-                  feedList.add(navDrawerData.getFeedById(categoryFeedIds.get(i)));
-                  counterList.add(navDrawerData.feedCounters.get(categoryFeedIds.get(i)));
+              for (Long feedId:categoryFeedIds) {
+                  Feed feedToAdd = navDrawerData.getFeedById(feedId);
+                  if(feedToAdd != null){
+                      feedList.add(feedToAdd);
+                      counterList.add(navDrawerData.feedCounters.get(feedId));
+                  }
               }
           } else {
               Log.d("ITEM_ACCESS", "navDrawerData was null in updateFeeds");
