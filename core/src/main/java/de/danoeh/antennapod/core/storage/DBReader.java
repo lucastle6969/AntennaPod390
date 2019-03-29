@@ -87,6 +87,10 @@ public final class DBReader {
         }
     }
 
+    public static int getFeedListSize(){
+        return getFeedList().size();
+    }
+
     /**
      * Returns a list with the download URLs of all feeds.
      *
@@ -1215,6 +1219,15 @@ public final class DBReader {
             this.numDownloadedItems = numDownloadedItems;
             this.feedCounters = feedIndicatorValues;
             this.reclaimableSpace = reclaimableSpace;
+        }
+
+        public Feed getFeedById(Long id){
+            for(Feed feed:feeds){
+                if(feed.getId() == id){
+                    return feed;
+                }
+            }
+            return null;
         }
     }
 }
