@@ -3,6 +3,8 @@ package de.danoeh.antennapod.core.util;
 import android.content.Context;
 import android.util.Log;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 import de.danoeh.antennapod.core.R;
@@ -141,5 +143,14 @@ public final class Converter {
         if (progress==100)
             return 1f;
         return (float) (1 - (Math.log(101 - progress) / Math.log(101)));
+    }
+
+    public static List<Integer> getIntegerListFromLongList(List<Long> listToConvert){
+        List<Integer> listToReturn = new ArrayList<>();
+        for(Long longItem:listToConvert){
+            String tempString = String.valueOf(longItem);
+            listToReturn.add(Integer.valueOf(tempString));
+        }
+        return listToReturn;
     }
 }

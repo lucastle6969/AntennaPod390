@@ -87,6 +87,10 @@ public final class DBReader {
         }
     }
 
+    public static int getFeedListSize(){
+        return getFeedList().size();
+    }
+
     /**
      * Returns a list with the download URLs of all feeds.
      *
