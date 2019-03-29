@@ -2,11 +2,12 @@ package de.danoeh.antennapod.adapter;
 
 import android.content.Context;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -23,26 +24,23 @@ import de.danoeh.antennapod.fragment.AddFeedFragment;
 import de.danoeh.antennapod.fragment.ItemlistFragment;
 import jp.shts.android.library.TriangleLabelView;
 
-/**
- * Adapter for subscriptions
- */
-public class SubscriptionsAdapter extends BaseAdapter implements AdapterView.OnItemClickListener {
+public class SubscriptionsAdapterAdd extends SubscriptionsAdapter implements AdapterView.OnItemClickListener {
+    /** placeholder object that indicates item should be added */
+    public static final Object ADD_ITEM_OBJ = new Object();
 
+    /** the position in the view that holds the add item; 0 is the first, -1 is the last position */
+    private static final int ADD_POSITION = 0;
     private static final String TAG = "SubscriptionsAdapter";
 
     private final WeakReference<MainActivity> mainActivityRef;
     private List<Feed> feedList;
     private List<Integer> counterList;
 
-    // default constructor to allow the class to be extended - do not use
-    public SubscriptionsAdapter(){
-        this.mainActivityRef = null;
-    }
-
-    public SubscriptionsAdapter(MainActivity mainActivity, List<Feed> feedList, List<Integer> counterList) {
+    public SubscriptionsAdapterAdd(MainActivity mainActivity, List<Feed> feedList, List<Integer> counterList) {
         this.mainActivityRef = new WeakReference<>(mainActivity);
         this.feedList = feedList;
         this.counterList = counterList;
+
     }
 
     public void updateFeeds(List<Feed> updatedFeeds, List<Integer> updatedCounters){
@@ -50,14 +48,34 @@ public class SubscriptionsAdapter extends BaseAdapter implements AdapterView.OnI
         counterList = updatedCounters;
     }
 
+    private int getAddTilePosition() {
+        if(ADD_POSITION < 0) {
+            return ADD_POSITION + getCount();
+        }
+        return ADD_POSITION;
+    }
+
+    private int getAdjustedPosition(int origPosition) {
+        if(origPosition < getAddTilePosition()){
+            return origPosition;
+        }else{
+            origPosition = origPosition - 1;
+            return origPosition;
+        }
+    }
+
     @Override
     public int getCount() {
-        return feedList.size();
+        return 1 + feedList.size();
     }
 
     @Override
     public Object getItem(int position) {
-        return feedList.get(position);
+        if (position == getAddTilePosition()) {
+            return ADD_ITEM_OBJ;
+        }
+        Log.d("ITEM_ACCESS_SA", "getItem adjPosition: " + String.valueOf(getAdjustedPosition(position)));
+        return feedList.get(getAdjustedPosition(position));
     }
 
     @Override
@@ -67,7 +85,10 @@ public class SubscriptionsAdapter extends BaseAdapter implements AdapterView.OnI
 
     @Override
     public long getItemId(int position) {
-        return feedList.get(position).getId();
+        if (position == getAddTilePosition()) {
+            return 0;
+        }
+        return feedList.get(getAdjustedPosition(position)).getId();
     }
 
     @Override
@@ -90,14 +111,28 @@ public class SubscriptionsAdapter extends BaseAdapter implements AdapterView.OnI
             holder = (SubscriptionsAdapter.Holder) convertView.getTag();
         }
 
+        if (position == getAddTilePosition()) {
+            holder.feedTitle.setText("{md-add 500%}\n\n" + mainActivityRef.get().getString(R.string.add_feed_label));
+            holder.feedTitle.setVisibility(View.VISIBLE);
+            // prevent any accidental re-use of old values (not sure how that would happen...)
+            holder.count.setPrimaryText("");
+            // make it go away, we don't need it for add feed
+            holder.count.setVisibility(View.INVISIBLE);
+
+            // when this holder is reused, we could else end up with a cover image
+            Glide.clear(holder.imageView);
+
+            return convertView;
+        }
+
         final Feed feed = (Feed) getItem(position);
         if (feed == null) return null;
 
         holder.feedTitle.setText(feed.getTitle());
         holder.feedTitle.setVisibility(View.VISIBLE);
-        int count = counterList.get(position);
+        int count = counterList.get(getAdjustedPosition(position));
         if(count > 0) {
-            holder.count.setPrimaryText(String.valueOf(counterList.get(position)));
+            holder.count.setPrimaryText(String.valueOf(counterList.get(getAdjustedPosition(position))));
             holder.count.setVisibility(View.VISIBLE);
         } else {
             holder.count.setVisibility(View.GONE);
@@ -115,14 +150,11 @@ public class SubscriptionsAdapter extends BaseAdapter implements AdapterView.OnI
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        Fragment fragment = ItemlistFragment.newInstance(getItemId(position));
-        mainActivityRef.get().loadChildFragment(fragment);
+        if (position == getAddTilePosition()) {
+            mainActivityRef.get().loadChildFragment(new AddFeedFragment());
+        } else {
+            Fragment fragment = ItemlistFragment.newInstance(getItemId(position));
+            mainActivityRef.get().loadChildFragment(fragment);
+        }
     }
-
-    static class Holder {
-        public TextView feedTitle;
-        public ImageView imageView;
-        public TriangleLabelView count;
-    }
-
 }
