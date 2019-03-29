@@ -12,19 +12,30 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.List;
+
 import de.danoeh.antennapod.R;
 import de.danoeh.antennapod.core.feed.Category;
+import de.danoeh.antennapod.core.storage.DBReader;
 import de.danoeh.antennapod.core.storage.DBWriter;
+
+import static de.danoeh.antennapod.core.storage.DBReader.getAllCategories;
 
 public class EditCategoryDialog {
 
+    private long categoryId;
+
     public void EditCategoryDialog(){ }
 
-    public void showEditCategoryDialog(Activity activity, Category category){
+    public void showEditCategoryDialog(Activity activity, String categoryTitle){
 
-        //Get information to display
-        long categoryId = category.getId();
-        String categoryName = category.getName();
+        //Retrieve the category id
+        List<Category> categories = DBReader.getAllCategories();
+        for(int i=0; i < categories.size(); i++){
+            if(categories.get(i).getName() == categoryTitle){
+                categoryId = categories.get(i).getId();
+            }
+        }
 
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         builder.setTitle(R.string.edit_category_dialog_title);
@@ -46,7 +57,7 @@ public class EditCategoryDialog {
         renameCategory.setInputType(InputType.TYPE_CLASS_TEXT);
         renameCategory.setGravity(Gravity.CENTER_HORIZONTAL);
         renameCategory.setPadding(50, 10, 50, 50);
-        renameCategory.setText(categoryName);
+        renameCategory.setText(categoryTitle);
         renameCategory.setSelection(renameCategory.getText().length());
         layout.addView(renameCategory);
 

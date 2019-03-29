@@ -16,6 +16,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -30,6 +32,7 @@ import de.danoeh.antennapod.adapter.SubscriptionsAdapter;
 import de.danoeh.antennapod.adapter.SubscriptionsAdapterAdd;
 import de.danoeh.antennapod.core.asynctask.FeedRemover;
 import de.danoeh.antennapod.core.dialog.ConfirmationDialog;
+import de.danoeh.antennapod.core.feed.Category;
 import de.danoeh.antennapod.core.feed.EventDistributor;
 import de.danoeh.antennapod.core.feed.Feed;
 import de.danoeh.antennapod.core.preferences.PlaybackPreferences;
@@ -40,6 +43,7 @@ import de.danoeh.antennapod.core.storage.DBWriter;
 import de.danoeh.antennapod.core.util.FeedItemUtil;
 import de.danoeh.antennapod.core.util.IntentUtils;
 import de.danoeh.antennapod.dialog.CreateCategoryDialog;
+import de.danoeh.antennapod.dialog.EditCategoryDialog;
 import de.danoeh.antennapod.dialog.MoveToCategoryDialog;
 import de.danoeh.antennapod.dialog.RenameFeedDialog;
 import rx.Observable;
@@ -120,7 +124,7 @@ public class SubscriptionFragment extends Fragment {
         // this should actually come from the db
         ArrayList<String> categoryTitles = new ArrayList<>();
 
-        categoryTitles.add("uncategorized subscriptions");
+        categoryTitles.add("Uncategorized Section");
         categoryTitles.add("Category 1");
         // categoryTitles.add("Category 2");
 
@@ -188,6 +192,11 @@ public class SubscriptionFragment extends Fragment {
         TableRow rowTitle = new TableRow(getActivity());
         rowTitle.setGravity(Gravity.CENTER_HORIZONTAL);
 
+        LinearLayout layout = new LinearLayout(getActivity());
+        layout.setOrientation(LinearLayout.HORIZONTAL);
+        layout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.FILL_PARENT));
+        layout.setGravity(Gravity.CENTER_HORIZONTAL);
+
         TextView title = new TextView(getActivity());
         title.setText(categoryTitle);
         title.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 18);
@@ -199,11 +208,27 @@ public class SubscriptionFragment extends Fragment {
                 toggle_contents(v);
             }
         });
+        layout.addView(title);
+
+        //get the uncategorized
+        List<Category> categories = DBReader.getAllCategories();
+        if(!categoryTitle.equals(categories.get(0).getName())) {
+            ImageButton editCategoryButton = new ImageButton(getActivity());
+            editCategoryButton.setImageResource(R.drawable.ic_edit_category_light);
+            //editCategoryButton.setId();
+            editCategoryButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    new EditCategoryDialog().showEditCategoryDialog(getActivity(), categoryTitle);
+                }
+            });
+            layout.addView(editCategoryButton);
+        }
 
         TableRow.LayoutParams params = new TableRow.LayoutParams();
         params.span = 6;
 
-        rowTitle.addView(title, params);
+        rowTitle.addView(layout, params);
         return rowTitle;
     }
 
