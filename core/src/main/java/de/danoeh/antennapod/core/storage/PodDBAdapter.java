@@ -444,6 +444,7 @@ public class PodDBAdapter {
             db.update(TABLE_NAME_FEEDS, values, KEY_ID + "=?",
                     new String[]{String.valueOf(feed.getId())});
         }
+        addToUncategorizedCategory(feed.getId());
         return feed.getId();
     }
 
