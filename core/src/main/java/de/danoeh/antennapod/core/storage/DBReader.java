@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 import de.danoeh.antennapod.core.feed.Bookmark;
+import de.danoeh.antennapod.core.feed.Category;
 import de.danoeh.antennapod.core.feed.Chapter;
 import de.danoeh.antennapod.core.feed.Feed;
 import de.danoeh.antennapod.core.feed.FeedItem;
@@ -46,7 +47,6 @@ public final class DBReader {
      * Maximum size of the list returned by {@link #getDownloadLog()}.
      */
     private static final int DOWNLOAD_LOG_SIZE = 200;
-
 
     private DBReader() {
     }
@@ -856,6 +856,39 @@ public final class DBReader {
             }
             cursor.close();
 
+        } finally {
+            adapter.close();
+        }
+        return result;
+    }
+
+    /**
+     * Returns all categories containing their feedIds
+     * @return  returns a list of all categories
+     */
+    public static List<Category> getAllCategories() {
+        List<Category> result = new ArrayList<>();
+        Category category;
+        PodDBAdapter adapter = PodDBAdapter.getInstance();
+        adapter.open();
+        Cursor categoryCursor;
+        Cursor associationCursor;
+        try {
+            categoryCursor = adapter.getAllCategories();
+            if (categoryCursor.moveToFirst()) {
+                do {
+                    category = Category.fromCursor(categoryCursor);
+                    associationCursor = adapter.getFeedIdsForCategory(category.getId());
+                    if (associationCursor.moveToFirst()) {
+                        do {
+                            int indexFeedId = associationCursor.getColumnIndex(PodDBAdapter.KEY_FEED);
+                            long feedId = associationCursor.getLong(indexFeedId);
+                            category.addFeedId(feedId);
+                        } while (associationCursor.moveToNext());
+                    }
+                    result.add(category);
+                } while (categoryCursor.moveToNext());
+            }
         } finally {
             adapter.close();
         }
