@@ -5,10 +5,12 @@ import android.content.DialogInterface;
 import android.support.v7.app.AlertDialog;
 import android.view.Gravity;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import de.danoeh.antennapod.R;
 import de.danoeh.antennapod.core.feed.Category;
+import de.danoeh.antennapod.core.storage.DBWriter;
 
 public class DeleteCategoryDialog {
 
@@ -24,12 +26,24 @@ public class DeleteCategoryDialog {
         layout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.FILL_PARENT));
         layout.setGravity(Gravity.CENTER_HORIZONTAL);
 
+        final TextView categoryTitle = new TextView(activity);
+        categoryTitle.setText(category.getName());
+        categoryTitle.setPadding(50, 10, 50, 50);
+        layout.addView(categoryTitle);
+
         builder.setView(layout);
 
         builder.setPositiveButton(R.string.confirm_label, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 //TODO: code to delete category and move feeds to uncategorized
+
+                //Looping through all the feeds from the category and setting them to uncategorized
+                for (Long feedId: category.getFeedIds()){
+//                    DBWriter.updateFeedCategory(feedId, 0);
+                }
+                DBWriter.deleteCategory(category);
+
                 Toast.makeText(activity, activity.getString(R.string.successfully_deleted_from_category), Toast.LENGTH_LONG).show();
             }
         });

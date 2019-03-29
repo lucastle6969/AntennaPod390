@@ -30,6 +30,7 @@ import de.danoeh.antennapod.adapter.SubscriptionsAdapter;
 import de.danoeh.antennapod.adapter.SubscriptionsAdapterAdd;
 import de.danoeh.antennapod.core.asynctask.FeedRemover;
 import de.danoeh.antennapod.core.dialog.ConfirmationDialog;
+import de.danoeh.antennapod.core.feed.Category;
 import de.danoeh.antennapod.core.feed.EventDistributor;
 import de.danoeh.antennapod.core.feed.Feed;
 import de.danoeh.antennapod.core.preferences.PlaybackPreferences;
@@ -40,6 +41,8 @@ import de.danoeh.antennapod.core.storage.DBWriter;
 import de.danoeh.antennapod.core.util.FeedItemUtil;
 import de.danoeh.antennapod.core.util.IntentUtils;
 import de.danoeh.antennapod.dialog.CreateCategoryDialog;
+import de.danoeh.antennapod.dialog.EditCategoryDialog;
+import de.danoeh.antennapod.dialog.RemoveFromCategoryDialog;
 import de.danoeh.antennapod.dialog.RenameFeedDialog;
 import rx.Observable;
 import rx.Subscription;
@@ -489,6 +492,17 @@ public class SubscriptionFragment extends Fragment {
             case R.id.rename_item:
                 new RenameFeedDialog(getActivity(), feed).show();
                 return true;
+
+            case R.id.remove_from_category_item:
+                Category category1 = new Category(1, "My Category for remove");
+                new RemoveFromCategoryDialog().showRemoveFromCategoryDialog(getActivity(), category1);
+                return true;
+
+            case R.id.testing_edit:
+                Category category3 = new Category(1, "My Category for edit");
+                new EditCategoryDialog().showEditCategoryDialog(getActivity(), category3);
+                return true;
+
             case R.id.remove_item:
                 final FeedRemover remover = new FeedRemover(getContext(), feed) {
                     @Override
