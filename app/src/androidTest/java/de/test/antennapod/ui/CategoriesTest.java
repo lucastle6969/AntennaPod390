@@ -85,5 +85,23 @@ public class CategoriesTest extends ActivityInstrumentationTestCase2<MainActivit
 
     }
 
+    public void testRenameCategoryValidation() {
+        //goingToSubscriptionPage();
+        //TODO: click on pen icon, erase the name of the category and try to save a blank category name.
+        //solo.clickOnText("Confirm");
+        //TODO: assert
+    }
 
+    public void testRenameCategorySuccess() {
+        //goingToSubscriptionPage();
+        //TODO: click on pen icon, write a new category title, and save
+        //solo.clickOnText("Confirm");
+        //TODO: assert
+    }
+
+    public void testMoveFeedToDifferentCategory() {
+        //goingToSubscriptionPage();
+        //TODO: clickLong on a podcast in a Category, and selecting a new category
+        //solo.clickOnText("Confirm");
+    }
 }

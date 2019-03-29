@@ -16,11 +16,7 @@ public class MoveToCategoryDialog {
 
     public void MoveToCategoryDialog(){ }
 
-    public void showMoveToCategoryDialog(Activity activity, long feedId, Category category){
-
-        //Get information to display
-        long categoryId = category.getId();
-        String categoryName = category.getName();
+    public void showMoveToCategoryDialog(Activity activity, long feedId) {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         builder.setTitle(R.string.move_to_category_dialog_title);

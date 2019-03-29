@@ -140,6 +140,7 @@
     <string name="category_success">Category Created: </string>
     <string name="category_renamed_toast">Category renamed to: </string>
     <string name="podcast_moved_toast">Podcast was moved to category: </string>
+    <string name="move_to_category_label">Move to Category</string>
 
     <!-- 'Add Feed' Activity labels -->
     <string name="feedurl_label">Feed URL</string>

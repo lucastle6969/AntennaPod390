@@ -40,6 +40,7 @@ import de.danoeh.antennapod.core.storage.DBWriter;
 import de.danoeh.antennapod.core.util.FeedItemUtil;
 import de.danoeh.antennapod.core.util.IntentUtils;
 import de.danoeh.antennapod.dialog.CreateCategoryDialog;
+import de.danoeh.antennapod.dialog.MoveToCategoryDialog;
 import de.danoeh.antennapod.dialog.RenameFeedDialog;
 import rx.Observable;
 import rx.Subscription;
@@ -519,6 +520,9 @@ public class SubscriptionFragment extends Fragment {
                     }
                 };
                 conDialog.createNewDialog().show();
+                return true;
+            case R.id.move_to_category:
+                new MoveToCategoryDialog().showMoveToCategoryDialog(getActivity(), feed.getId());
                 return true;
             default:
                 return super.onContextItemSelected(item);
