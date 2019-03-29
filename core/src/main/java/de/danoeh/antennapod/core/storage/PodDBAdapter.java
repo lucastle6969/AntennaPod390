@@ -1529,6 +1529,22 @@ public class PodDBAdapter {
     }
 
     /**
+     * Get a cursor to all categories and their feed ids
+     * @return Cursor of the first category and feed association
+     */
+    public final Cursor getAllCategories() {
+        String query = "SELECT * FROM " + TABLE_NAME_CATEGORIES;
+        return db.rawQuery(query, null);
+    }
+
+    public final Cursor getFeedIdsForCategory(long categoryId) {
+        String query = "SELECT * FROM " + TABLE_NAME_ASSOCIATION_FOR_CATEGORIES
+                     + " WHERE " + KEY_CATEGORY_ID + " = " + categoryId;
+
+        return db.rawQuery(query, null);
+    }
+
+    /**
      * Get a cursor to all the feed ids that are categorized
      * @return Cursor of the first categorized feed
      */
