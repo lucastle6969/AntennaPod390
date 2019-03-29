@@ -912,7 +912,6 @@ public class PodDBAdapter {
 
     private long updateFeedCategoryAssociation(long feedId, long categoryId) {
         ContentValues associationValue = new ContentValues();
-        associationValue.put(KEY_FEED, feedId);
         associationValue.put(KEY_CATEGORY_ID, categoryId);
         return db.update(TABLE_NAME_ASSOCIATION_FOR_CATEGORIES, associationValue,KEY_FEED
                 + "=?", new String[]{String.valueOf(feedId)});

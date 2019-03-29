@@ -77,6 +77,8 @@ public class SubscriptionFragment extends Fragment {
 
     private Subscription subscription;
 
+    private int fragmentId;
+
     public SubscriptionFragment() {
     }
 
@@ -91,6 +93,8 @@ public class SubscriptionFragment extends Fragment {
         setHasOptionsMenu(true);
         subscriptionsAdapterList = new ArrayList<>();
         categoryView = UserPreferences.getCategoryToggle();
+        fragmentId = this.getId();
+
     }
 
     @Override
@@ -122,7 +126,7 @@ public class SubscriptionFragment extends Fragment {
 
         return root;
     }
-    
+
     public TableRow addGridRowSimple(){
         TableRow gridRow = new TableRow(getActivity());
         GridView gridView = new GridView(getActivity());
@@ -181,16 +185,14 @@ public class SubscriptionFragment extends Fragment {
         });
         layout.addView(title);
 
-        //get the uncategorized
-        List<Category> categories = DBReader.getAllCategories();
-        if(!categoryTitle.equals(categories.get(0).getName())) {
+        if(category.getId() != 0) {
             ImageButton editCategoryButton = new ImageButton(getActivity());
             editCategoryButton.setImageResource(R.drawable.ic_edit_category_light);
-            //editCategoryButton.setId();
+            editCategoryButton.setId(R.id.edit_category_button);
             editCategoryButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    new EditCategoryDialog().showEditCategoryDialog(getActivity(), categoryTitle);
+                    new EditCategoryDialog().showEditCategoryDialog(getActivity(), category, (SubscriptionFragment)getFragmentManager().findFragmentById(fragmentId));
                 }
             });
             layout.addView(editCategoryButton);
@@ -201,6 +203,10 @@ public class SubscriptionFragment extends Fragment {
 
         rowTitle.addView(layout, params);
         return rowTitle;
+    }
+
+    public void refresh(){
+        getFragmentManager().beginTransaction().detach(this).attach(this).commit();
     }
 
     public TableRow addGridRow(int rowNumber, Category category){
@@ -512,7 +518,8 @@ public class SubscriptionFragment extends Fragment {
                 conDialog.createNewDialog().show();
                 return true;
             case R.id.move_to_category:
-                new MoveToCategoryDialog().showMoveToCategoryDialog(getActivity(), feed.getId());
+                new MoveToCategoryDialog().showMoveToCategoryDialog(getActivity(), feed.getId(), (SubscriptionFragment)getFragmentManager().findFragmentById(fragmentId));
+                refresh();
                 return true;
             default:
                 return super.onContextItemSelected(item);

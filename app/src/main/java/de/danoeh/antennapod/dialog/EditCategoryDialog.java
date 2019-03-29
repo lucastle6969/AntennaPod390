@@ -12,30 +12,16 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.List;
-
 import de.danoeh.antennapod.R;
 import de.danoeh.antennapod.core.feed.Category;
-import de.danoeh.antennapod.core.storage.DBReader;
 import de.danoeh.antennapod.core.storage.DBWriter;
-
-import static de.danoeh.antennapod.core.storage.DBReader.getAllCategories;
+import de.danoeh.antennapod.fragment.SubscriptionFragment;
 
 public class EditCategoryDialog {
 
-    private long categoryId;
-
-    public void EditCategoryDialog(){ }
-
-    public void showEditCategoryDialog(Activity activity, String categoryTitle){
-
-        //Retrieve the category id
-        List<Category> categories = DBReader.getAllCategories();
-        for(int i=0; i < categories.size(); i++){
-            if(categories.get(i).getName() == categoryTitle){
-                categoryId = categories.get(i).getId();
-            }
-        }
+    public void showEditCategoryDialog(Activity activity, Category category, SubscriptionFragment fragment){
+        long categoryId = category.getId();
+        String categoryName = category.getName();
 
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         builder.setTitle(R.string.edit_category_dialog_title);
@@ -57,7 +43,7 @@ public class EditCategoryDialog {
         renameCategory.setInputType(InputType.TYPE_CLASS_TEXT);
         renameCategory.setGravity(Gravity.CENTER_HORIZONTAL);
         renameCategory.setPadding(50, 10, 50, 50);
-        renameCategory.setText(categoryTitle);
+        renameCategory.setText(categoryName);
         renameCategory.setSelection(renameCategory.getText().length());
         layout.addView(renameCategory);
 
@@ -86,6 +72,7 @@ public class EditCategoryDialog {
                             DBWriter.updateCategory(updatedCategory);
                             dialog.dismiss();
                             Toast.makeText(activity, activity.getString(R.string.category_renamed_toast) + newCategoryName, Toast.LENGTH_LONG).show();
+                            fragment.refresh();
                         } else {
                             Toast.makeText(activity, activity.getString(R.string.category_error_toast), Toast.LENGTH_SHORT).show();
                         }
