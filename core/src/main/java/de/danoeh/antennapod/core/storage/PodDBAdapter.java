@@ -689,6 +689,20 @@ public class PodDBAdapter {
         return result;
     }
 
+    public long removeAFeed(Feed feed) {
+        long result = 0;
+        try {
+            db.beginTransactionNonExclusive();
+            result = removeFeedFromSubscriptions(feed);
+            db.setTransactionSuccessful();
+        } catch (SQLException e) {
+            Log.e(TAG, Log.getStackTraceString(e));
+        } finally {
+            db.endTransaction();
+        }
+        return result;
+    }
+
     public long addFeedIntoUncategorizedCategory(long feedId) {
         long result = 0;
         try {
@@ -873,6 +887,17 @@ public class PodDBAdapter {
         db.delete(TABLE_NAME_CATEGORIES, KEY_ID + "=?",
                 new String[]{String.valueOf(category.getId())});
         return category.getId();
+    }
+
+    /**
+     * Remove Feed object in the CREATE_TABLE_ASSOCIATION_FOR_CATEGORIES table of the database
+     * @param feed  The Feed object
+     * @return the id of the entry
+     */
+    private long removeFeedFromSubscriptions(Feed feed) {
+        db.delete(CREATE_TABLE_ASSOCIATION_FOR_CATEGORIES, KEY_FEED + "=?",
+                new String[]{String.valueOf(feed.getId())});
+        return feed.getId();
     }
 
     private long addToUncategorizedCategory(long feedId) {

@@ -819,6 +819,20 @@ public class DBWriter {
     }
 
     /**
+     * Remove feed from subscriptions
+     *
+     * @param feed  Feed to be removed.
+     */
+    public static Future<?> removeFeedFromSubscriptions(final Feed feed){
+        return dbExec.submit(()-> {
+            PodDBAdapter adapter = PodDBAdapter.getInstance();
+            adapter.open();
+            adapter.removeAFeed(feed);
+            adapter.close();
+        });
+    }
+
+    /**
      * Add new Feed (subscription) to uncategorized category in db
      *
      * @param feedId  Feed (Subscription) id.

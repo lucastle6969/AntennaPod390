@@ -26,9 +26,4 @@
         android:menuCategory="container"
         android:title="@string/remove_from_category_button" />
 
-    <item
-        android:id="@+id/testing_edit"
-        android:menuCategory="container"
-        android:title="testing edit" />
-
 </menu>

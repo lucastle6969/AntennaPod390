@@ -498,16 +498,12 @@ public class SubscriptionFragment extends Fragment {
                 new RemoveFromCategoryDialog().showRemoveFromCategoryDialog(getActivity(), category1);
                 return true;
 
-            case R.id.testing_edit:
-                Category category3 = new Category(1, "My Category for edit");
-                new EditCategoryDialog().showEditCategoryDialog(getActivity(), category3);
-                return true;
-
             case R.id.remove_item:
                 final FeedRemover remover = new FeedRemover(getContext(), feed) {
                     @Override
                     protected void onPostExecute(Void result) {
                         super.onPostExecute(result);
+                        DBWriter.removeFeedFromSubscriptions(feed);
                         loadSubscriptions();
                     }
                 };
