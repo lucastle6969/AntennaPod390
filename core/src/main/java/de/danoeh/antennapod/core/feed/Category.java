@@ -20,7 +20,7 @@ public class Category {
     }
 
     public static Category fromCursor(Cursor cursor) {
-        int indexId = cursor.getColumnIndex(PodDBAdapter.KEY_CATEGORY_ID);
+        int indexId = cursor.getColumnIndex(PodDBAdapter.KEY_ID);
         int indexName = cursor.getColumnIndex(PodDBAdapter.KEY_CATEGORY_NAME);
 
         return new Category(
@@ -49,5 +49,9 @@ public class Category {
 
     public void setName(String name){
         this.name = name;
+    }
+
+    public List<Long> getFeedIds() {
+        return feedIds;
     }
 }

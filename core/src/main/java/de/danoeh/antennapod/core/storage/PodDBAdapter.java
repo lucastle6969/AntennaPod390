@@ -1528,25 +1528,11 @@ public class PodDBAdapter {
         return db.rawQuery(query, null);
     }
 
-    public Cursor getCategory(long id) {
-        // TODO return the category to get the name
-        return null;
-    }
-
     /**
      * Get a cursor to all categories and their feed ids
      * @return Cursor of the first category and feed association
      */
     public final Cursor getAllCategories() {
-        String query = "SELECT * FROM " + TABLE_NAME_ASSOCIATION_FOR_CATEGORIES
-                     + " LEFT JOIN " + TABLE_NAME_CATEGORIES + " ON " + TABLE_NAME_ASSOCIATION_FOR_CATEGORIES
-                     + "." + KEY_CATEGORY_ID + " = " + TABLE_NAME_CATEGORIES + "." + KEY_ID
-                     + " ORDER BY " + KEY_CATEGORY_ID;
-
-        return db.rawQuery(query, null);
-    }
-
-    public final Cursor getAllCategories1() {
         String query = "SELECT * FROM " + TABLE_NAME_CATEGORIES;
         return db.rawQuery(query, null);
     }

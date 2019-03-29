@@ -874,7 +874,7 @@ public final class DBReader {
         Cursor categoryCursor;
         Cursor associationCursor;
         try {
-            categoryCursor = adapter.getAllCategories1();
+            categoryCursor = adapter.getAllCategories();
             if (categoryCursor.moveToFirst()) {
                 do {
                     category = Category.fromCursor(categoryCursor);
