@@ -1220,5 +1220,14 @@ public final class DBReader {
             this.feedCounters = feedIndicatorValues;
             this.reclaimableSpace = reclaimableSpace;
         }
+
+        public Feed getFeedById(Long id){
+            for(Feed feed:feeds){
+                if(feed.getId() == id){
+                    return feed;
+                }
+            }
+            return null;
+        }
     }
 }

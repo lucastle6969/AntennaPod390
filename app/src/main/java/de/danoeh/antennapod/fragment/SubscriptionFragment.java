@@ -37,7 +37,6 @@ import de.danoeh.antennapod.core.preferences.UserPreferences;
 import de.danoeh.antennapod.core.service.playback.PlaybackService;
 import de.danoeh.antennapod.core.storage.DBReader;
 import de.danoeh.antennapod.core.storage.DBWriter;
-import de.danoeh.antennapod.core.util.Converter;
 import de.danoeh.antennapod.core.util.FeedItemUtil;
 import de.danoeh.antennapod.core.util.IntentUtils;
 import de.danoeh.antennapod.dialog.CreateCategoryDialog;
@@ -190,10 +189,10 @@ public class SubscriptionFragment extends Fragment {
         List<Feed> feedList = new ArrayList<>();
         List<Integer> counterList = new ArrayList<>();
         if(navDrawerData!=null){
-            List<Integer> categoryFeedIds = Converter.getIntegerListFromLongList(category.getFeedIds());
+            List<Long> categoryFeedIds = category.getFeedIds();
             for(int i=0; i<categoryFeedIds.size(); i++){
-                feedList.add(navDrawerData.feeds.get(categoryFeedIds.get(i)));
-                counterList.add(navDrawerData.feedCounters.get(navDrawerData.feeds.get(categoryFeedIds.get(i)).getId()));
+                feedList.add(navDrawerData.getFeedById(categoryFeedIds.get(i)));
+                counterList.add(navDrawerData.feedCounters.get(categoryFeedIds.get(i)));
             }
         }else{
             Log.d("ITEM_ACCESS", "navDrawerData was null in addGridRow");
@@ -324,11 +323,11 @@ public class SubscriptionFragment extends Fragment {
             feedList = new ArrayList<>();
             counterList = new ArrayList<>();
 
-            List<Integer> categoryFeedIds = Converter.getIntegerListFromLongList(category.getFeedIds());
+            List<Long> categoryFeedIds = category.getFeedIds();
           if (navDrawerData != null) {
               for (int i = 0; i < categoryFeedIds.size(); i++) {
-                  feedList.add(navDrawerData.feeds.get(categoryFeedIds.get(i)));
-                  counterList.add(navDrawerData.feedCounters.get(navDrawerData.feeds.get(categoryFeedIds.get(i)).getId()));
+                  feedList.add(navDrawerData.getFeedById(categoryFeedIds.get(i)));
+                  counterList.add(navDrawerData.feedCounters.get(categoryFeedIds.get(i)));
               }
           } else {
               Log.d("ITEM_ACCESS", "navDrawerData was null in updateFeeds");
