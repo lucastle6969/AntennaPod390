@@ -528,7 +528,6 @@ public class SubscriptionFragment extends Fragment {
                     public void onConfirmButtonPressed(
                             DialogInterface dialog) {
                         dialog.dismiss();
-//                        DBWriter.removeFeedFromSubscriptions(feed);
                         long mediaId = PlaybackPreferences.getCurrentlyPlayingFeedMediaId();
                         if (mediaId > 0 &&
                                 FeedItemUtil.indexOfItemWithMediaId(feed.getItems(), mediaId) >= 0) {
