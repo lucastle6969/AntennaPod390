@@ -44,6 +44,7 @@ import de.danoeh.antennapod.core.util.FeedItemUtil;
 import de.danoeh.antennapod.core.util.IntentUtils;
 import de.danoeh.antennapod.dialog.CreateCategoryDialog;
 import de.danoeh.antennapod.dialog.EditCategoryDialog;
+import de.danoeh.antennapod.dialog.MoveToCategoryDialog;
 import de.danoeh.antennapod.dialog.RemoveFromCategoryDialog;
 import de.danoeh.antennapod.dialog.RenameFeedDialog;
 import rx.Observable;
@@ -499,8 +500,7 @@ public class SubscriptionFragment extends Fragment {
                 return true;
 
             case R.id.remove_from_category_item:
-                Category category1 = new Category(1, "My Category for remove");
-                new RemoveFromCategoryDialog().showRemoveFromCategoryDialog(getActivity(), category1);
+                new RemoveFromCategoryDialog().showRemoveFromCategoryDialog(getActivity(), feed.getId(), (SubscriptionFragment)getFragmentManager().findFragmentById(fragmentId));
                 return true;
 
             case R.id.remove_item:
@@ -508,7 +508,7 @@ public class SubscriptionFragment extends Fragment {
                     @Override
                     protected void onPostExecute(Void result) {
                         super.onPostExecute(result);
-                        DBWriter.removeFeedFromSubscriptions(feed);
+//                        DBWriter.removeFeedFromSubscriptions(feed);
                         loadSubscriptions();
                     }
                 };
@@ -519,6 +519,7 @@ public class SubscriptionFragment extends Fragment {
                     public void onConfirmButtonPressed(
                             DialogInterface dialog) {
                         dialog.dismiss();
+                        DBWriter.removeFeedFromSubscriptions(feed);
                         long mediaId = PlaybackPreferences.getCurrentlyPlayingFeedMediaId();
                         if (mediaId > 0 &&
                                 FeedItemUtil.indexOfItemWithMediaId(feed.getItems(), mediaId) >= 0) {

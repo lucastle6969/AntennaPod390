@@ -11,12 +11,13 @@ import android.widget.Toast;
 import de.danoeh.antennapod.R;
 import de.danoeh.antennapod.core.feed.Category;
 import de.danoeh.antennapod.core.storage.DBWriter;
+import de.danoeh.antennapod.fragment.SubscriptionFragment;
 
 public class DeleteCategoryDialog {
 
     public void DeleteCategoryDialog(){ }
 
-    public void showDeleteCategoryDialog(Activity activity, Category category){
+    public void showDeleteCategoryDialog(Activity activity, Category category, SubscriptionFragment fragment){
 
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         builder.setTitle(R.string.delete_from_category_message);
@@ -36,15 +37,14 @@ public class DeleteCategoryDialog {
         builder.setPositiveButton(R.string.confirm_label, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                //TODO: code to delete category and move feeds to uncategorized
-
                 //Looping through all the feeds from the category and setting them to uncategorized
                 for (Long feedId: category.getFeedIds()){
-//                    DBWriter.updateFeedCategory(feedId, 0);
+                    DBWriter.updateFeedCategory(feedId, 0);
                 }
                 DBWriter.deleteCategory(category);
 
                 Toast.makeText(activity, activity.getString(R.string.successfully_deleted_from_category), Toast.LENGTH_LONG).show();
+                fragment.refresh();
             }
         });
         builder.setNegativeButton(R.string.cancel_label, new DialogInterface.OnClickListener() {

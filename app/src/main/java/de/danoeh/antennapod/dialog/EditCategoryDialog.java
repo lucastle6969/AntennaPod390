@@ -7,7 +7,7 @@ import android.support.v7.app.AlertDialog;
 import android.text.InputType;
 import android.view.Gravity;
 import android.view.View;
-import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -91,13 +91,13 @@ public class EditCategoryDialog {
                     @Override
                     public void onClick(View v) {
                         alertDialog.dismiss();
-                        new DeleteCategoryDialog().showDeleteCategoryDialog(activity, category);
+                        new DeleteCategoryDialog().showDeleteCategoryDialog(activity, category, fragment);
                     }
                 }
         );
 
         alertDialog.show();
-        final AlertDialog alertDialog = builder.create();
+
         alertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
             @Override
             public void onShow(final DialogInterface dialog) {
