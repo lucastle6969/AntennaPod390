@@ -401,7 +401,8 @@ public class SubscriptionFragment extends Fragment {
 
         if (id == R.id.addCategory) {
             CreateCategoryDialog categoryDialog = new CreateCategoryDialog();
-            categoryDialog.showCreateCategoryDialog(getActivity());
+            SubscriptionFragment sf = (SubscriptionFragment) getFragmentManager().findFragmentById(fragmentId);
+            categoryDialog.showCreateCategoryDialog(getActivity(), sf);
         }
         if (id == R.id.toggleCategoryView){
             categoryView = categoryView ? false : true;
