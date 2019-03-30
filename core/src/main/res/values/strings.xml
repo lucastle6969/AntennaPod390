@@ -3,6 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:ignore="MissingTranslation">
 
+    <string name="facebook_app_id">457848604969651</string>
+
     <!-- Activitiy and fragment titles -->
     <string name="app_name" translate="false">AntennaPod</string>
     <string name="provider_authority" translate="false">de.danoeh.antennapod.provider</string>
@@ -164,6 +166,7 @@
     <string name="share_link_label">Share Episode URL</string>
     <string name="share_link_with_position_label">Share Episode URL with Position</string>
     <string name="share_file_label">Share File</string>
+    <string name="share_on_fb">Share On Facebook</string>
     <string name="share_feed_url_label">Share Feed URL</string>
     <string name="share_item_url_label">Share Media File URL</string>
     <string name="share_item_url_with_position_label">Share Media File URL with Position</string>

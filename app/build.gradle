@@ -199,6 +199,8 @@ dependencies {
     implementation 'com.github.ByteHamster:SearchPreference:v1.0.8'
 
     implementation 'com.google.firebase:firebase-core:16.0.1'
+    implementation 'com.facebook.android:facebook-android-sdk:[4,5)'
+    implementation 'com.facebook.android:facebook-share:[4,5)'
 
     testImplementation  'junit:junit:4.12'
     testImplementation 'org.robolectric:robolectric:4.2'
@@ -263,3 +265,15 @@ allprojects {
 
 apply plugin: 'com.google.gms.google-services'
 com.google.gms.googleservices.GoogleServicesPlugin.config.disableVersionCheck = true
+
+configurations.all {
+    resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+        def requested = details.requested
+        if (requested.group == 'com.android.support') {
+            if (!requested.name.startsWith("multidex")) {
+                details.useVersion '27.0.2'
+            }
+        }
+
+    }
+}
