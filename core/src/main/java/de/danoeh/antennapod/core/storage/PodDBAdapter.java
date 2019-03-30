@@ -935,7 +935,7 @@ public class PodDBAdapter {
      * @return the id of the entry
      */
     private long removeFeedFromSubscriptions(Feed feed) {
-        db.delete(CREATE_TABLE_ASSOCIATION_FOR_CATEGORIES, KEY_FEED + "=?",
+        db.delete(TABLE_NAME_ASSOCIATION_FOR_CATEGORIES, KEY_FEED + "=?",
                 new String[]{String.valueOf(feed.getId())});
         return feed.getId();
     }

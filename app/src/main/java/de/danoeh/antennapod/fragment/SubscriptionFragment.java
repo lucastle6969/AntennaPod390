@@ -437,6 +437,15 @@ public class SubscriptionFragment extends Fragment {
         MenuInflater inflater = getActivity().getMenuInflater();
         inflater.inflate(R.menu.nav_feed_context, menu);
 
+        long currentCategoryId = 0;
+        for(int i=0; i < categoryArrayList.size(); i++){
+            if(categoryArrayList.get(i).getFeedIds().contains(feed.getId())){
+                currentCategoryId = categoryArrayList.get(i).getId();
+            }
+        }
+        if(currentCategoryId ==0) {
+            menu.getItem(5).setVisible(false);
+        }
         menu.setHeaderTitle(feed.getTitle());
 
         mPosition = position;
@@ -500,15 +509,15 @@ public class SubscriptionFragment extends Fragment {
                 return true;
 
             case R.id.remove_from_category_item:
-                new RemoveFromCategoryDialog().showRemoveFromCategoryDialog(getActivity(), feed.getId(), (SubscriptionFragment)getFragmentManager().findFragmentById(fragmentId));
-                return true;
+                new RemoveFromCategoryDialog().showRemoveFromCategoryDialog(getActivity(), feed.getId(), (SubscriptionFragment) getFragmentManager().findFragmentById(fragmentId));
+            return true;
 
             case R.id.remove_item:
                 final FeedRemover remover = new FeedRemover(getContext(), feed) {
                     @Override
                     protected void onPostExecute(Void result) {
                         super.onPostExecute(result);
-//                        DBWriter.removeFeedFromSubscriptions(feed);
+                        DBWriter.removeFeedFromSubscriptions(feed);
                         loadSubscriptions();
                     }
                 };
@@ -519,7 +528,7 @@ public class SubscriptionFragment extends Fragment {
                     public void onConfirmButtonPressed(
                             DialogInterface dialog) {
                         dialog.dismiss();
-                        DBWriter.removeFeedFromSubscriptions(feed);
+//                        DBWriter.removeFeedFromSubscriptions(feed);
                         long mediaId = PlaybackPreferences.getCurrentlyPlayingFeedMediaId();
                         if (mediaId > 0 &&
                                 FeedItemUtil.indexOfItemWithMediaId(feed.getItems(), mediaId) >= 0) {
