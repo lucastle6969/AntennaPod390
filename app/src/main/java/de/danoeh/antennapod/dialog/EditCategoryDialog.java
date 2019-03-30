@@ -2,12 +2,14 @@ package de.danoeh.antennapod.dialog;
 
 import android.app.Activity;
 import android.content.DialogInterface;
+import android.graphics.Typeface;
 import android.support.v7.app.AlertDialog;
 import android.text.InputType;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -24,14 +26,35 @@ public class EditCategoryDialog {
         String categoryName = category.getName();
 
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-        builder.setTitle(R.string.edit_category_dialog_title);
+
+        TextView title = new TextView(activity);
+        title.setText(R.string.edit_category_dialog_title);
+        title.setPadding(100,10,10,10);
+        title.setTextSize(20);
+        title.setTypeface(title.getTypeface(), Typeface.BOLD);
 
         LinearLayout layout = new LinearLayout(activity);
         layout.setOrientation(LinearLayout.VERTICAL);
-        layout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.FILL_PARENT));
+        layout.setLayoutParams(new LinearLayout.LayoutParams(900,400));
         layout.setGravity(Gravity.CENTER_HORIZONTAL);
 
-        //TODO: Add trashcan icon to click and redirect to new dialog
+        layout.addView(title);
+
+        LinearLayout layoutForTrashCan = new LinearLayout(activity);
+        layoutForTrashCan.setOrientation(LinearLayout.HORIZONTAL);
+        layoutForTrashCan.setLayoutParams(new LinearLayout.LayoutParams(150, 150));
+        layoutForTrashCan.setGravity(Gravity.LEFT);
+        layoutForTrashCan.setPadding(10,30,10,10);
+
+        LinearLayout overallLayout = new LinearLayout(activity);
+        overallLayout.setOrientation(LinearLayout.HORIZONTAL);
+        overallLayout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.FILL_PARENT));
+        overallLayout.setGravity(Gravity.CENTER_HORIZONTAL);
+
+        ImageButton deleteTrashCan = new ImageButton(activity);
+        deleteTrashCan.setBackgroundResource(R.drawable.ic_delete_grey600_24dp);
+
+        layoutForTrashCan.addView(deleteTrashCan);
 
         final TextView renameCategoryHint = new TextView(activity);
         renameCategoryHint.setText(R.string.rename_category_hint);
@@ -47,7 +70,9 @@ public class EditCategoryDialog {
         renameCategory.setSelection(renameCategory.getText().length());
         layout.addView(renameCategory);
 
-        builder.setView(layout);
+        overallLayout.addView(layout);
+        overallLayout.addView(layoutForTrashCan);
+        builder.setView(overallLayout);
 
         builder.setPositiveButton(R.string.confirm_label, null);
 
@@ -58,7 +83,21 @@ public class EditCategoryDialog {
             }
         });
 
-        final AlertDialog alertDialog = builder.create();
+
+        AlertDialog alertDialog = builder.create();
+
+        deleteTrashCan.setOnClickListener(
+                new View.OnClickListener(){
+                    @Override
+                    public void onClick(View v) {
+                        alertDialog.dismiss();
+                        new DeleteCategoryDialog().showDeleteCategoryDialog(activity, category, fragment);
+                    }
+                }
+        );
+
+        alertDialog.show();
+
         alertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
             @Override
             public void onShow(final DialogInterface dialog) {
