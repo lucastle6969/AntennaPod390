@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.ListAdapter;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -219,12 +220,23 @@ public class SubscriptionFragment extends Fragment {
 
     public void setGridViewHeightBasedOnChildren(GridView gridView, int numberOfFeeds, int columns) {
 
-        int totalHeight;
+        int totalHeight = -1;
         int items = numberOfFeeds;
         int rows;
+        if(subscriptionsAdapterList.get(0) != null) {
+            View listItem = subscriptionsAdapterList.get(0).getView(0, null, gridView);
+            if(listItem!=null){
+                listItem.measure(0,0);
+                totalHeight = listItem.getMeasuredHeight()*2;
+            }
 
-        // this number seems to match the feed image height
-        totalHeight = 500;
+        }
+
+        // this number seems to match the feed image height if the actual can't be found
+        if(totalHeight == -1){
+            totalHeight = 518;
+        }
+
 
         float x;
         if( items > columns ){
