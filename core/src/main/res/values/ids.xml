@@ -25,4 +25,6 @@
     <item name="undobar_button" type="id"/>
     <item name="undobar_message" type="id"/>
     <item name="edit_category_button" type="id"/>
+    <item name="category_title_view" type="id"/>
+    <item name="category_collapse_button" type="id"/>
 </resources>

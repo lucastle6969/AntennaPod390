@@ -1,5 +1,7 @@
 package de.danoeh.antennapod.fragment;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.content.DialogInterface;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -17,6 +19,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -158,30 +161,38 @@ public class SubscriptionFragment extends Fragment {
 
     public TableRow addRowTitle(Category category){
         TableRow rowTitle = new TableRow(getActivity());
-        rowTitle.setGravity(Gravity.CENTER_HORIZONTAL);
-
+        rowTitle.setGravity(Gravity.FILL_HORIZONTAL);
         LinearLayout layout = new LinearLayout(getActivity());
         layout.setOrientation(LinearLayout.HORIZONTAL);
-        layout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.FILL_PARENT));
-        layout.setGravity(Gravity.CENTER_HORIZONTAL);
-
-        TextView title = new TextView(getActivity());
-        title.setText(category.getName());
-        title.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 18);
-        title.setGravity(Gravity.LEFT);
-        title.setTypeface(Typeface.SANS_SERIF, Typeface.BOLD);
-        title.setOnClickListener(new View.OnClickListener(){
+        layout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
+        layout.setGravity(Gravity.FILL_HORIZONTAL);
+        layout.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
                 toggle_contents(v);
             }
         });
+
+        ImageView expandButton = new ImageView(getActivity());
+        expandButton.setImageResource(R.drawable.ic_expand_more_grey600_36dp);
+        expandButton.setId(R.id.category_collapse_button);
+
+        layout.addView(expandButton);
+
+        TextView title = new TextView(getActivity());
+        title.setText(category.getName());
+        title.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 18);
+        title.setPadding(70, 4, 400, 4);
+        title.setTypeface(Typeface.SANS_SERIF, Typeface.BOLD);
+        title.setId(R.id.category_title_view);
         layout.addView(title);
 
         if(category.getId() != 0) {
             ImageButton editCategoryButton = new ImageButton(getActivity());
             editCategoryButton.setImageResource(R.drawable.ic_edit_category_light);
             editCategoryButton.setId(R.id.edit_category_button);
+
+
             editCategoryButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -242,16 +253,39 @@ public class SubscriptionFragment extends Fragment {
     }
 
     private void toggle_contents(View v){
-        TextView title = (TextView) v;
+        TextView title = v.findViewById(R.id.category_title_view);
+        ImageView collapse= v.findViewById(R.id.category_collapse_button);
         String currentText = title.getText().toString();
 
         for(int i = 0; i<categoryArrayList.size(); i++){
             if(categoryArrayList.get(i).getName().equals(currentText)){
                 GridView currentView = gridViewList.get(i);
                 if(currentView.isShown()){
-                    currentView.setVisibility(View.GONE);
+                    collapse.animate().rotation(-90).setDuration(300);
+                    currentView.animate()
+                            .translationY(-currentView.getHeight())
+                            .setDuration(300)
+                            .setListener(new AnimatorListenerAdapter() {
+                                @Override
+                                public void onAnimationEnd(Animator animation){
+                                    super.onAnimationEnd(animation);
+                                    currentView.setVisibility(View.GONE);
+                                }
+                    });
+
                 }else{
+                    collapse.animate().rotation(0).setDuration(300);
                     currentView.setVisibility(View.VISIBLE);
+                    currentView.animate()
+                            .translationY(0)
+                            .setDuration(300)
+                            .setListener(new AnimatorListenerAdapter() {
+                                 @Override
+                                 public void onAnimationEnd(Animator animation) {
+                                     super.onAnimationEnd(animation);
+                                     currentView.setVisibility(View.VISIBLE);
+                                 }
+                             });
                 }
                 break;
             }
