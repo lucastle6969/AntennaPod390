@@ -18,7 +18,6 @@ import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.ListAdapter;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -46,6 +45,7 @@ import de.danoeh.antennapod.dialog.CreateCategoryDialog;
 import de.danoeh.antennapod.dialog.EditCategoryDialog;
 import de.danoeh.antennapod.dialog.MoveToCategoryDialog;
 import de.danoeh.antennapod.dialog.RenameFeedDialog;
+import de.danoeh.antennapod.view.WrappedGridView;
 import rx.Observable;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
@@ -107,6 +107,7 @@ public class SubscriptionFragment extends Fragment {
         TableLayout table = root.findViewById(R.id.tableLayout);
         table.setStretchAllColumns(true);
         table.setShrinkAllColumns(true);
+
         TableRow tableGridRow;
         if(!categoryView){
             tableGridRow = addGridRowSimple();
@@ -129,25 +130,18 @@ public class SubscriptionFragment extends Fragment {
 
     public TableRow addGridRowSimple(){
         TableRow gridRow = new TableRow(getActivity());
-        GridView gridView = new GridView(getActivity());
-        TableRow.LayoutParams params = new TableRow.LayoutParams(
-                TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT
-        );
-        gridView.setLayoutParams(params);
+        WrappedGridView gridView = new WrappedGridView(getActivity());
         gridView.setNumColumns(GRID_COL_NUM);
 
         List<Feed> feedList = new ArrayList<>();
         List<Integer> counterList = new ArrayList<>();
-        int numberOfFeeds = 0;
         if(navDrawerData!=null){
             for(int i=0; i<navDrawerData.feeds.size(); i++){
                 feedList.add(navDrawerData.feeds.get(i));
                 counterList.add(navDrawerData.feedCounters.get(navDrawerData.feeds.get(i).getId()));
-                numberOfFeeds = navDrawerData.feeds.size();
             }
         }else{
             Log.d("ITEM_ACCESS", "navDrawerData was null in addGridRowSimple");
-            numberOfFeeds = DBReader.getFeedListSize();
         }
 
         subscriptionsAdapterList.add(new SubscriptionsAdapterAdd((MainActivity) getActivity(), feedList, counterList));
@@ -156,9 +150,7 @@ public class SubscriptionFragment extends Fragment {
         gridView.setOnItemClickListener(subscriptionsAdapterList.get(0));
 
         registerForContextMenu(gridView);
-        
         gridRow.addView(gridView);
-        setGridViewHeightBasedOnChildren(gridView, numberOfFeeds, GRID_COL_NUM);
 
         return gridRow;
     }
@@ -211,11 +203,8 @@ public class SubscriptionFragment extends Fragment {
 
     public TableRow addGridRow(int rowNumber, Category category){
         TableRow gridRow = new TableRow(getActivity());
-        GridView gridView = new GridView(getActivity());
-        TableRow.LayoutParams params = new TableRow.LayoutParams(
-                TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT
-        );
-        gridView.setLayoutParams(params);
+
+        WrappedGridView gridView = new WrappedGridView(getActivity());
         gridView.setNumColumns(GRID_COL_NUM);
 
         List<Feed> feedList = new ArrayList<>();
@@ -243,42 +232,12 @@ public class SubscriptionFragment extends Fragment {
 
         registerForContextMenu(gridView);
         gridViewList.add(gridView);
-        gridRow.addView(gridView);
-        setGridViewHeightBasedOnChildren(gridView, category.getFeedIds().size(), GRID_COL_NUM);
+
+        TableRow.LayoutParams params = new TableRow.LayoutParams();
+        params.span = 6;
+        gridRow.addView(gridView, params);
 
         return gridRow;
-    }
-
-    public void setGridViewHeightBasedOnChildren(GridView gridView, int numberOfFeeds, int columns) {
-
-        int totalHeight = -1;
-        int items = numberOfFeeds;
-        int rows;
-        if(subscriptionsAdapterList.get(0) != null) {
-            View listItem = subscriptionsAdapterList.get(0).getView(0, null, gridView);
-            if(listItem!=null){
-                listItem.measure(0,0);
-                totalHeight = listItem.getMeasuredHeight()*2;
-            }
-
-        }
-
-        // this number seems to match the feed image height if the actual can't be found
-        if(totalHeight == -1){
-            totalHeight = 518;
-        }
-
-
-        float x;
-        if( items > columns ){
-            x = items/columns;
-            rows = (int) (x + 1);
-            totalHeight *= rows;
-        }
-
-        ViewGroup.LayoutParams params = gridView.getLayoutParams();
-        params.height = totalHeight;
-        gridView.setLayoutParams(params);
     }
 
     private void toggle_contents(View v){
