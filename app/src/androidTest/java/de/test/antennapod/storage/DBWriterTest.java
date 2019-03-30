@@ -16,6 +16,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import de.danoeh.antennapod.core.feed.Bookmark;
+import de.danoeh.antennapod.core.feed.Category;
 import de.danoeh.antennapod.core.feed.Feed;
 import de.danoeh.antennapod.core.feed.FeedItem;
 import de.danoeh.antennapod.core.feed.FeedMedia;
@@ -24,6 +25,8 @@ import de.danoeh.antennapod.core.storage.DBWriter;
 import de.danoeh.antennapod.core.storage.PodDBAdapter;
 
 import static java.lang.Thread.sleep;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * Test class for DBWriter
@@ -52,11 +55,12 @@ public class DBWriterTest extends InstrumentationTestCase {
     protected void setUp() throws Exception {
         super.setUp();
 
-        // create new database
+//      create new database
         PodDBAdapter.init(getInstrumentation().getTargetContext());
         PodDBAdapter.deleteDatabase();
         PodDBAdapter adapter = PodDBAdapter.getInstance();
         adapter.open();
+        insertUncategorized();
         adapter.close();
     }
 
@@ -106,7 +110,7 @@ public class DBWriterTest extends InstrumentationTestCase {
         //every separate test execution.
 
         //Test to insert a new bookmark and make sure that it is retrieved properly.
-        synchronized (this){
+        synchronized (this) {
             try {
                 DBWriter.setBookmark(testingBookmark);
                 sleep(100);
@@ -125,7 +129,7 @@ public class DBWriterTest extends InstrumentationTestCase {
 
         //Testing editing.
         testingBookmark.setTimestamp(456);
-        synchronized (this){
+        synchronized (this) {
             try {
                 DBWriter.updateBookmark(testingBookmark);
                 sleep(100);
@@ -139,7 +143,7 @@ public class DBWriterTest extends InstrumentationTestCase {
         assertEquals(testingBookmark.getTimestamp(), retrievedBookmark.getTimestamp());
 
         //Testing deletion.
-        synchronized (this){
+        synchronized (this) {
             try {
                 DBWriter.deleteBookmark(testingBookmark);
                 sleep(100);
@@ -150,6 +154,84 @@ public class DBWriterTest extends InstrumentationTestCase {
         }
         assertEquals(0, bookmarksFromDb.size());
 
+    }
+
+    private void insertUncategorized() {
+        Category uncategorizedCategory = new Category(PodDBAdapter.UNCATEGORIZED_CATEGORY_ID, PodDBAdapter.UNCATEGORIZED_CATEGORY_NAME);
+
+        synchronized (this) {
+            try {
+                DBWriter.setCategory(uncategorizedCategory);
+                sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void testCategoriesCRUD() {
+        final int id = 1;
+        final String title = "categoryTitle";
+        List<Long> feedIds = null;
+        List<Category> categoriesFromDb = null;
+
+        Category testingCategory = new Category(id, title);
+
+        //Test to insert a new category and make sure that it is retrieved properly.
+        synchronized (this) {
+            try {
+                DBWriter.setCategory(testingCategory);
+                sleep(100);
+                categoriesFromDb = DBReader.getAllCategories();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        Category retrievedCategory = categoriesFromDb.get(1);
+        assertNotNull(retrievedCategory);
+        assertEquals(testingCategory.getId(), retrievedCategory.getId());
+        assertEquals(testingCategory.getName(), retrievedCategory.getName());
+
+        //Testing editing category name.
+        final String newCategoryName = "Another title";
+        testingCategory.setName(newCategoryName);
+        synchronized (this) {
+            try {
+                DBWriter.updateCategory(testingCategory);
+                sleep(100);
+                categoriesFromDb = DBReader.getAllCategories();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        retrievedCategory = categoriesFromDb.get(1);
+        assertEquals(newCategoryName, retrievedCategory.getName());
+
+        // Test remove feed from category
+        final long feedId = 0;
+        final String feedTitle = "feed title";
+
+        Feed testFeed = mock(Feed.class);
+        when(testFeed.getId()).thenReturn(feedId);
+        when(testFeed.getTitle()).thenReturn(feedTitle);
+
+        FeedItem feedItem = mock(FeedItem.class);
+        when(feedItem.getFeed()).thenReturn(testFeed);
+
+        synchronized (this) {
+            try {
+                DBWriter.setFeedItem(feedItem);
+                sleep(100);
+                categoriesFromDb = DBReader.getAllCategories();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        Category uncategorized = categoriesFromDb.get(0);
+        assertNotNull(uncategorized);
+        assertTrue(uncategorized.getFeedIds().contains(feedId));
     }
 
     public void testDeleteFeedMediaOfItemFileExists()
