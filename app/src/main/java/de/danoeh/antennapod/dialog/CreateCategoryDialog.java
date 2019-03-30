@@ -12,12 +12,17 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import java.util.concurrent.Future;
+
 import de.danoeh.antennapod.R;
 import de.danoeh.antennapod.core.feed.Category;
 import de.danoeh.antennapod.core.storage.DBWriter;
 import de.danoeh.antennapod.fragment.SubscriptionFragment;
 
 public class CreateCategoryDialog {
+
+    private boolean openMoveDialog = false;
+    private long lastSelectedFeedId = -1;
 
     public void showCreateCategoryDialog(Activity context, SubscriptionFragment subscriptionFragment) {
         // Create category alert dialog
@@ -56,10 +61,18 @@ public class CreateCategoryDialog {
                     public void onClick(View v) {
                         String inputCategoryName = input.getText().toString();
                         if (!inputCategoryName.isEmpty()) {
-                            DBWriter.setCategory(new Category(-1, inputCategoryName));
+                            Future<?> task = DBWriter.setCategory(new Category(-1, inputCategoryName));
                             dialog.dismiss();
+                            while(!task.isDone()) { /* Wait for category to be inserted */}
                             Toast.makeText(context, context.getString(R.string.category_success) + inputCategoryName, Toast.LENGTH_LONG).show();
                             subscriptionFragment.refresh();
+
+                            if (openMoveDialog) {
+                                new MoveToCategoryDialog().showMoveToCategoryDialog(context, lastSelectedFeedId, subscriptionFragment);
+                                openMoveDialog = false;
+                                lastSelectedFeedId = -1;
+                            }
+
                         } else {
                             Toast.makeText(context, context.getString(R.string.category_error_toast), Toast.LENGTH_SHORT).show();
                         }
@@ -70,5 +83,13 @@ public class CreateCategoryDialog {
 
         alertDialog.show();
 
+    }
+
+    public void setOpenMoveDialogStatus(boolean value) {
+        this.openMoveDialog = value;
+    }
+
+    public void setLastSelectedFeedId(long feedId) {
+        this.lastSelectedFeedId = feedId;
     }
 }
