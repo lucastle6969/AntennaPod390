@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.DialogInterface;
 import android.support.v7.app.AlertDialog;
 import android.view.Gravity;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
@@ -19,8 +20,6 @@ import de.danoeh.antennapod.core.storage.DBWriter;
 import de.danoeh.antennapod.fragment.SubscriptionFragment;
 
 public class MoveToCategoryDialog {
-
-    public void MoveToCategoryDialog(){ }
 
     public void showMoveToCategoryDialog(Activity activity, long feedId, SubscriptionFragment fragment) {
         String currentCategory = "";
@@ -40,7 +39,6 @@ public class MoveToCategoryDialog {
         layout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.FILL_PARENT));
         layout.setGravity(Gravity.CENTER_HORIZONTAL);
 
-        //Dropdown to choose the Category to which the podcast will be moved
         final Spinner categoriesDropdown = new Spinner(activity);
 
         List<String> categoryTitles = new ArrayList<String>();
@@ -50,9 +48,10 @@ public class MoveToCategoryDialog {
             }
         }
 
-        ArrayAdapter<String> dataAdapter = new ArrayAdapter<>(activity, android.R.layout.simple_spinner_item, categoryTitles);
-        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        ArrayAdapter<String> dataAdapter = new ArrayAdapter<>(activity, R.layout.spinner_item, categoryTitles);
+        dataAdapter.setDropDownViewResource(R.layout.spinner_item);
         categoriesDropdown.setAdapter(dataAdapter);
+        categoriesDropdown.setPadding(10, 20, 10, 10);
         layout.addView(categoriesDropdown);
 
         //TODO: add + icon to redirect to an add a new category dialog
@@ -62,8 +61,9 @@ public class MoveToCategoryDialog {
         builder.setPositiveButton(R.string.confirm_label, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                if(categories.size() != 1) {
-                    String chosenCategoryName = categoriesDropdown.getSelectedItem().toString();
+
+                String chosenCategoryName = categoriesDropdown.getSelectedItem().toString();
+                if(!chosenCategoryName.isEmpty()) {
                     long categoryId = 0;
                     for (int i = 0; i < categories.size(); i++) {
                         if (categories.get(i).getName().equals(chosenCategoryName)) {
@@ -76,6 +76,7 @@ public class MoveToCategoryDialog {
                         fragment.refresh();
                     }
                 }
+
                 dialog.dismiss();
 
             }
