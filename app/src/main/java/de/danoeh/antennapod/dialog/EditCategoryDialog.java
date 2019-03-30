@@ -42,7 +42,7 @@ public class EditCategoryDialog {
 
         LinearLayout layoutForTrashCan = new LinearLayout(activity);
         layoutForTrashCan.setOrientation(LinearLayout.HORIZONTAL);
-        layoutForTrashCan.setLayoutParams(new LinearLayout.LayoutParams(150, 100));
+        layoutForTrashCan.setLayoutParams(new LinearLayout.LayoutParams(150, 150));
         layoutForTrashCan.setGravity(Gravity.LEFT);
         layoutForTrashCan.setPadding(10,30,10,10);
 

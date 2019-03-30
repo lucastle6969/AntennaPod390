@@ -11,6 +11,7 @@ import android.widget.Toast;
 import de.danoeh.antennapod.R;
 import de.danoeh.antennapod.core.feed.Category;
 import de.danoeh.antennapod.core.storage.DBWriter;
+import de.danoeh.antennapod.core.storage.PodDBAdapter;
 import de.danoeh.antennapod.fragment.SubscriptionFragment;
 
 public class DeleteCategoryDialog {
@@ -27,10 +28,11 @@ public class DeleteCategoryDialog {
         layout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.FILL_PARENT));
         layout.setGravity(Gravity.CENTER_HORIZONTAL);
 
-        final TextView categoryTitle = new TextView(activity);
-        categoryTitle.setText(category.getName());
-        categoryTitle.setPadding(50, 10, 50, 50);
-        layout.addView(categoryTitle);
+        final TextView warningMessage = new TextView(activity);
+        warningMessage.setText(R.string.delete_from_category_warning);
+        warningMessage.setPadding(50, 10, 50, 50);
+        warningMessage.setGravity(Gravity.CENTER_HORIZONTAL);
+        layout.addView(warningMessage);
 
         builder.setView(layout);
 
@@ -39,7 +41,7 @@ public class DeleteCategoryDialog {
             public void onClick(DialogInterface dialog, int which) {
                 //Looping through all the feeds from the category and setting them to uncategorized
                 for (Long feedId: category.getFeedIds()){
-                    DBWriter.updateFeedCategory(feedId, 0);
+                    DBWriter.updateFeedCategory(feedId, PodDBAdapter.UNCATEGORIZED_CATEGORY_ID);
                 }
                 DBWriter.deleteCategory(category);
 

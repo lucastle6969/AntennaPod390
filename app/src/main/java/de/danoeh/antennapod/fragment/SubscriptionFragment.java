@@ -509,7 +509,7 @@ public class SubscriptionFragment extends Fragment {
                 return true;
 
             case R.id.remove_from_category_item:
-                new RemoveFromCategoryDialog().showRemoveFromCategoryDialog(getActivity(), feed.getId(), (SubscriptionFragment) getFragmentManager().findFragmentById(fragmentId));
+                new RemoveFromCategoryDialog().showRemoveFromCategoryDialog(getActivity(), categoryArrayList,  feed.getId(), (SubscriptionFragment) getFragmentManager().findFragmentById(fragmentId));
             return true;
 
             case R.id.remove_item:
