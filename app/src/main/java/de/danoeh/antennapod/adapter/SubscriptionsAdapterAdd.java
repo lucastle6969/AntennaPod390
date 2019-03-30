@@ -2,11 +2,9 @@ package de.danoeh.antennapod.adapter;
 
 import android.content.Context;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -30,7 +28,7 @@ public class SubscriptionsAdapterAdd extends SubscriptionsAdapter implements Ada
 
     /** the position in the view that holds the add item; 0 is the first, -1 is the last position */
     private static final int ADD_POSITION = -1;
-    private static final String TAG = "SubscriptionsAdapter";
+    private static final String TAG = "SubscriptionsAdapterAdd";
 
     private final WeakReference<MainActivity> mainActivityRef;
     private List<Feed> feedList;
@@ -74,7 +72,6 @@ public class SubscriptionsAdapterAdd extends SubscriptionsAdapter implements Ada
         if (position == getAddTilePosition()) {
             return ADD_ITEM_OBJ;
         }
-        Log.d("ITEM_ACCESS_SA", "getItem adjPosition: " + String.valueOf(getAdjustedPosition(position)));
         return feedList.get(getAdjustedPosition(position));
     }
 
