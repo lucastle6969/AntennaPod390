@@ -819,6 +819,35 @@ public class DBWriter {
     }
 
     /**
+     * Updates Category object in the database by overwriting all changed and unchanged attribute
+     * values of the passed Category object.
+     * @param category The Category object used to overwrite the previous one.
+     */
+    public static Future<?> updateCategory(final Category category) {
+        return dbExec.submit(() -> {
+            PodDBAdapter adapter = PodDBAdapter.getInstance();
+            adapter.open();
+            adapter.updateSingleCategory(category);
+            adapter.close();
+        });
+    }
+
+    /**
+     * Update the association between a feed and a category in the database
+     * @param feedId the id of the feed whose association is to change
+     * @param categoryId the id of the new category to which the feed will be associated
+     * @return
+     */
+    public static Future<?> updateFeedCategory(final long feedId, final long categoryId) {
+        return dbExec.submit(() -> {
+           PodDBAdapter adapter = PodDBAdapter.getInstance();
+           adapter.open();
+           adapter.updateFeedCategory(feedId, categoryId);
+           adapter.close();
+        });
+    }
+
+    /**
      * Updates download URL of a feed
      */
     public static Future<?> updateFeedDownloadURL(final String original, final String updated) {

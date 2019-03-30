@@ -691,6 +691,45 @@ public class PodDBAdapter {
     }
 
     /**
+     * Update a category
+     * @param category the category to be updated
+     * @return
+     */
+    public long updateSingleCategory(Category category) {
+        long result = 0;
+        try {
+            db.beginTransactionNonExclusive();
+            result = updateCategory(category);
+            db.setTransactionSuccessful();
+        } catch (SQLException e) {
+            Log.e(TAG, Log.getStackTraceString(e));
+        } finally {
+            db.endTransaction();
+        }
+        return result;
+    }
+
+    /**
+     * Update a feed and category association
+     * @param feedId
+     * @param categoryId
+     * @return
+     */
+    public long updateFeedCategory(long feedId, long categoryId) {
+        long result = 0;
+        try {
+            db.beginTransactionNonExclusive();
+            result = updateFeedCategoryAssociation(feedId, categoryId);
+            db.setTransactionSuccessful();
+        }catch(SQLException e) {
+            Log.e(TAG, Log.getStackTraceString(e));
+        } finally {
+            db.endTransaction();
+        }
+        return result;
+    }
+
+    /**
      * Update the flattr status of a FeedItem
      */
     public void setFeedItemFlattrStatus(FeedItem feedItem) {
@@ -857,6 +896,27 @@ public class PodDBAdapter {
         associationValue.put(KEY_CATEGORY_ID, UNCATEGORIZED_CATEGORY_ID);
         return db.insert(TABLE_NAME_ASSOCIATION_FOR_CATEGORIES, null, associationValue);
     }
+
+    /**
+     * Update a Category object in the TABLE_NAME_CATEGORIES table of the database
+     * @param category The Category object
+     * @return The id of that Category object
+     */
+    private long updateCategory(Category category) {
+        ContentValues categoryValue = new ContentValues();
+        categoryValue.put(KEY_CATEGORY_NAME, category.getName());
+        db.update(TABLE_NAME_CATEGORIES, categoryValue, KEY_ID + "=?",
+                new String[]{String.valueOf(category.getId())});
+        return category.getId();
+    }
+
+    private long updateFeedCategoryAssociation(long feedId, long categoryId) {
+        ContentValues associationValue = new ContentValues();
+        associationValue.put(KEY_CATEGORY_ID, categoryId);
+        return db.update(TABLE_NAME_ASSOCIATION_FOR_CATEGORIES, associationValue,KEY_FEED
+                + "=?", new String[]{String.valueOf(feedId)});
+    }
+
 
     public void setFeedItemRead(int played, long itemId, long mediaId,
                                 boolean resetMediaPosition) {

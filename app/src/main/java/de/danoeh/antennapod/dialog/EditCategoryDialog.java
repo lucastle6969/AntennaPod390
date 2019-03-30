@@ -5,20 +5,21 @@ import android.content.DialogInterface;
 import android.support.v7.app.AlertDialog;
 import android.text.InputType;
 import android.view.Gravity;
+import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import de.danoeh.antennapod.R;
 import de.danoeh.antennapod.core.feed.Category;
+import de.danoeh.antennapod.core.storage.DBWriter;
+import de.danoeh.antennapod.fragment.SubscriptionFragment;
 
 public class EditCategoryDialog {
 
-    public void EditCategoryDialog(){ }
-
-    public void showEditCategoryDialog(Activity activity, Category category){
-
-        //Get information to display
+    public void showEditCategoryDialog(Activity activity, Category category, SubscriptionFragment fragment){
         long categoryId = category.getId();
         String categoryName = category.getName();
 
@@ -48,20 +49,40 @@ public class EditCategoryDialog {
 
         builder.setView(layout);
 
-        builder.setPositiveButton(R.string.save_rename_category_button, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                //TODO: code to save changes
-            }
-        });
-        builder.setNegativeButton(R.string.cancel_rename_category_button, new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(R.string.confirm_label, null);
+
+        builder.setNegativeButton(R.string.cancel_label, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.cancel();
             }
         });
 
-        builder.create().show();
+        final AlertDialog alertDialog = builder.create();
+        alertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(final DialogInterface dialog) {
+                Button positiveButton = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                positiveButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        String newCategoryName = renameCategory.getText().toString();
+                        if(!newCategoryName.isEmpty()) {
+                            Category updatedCategory = new Category(categoryId, newCategoryName);
+                            DBWriter.updateCategory(updatedCategory);
+                            dialog.dismiss();
+                            Toast.makeText(activity, activity.getString(R.string.category_renamed_toast) + newCategoryName, Toast.LENGTH_LONG).show();
+                            fragment.refresh();
+                        } else {
+                            Toast.makeText(activity, activity.getString(R.string.category_error_toast), Toast.LENGTH_SHORT).show();
+                        }
+
+                    }
+                });
+            }
+        });
+
+        alertDialog.show();
     }
 
 }

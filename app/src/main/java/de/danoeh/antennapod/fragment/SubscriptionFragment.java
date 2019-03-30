@@ -16,6 +16,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -41,6 +43,8 @@ import de.danoeh.antennapod.core.storage.DBWriter;
 import de.danoeh.antennapod.core.util.FeedItemUtil;
 import de.danoeh.antennapod.core.util.IntentUtils;
 import de.danoeh.antennapod.dialog.CreateCategoryDialog;
+import de.danoeh.antennapod.dialog.EditCategoryDialog;
+import de.danoeh.antennapod.dialog.MoveToCategoryDialog;
 import de.danoeh.antennapod.dialog.RenameFeedDialog;
 import rx.Observable;
 import rx.Subscription;
@@ -73,6 +77,8 @@ public class SubscriptionFragment extends Fragment {
 
     private Subscription subscription;
 
+    private int fragmentId;
+
     public SubscriptionFragment() {
     }
 
@@ -87,6 +93,8 @@ public class SubscriptionFragment extends Fragment {
         setHasOptionsMenu(true);
         subscriptionsAdapterList = new ArrayList<>();
         categoryView = UserPreferences.getCategoryToggle();
+        fragmentId = this.getId();
+
     }
 
     @Override
@@ -159,6 +167,11 @@ public class SubscriptionFragment extends Fragment {
         TableRow rowTitle = new TableRow(getActivity());
         rowTitle.setGravity(Gravity.CENTER_HORIZONTAL);
 
+        LinearLayout layout = new LinearLayout(getActivity());
+        layout.setOrientation(LinearLayout.HORIZONTAL);
+        layout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.FILL_PARENT));
+        layout.setGravity(Gravity.CENTER_HORIZONTAL);
+
         TextView title = new TextView(getActivity());
         title.setText(category.getName());
         title.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 18);
@@ -170,12 +183,30 @@ public class SubscriptionFragment extends Fragment {
                 toggle_contents(v);
             }
         });
+        layout.addView(title);
+
+        if(category.getId() != 0) {
+            ImageButton editCategoryButton = new ImageButton(getActivity());
+            editCategoryButton.setImageResource(R.drawable.ic_edit_category_light);
+            editCategoryButton.setId(R.id.edit_category_button);
+            editCategoryButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    new EditCategoryDialog().showEditCategoryDialog(getActivity(), category, (SubscriptionFragment)getFragmentManager().findFragmentById(fragmentId));
+                }
+            });
+            layout.addView(editCategoryButton);
+        }
 
         TableRow.LayoutParams params = new TableRow.LayoutParams();
         params.span = 6;
 
-        rowTitle.addView(title, params);
+        rowTitle.addView(layout, params);
         return rowTitle;
+    }
+
+    public void refresh(){
+        getFragmentManager().beginTransaction().detach(this).attach(this).commit();
     }
 
     public TableRow addGridRow(int rowNumber, Category category){
@@ -496,6 +527,10 @@ public class SubscriptionFragment extends Fragment {
                     }
                 };
                 conDialog.createNewDialog().show();
+                return true;
+            case R.id.move_to_category:
+                new MoveToCategoryDialog().showMoveToCategoryDialog(getActivity(), feed.getId(), (SubscriptionFragment)getFragmentManager().findFragmentById(fragmentId));
+                refresh();
                 return true;
             default:
                 return super.onContextItemSelected(item);
