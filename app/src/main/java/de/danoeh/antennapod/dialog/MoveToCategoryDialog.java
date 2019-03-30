@@ -61,9 +61,9 @@ public class MoveToCategoryDialog {
         builder.setPositiveButton(R.string.confirm_label, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                if(!categoriesDropdown.getAdapter().isEmpty()) {
 
-                String chosenCategoryName = categoriesDropdown.getSelectedItem().toString();
-                if(!chosenCategoryName.isEmpty()) {
+                    String chosenCategoryName = categoriesDropdown.getSelectedItem().toString();
                     long categoryId = 0;
                     for (int i = 0; i < categories.size(); i++) {
                         if (categories.get(i).getName().equals(chosenCategoryName)) {
@@ -76,7 +76,6 @@ public class MoveToCategoryDialog {
                         fragment.refresh();
                     }
                 }
-
                 dialog.dismiss();
 
             }
