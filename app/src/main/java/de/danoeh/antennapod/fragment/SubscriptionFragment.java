@@ -44,6 +44,7 @@ import de.danoeh.antennapod.core.util.IntentUtils;
 import de.danoeh.antennapod.dialog.CreateCategoryDialog;
 import de.danoeh.antennapod.dialog.EditCategoryDialog;
 import de.danoeh.antennapod.dialog.MoveToCategoryDialog;
+import de.danoeh.antennapod.dialog.RemoveFromCategoryDialog;
 import de.danoeh.antennapod.dialog.RenameFeedDialog;
 import de.danoeh.antennapod.view.WrappedGridView;
 import rx.Observable;
@@ -395,6 +396,15 @@ public class SubscriptionFragment extends Fragment {
         MenuInflater inflater = getActivity().getMenuInflater();
         inflater.inflate(R.menu.nav_feed_context, menu);
 
+        long currentCategoryId = 0;
+        for(int i=0; i < categoryArrayList.size(); i++){
+            if(categoryArrayList.get(i).getFeedIds().contains(feed.getId())){
+                currentCategoryId = categoryArrayList.get(i).getId();
+            }
+        }
+        if(currentCategoryId ==0) {
+            menu.getItem(5).setVisible(false);
+        }
         menu.setHeaderTitle(feed.getTitle());
 
         mPosition = position;
@@ -456,11 +466,17 @@ public class SubscriptionFragment extends Fragment {
             case R.id.rename_item:
                 new RenameFeedDialog(getActivity(), feed).show();
                 return true;
+
+            case R.id.remove_from_category_item:
+                new RemoveFromCategoryDialog().showRemoveFromCategoryDialog(getActivity(), categoryArrayList,  feed.getId(), (SubscriptionFragment) getFragmentManager().findFragmentById(fragmentId));
+            return true;
+
             case R.id.remove_item:
                 final FeedRemover remover = new FeedRemover(getContext(), feed) {
                     @Override
                     protected void onPostExecute(Void result) {
                         super.onPostExecute(result);
+                        DBWriter.removeFeedFromSubscriptions(feed);
                         loadSubscriptions();
                     }
                 };
