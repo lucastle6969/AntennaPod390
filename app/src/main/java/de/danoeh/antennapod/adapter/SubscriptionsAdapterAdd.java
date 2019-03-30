@@ -29,7 +29,7 @@ public class SubscriptionsAdapterAdd extends SubscriptionsAdapter implements Ada
     public static final Object ADD_ITEM_OBJ = new Object();
 
     /** the position in the view that holds the add item; 0 is the first, -1 is the last position */
-    private static final int ADD_POSITION = 0;
+    private static final int ADD_POSITION = -1;
     private static final String TAG = "SubscriptionsAdapter";
 
     private final WeakReference<MainActivity> mainActivityRef;

@@ -16,6 +16,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -69,9 +71,13 @@ public class SubscriptionFragment extends Fragment {
 
     private boolean categoryView;
 
+    private List<Category> categoryArrayList = new ArrayList<>();
+
     private static final int GRID_COL_NUM = 3;
 
     private Subscription subscription;
+
+    private int fragmentId;
 
     public SubscriptionFragment() {
     }
@@ -87,6 +93,8 @@ public class SubscriptionFragment extends Fragment {
         setHasOptionsMenu(true);
         subscriptionsAdapterList = new ArrayList<>();
         categoryView = UserPreferences.getCategoryToggle();
+        fragmentId = this.getId();
+
     }
 
     @Override
@@ -106,51 +114,17 @@ public class SubscriptionFragment extends Fragment {
             return root;
         }
 
-        ArrayList<String> categoryTitles = getCategoryTitles();
+        categoryArrayList = DBReader.getAllCategories();
 
-        for(int i=0; i<categoryTitles.size(); i++){
-            TableRow tableRowTitle = addRowTitle(categoryTitles.get(i));
+        for(int i=0; i<categoryArrayList.size(); i++){
+            Category category = categoryArrayList.get(i);
+            TableRow tableRowTitle = addRowTitle(category);
             table.addView(tableRowTitle);
-            tableGridRow = addGridRow(i);
+            tableGridRow = addGridRow(i, category);
             table.addView(tableGridRow);
         }
 
         return root;
-    }
-
-    public ArrayList<String> getCategoryTitles(){
-        // this should actually come from the db
-        ArrayList<String> categoryTitles = new ArrayList<>();
-
-        categoryTitles.add("uncategorized subscriptions");
-        categoryTitles.add("Category 1");
-        // categoryTitles.add("Category 2");
-
-        return categoryTitles;
-    }
-
-    public int getNavDrawerPositionOffset(int rowNumber){
-        // this should come from db
-        int navDrawerPositionOffset = 0;
-        if(rowNumber == 0){
-            return navDrawerPositionOffset;
-        }else{
-            for(int i=0; i<rowNumber; i++){
-                navDrawerPositionOffset += getNumberOfFeeds(i);
-            }
-            return navDrawerPositionOffset;
-        }
-    }
-
-    public int getNumberOfFeeds(int rowNumber){
-        // this should come from db
-        // numberOfFeeds = 0;
-        // example for(int i = 0; i<totalFeeds.size(); i++){
-        //      if(totalFeeds.get(i).categoryTitle.equals(getCategoryTitles().get(rowNumber)){
-        //          numberOfFeeds++;
-        // }
-        // return numberOfFeeds;
-        return 2;
     }
 
     public TableRow addGridRowSimple(){
@@ -164,13 +138,16 @@ public class SubscriptionFragment extends Fragment {
 
         List<Feed> feedList = new ArrayList<>();
         List<Integer> counterList = new ArrayList<>();
+        int numberOfFeeds = 0;
         if(navDrawerData!=null){
             for(int i=0; i<navDrawerData.feeds.size(); i++){
                 feedList.add(navDrawerData.feeds.get(i));
                 counterList.add(navDrawerData.feedCounters.get(navDrawerData.feeds.get(i).getId()));
+                numberOfFeeds = navDrawerData.feeds.size();
             }
         }else{
             Log.d("ITEM_ACCESS", "navDrawerData was null in addGridRowSimple");
+            numberOfFeeds = DBReader.getFeedListSize();
         }
 
         subscriptionsAdapterList.add(new SubscriptionsAdapterAdd((MainActivity) getActivity(), feedList, counterList));
@@ -181,19 +158,24 @@ public class SubscriptionFragment extends Fragment {
         registerForContextMenu(gridView);
         
         gridRow.addView(gridView);
-        setGridViewHeightBasedOnChildren(gridView, GRID_COL_NUM);
+        setGridViewHeightBasedOnChildren(gridView, numberOfFeeds, GRID_COL_NUM);
 
         return gridRow;
     }
 
-    public TableRow addRowTitle(String categoryTitle){
+    public TableRow addRowTitle(Category category){
         TableRow rowTitle = new TableRow(getActivity());
         rowTitle.setGravity(Gravity.CENTER_HORIZONTAL);
 
+        LinearLayout layout = new LinearLayout(getActivity());
+        layout.setOrientation(LinearLayout.HORIZONTAL);
+        layout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.FILL_PARENT));
+        layout.setGravity(Gravity.CENTER_HORIZONTAL);
+
         TextView title = new TextView(getActivity());
-        title.setText(categoryTitle);
+        title.setText(category.getName());
         title.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 18);
-        title.setGravity(Gravity.CENTER);
+        title.setGravity(Gravity.LEFT);
         title.setTypeface(Typeface.SANS_SERIF, Typeface.BOLD);
         title.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -201,15 +183,33 @@ public class SubscriptionFragment extends Fragment {
                 toggle_contents(v);
             }
         });
+        layout.addView(title);
+
+        if(category.getId() != 0) {
+            ImageButton editCategoryButton = new ImageButton(getActivity());
+            editCategoryButton.setImageResource(R.drawable.ic_edit_category_light);
+            editCategoryButton.setId(R.id.edit_category_button);
+            editCategoryButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    new EditCategoryDialog().showEditCategoryDialog(getActivity(), category, (SubscriptionFragment)getFragmentManager().findFragmentById(fragmentId));
+                }
+            });
+            layout.addView(editCategoryButton);
+        }
 
         TableRow.LayoutParams params = new TableRow.LayoutParams();
         params.span = 6;
 
-        rowTitle.addView(title, params);
+        rowTitle.addView(layout, params);
         return rowTitle;
     }
 
-    public TableRow addGridRow(int rowNumber){
+    public void refresh(){
+        getFragmentManager().beginTransaction().detach(this).attach(this).commit();
+    }
+
+    public TableRow addGridRow(int rowNumber, Category category){
         TableRow gridRow = new TableRow(getActivity());
         GridView gridView = new GridView(getActivity());
         TableRow.LayoutParams params = new TableRow.LayoutParams(
@@ -218,15 +218,16 @@ public class SubscriptionFragment extends Fragment {
         gridView.setLayoutParams(params);
         gridView.setNumColumns(GRID_COL_NUM);
 
-        int navDrawerPositionOffset = getNavDrawerPositionOffset(rowNumber);
-        int numberOfFeeds = getNumberOfFeeds(rowNumber);
-
         List<Feed> feedList = new ArrayList<>();
         List<Integer> counterList = new ArrayList<>();
         if(navDrawerData!=null){
-            for(int i=0; i<numberOfFeeds; i++){
-                feedList.add(navDrawerData.feeds.get(i+navDrawerPositionOffset));
-                counterList.add(navDrawerData.feedCounters.get(navDrawerData.feeds.get(i+navDrawerPositionOffset).getId()));
+            List<Long> categoryFeedIds = category.getFeedIds();
+            for(Long feedId:categoryFeedIds){
+                Feed feedToAdd = navDrawerData.getFeedById(feedId);
+                if(feedToAdd != null){
+                    feedList.add(feedToAdd);
+                    counterList.add(navDrawerData.feedCounters.get(feedId));
+                }
             }
         }else{
             Log.d("ITEM_ACCESS", "navDrawerData was null in addGridRow");
@@ -243,24 +244,30 @@ public class SubscriptionFragment extends Fragment {
         registerForContextMenu(gridView);
         gridViewList.add(gridView);
         gridRow.addView(gridView);
-        setGridViewHeightBasedOnChildren(gridView, GRID_COL_NUM);
+        setGridViewHeightBasedOnChildren(gridView, category.getFeedIds().size(), GRID_COL_NUM);
 
         return gridRow;
     }
 
-    public void setGridViewHeightBasedOnChildren(GridView gridView, int columns) {
-        ListAdapter listAdapter = gridView.getAdapter();
-        if (listAdapter == null) {
-            // pre-condition
-            return;
+    public void setGridViewHeightBasedOnChildren(GridView gridView, int numberOfFeeds, int columns) {
+
+        int totalHeight = -1;
+        int items = numberOfFeeds;
+        int rows;
+        if(subscriptionsAdapterList.get(0) != null) {
+            View listItem = subscriptionsAdapterList.get(0).getView(0, null, gridView);
+            if(listItem!=null){
+                listItem.measure(0,0);
+                totalHeight = listItem.getMeasuredHeight()*2;
+            }
+
         }
 
-        int totalHeight;
-        int items = listAdapter.getCount();
-        int rows;
+        // this number seems to match the feed image height if the actual can't be found
+        if(totalHeight == -1){
+            totalHeight = 518;
+        }
 
-        // this number seems to match the feed image height
-        totalHeight = 500;
 
         float x;
         if( items > columns ){
@@ -276,11 +283,10 @@ public class SubscriptionFragment extends Fragment {
 
     private void toggle_contents(View v){
         TextView title = (TextView) v;
-        List<String> categoryTitles = getCategoryTitles();
         String currentText = title.getText().toString();
 
-        for(int i = 0; i<categoryTitles.size(); i++){
-            if(categoryTitles.get(i).equals(currentText)){
+        for(int i = 0; i<categoryArrayList.size(); i++){
+            if(categoryArrayList.get(i).getName().equals(currentText)){
                 GridView currentView = gridViewList.get(i);
                 if(currentView.isShown()){
                     currentView.setVisibility(View.GONE);
@@ -358,20 +364,19 @@ public class SubscriptionFragment extends Fragment {
             return;
         }
 
-        ArrayList<String> categoryTitles = getCategoryTitles();
-
-        for(int rowNumber=0; rowNumber<categoryTitles.size(); rowNumber++) {
-
+        for(int rowNumber=0; rowNumber<categoryArrayList.size(); rowNumber++) {
+            Category category = categoryArrayList.get(rowNumber);
             feedList = new ArrayList<>();
             counterList = new ArrayList<>();
 
-          int navDrawerPositionOffset = getNavDrawerPositionOffset(rowNumber);
-          int numberOfFeeds = getNumberOfFeeds(rowNumber);
-
+            List<Long> categoryFeedIds = category.getFeedIds();
           if (navDrawerData != null) {
-              for (int i = 0; i < numberOfFeeds; i++) {
-                  feedList.add(navDrawerData.feeds.get(i + navDrawerPositionOffset));
-                  counterList.add(navDrawerData.feedCounters.get(navDrawerData.feeds.get(i + navDrawerPositionOffset).getId()));
+              for (Long feedId:categoryFeedIds) {
+                  Feed feedToAdd = navDrawerData.getFeedById(feedId);
+                  if(feedToAdd != null){
+                      feedList.add(feedToAdd);
+                      counterList.add(navDrawerData.feedCounters.get(feedId));
+                  }
               }
           } else {
               Log.d("ITEM_ACCESS", "navDrawerData was null in updateFeeds");
@@ -529,6 +534,10 @@ public class SubscriptionFragment extends Fragment {
                     }
                 };
                 conDialog.createNewDialog().show();
+                return true;
+            case R.id.move_to_category:
+                new MoveToCategoryDialog().showMoveToCategoryDialog(getActivity(), feed.getId(), (SubscriptionFragment)getFragmentManager().findFragmentById(fragmentId));
+                refresh();
                 return true;
             default:
                 return super.onContextItemSelected(item);

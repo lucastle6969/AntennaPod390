@@ -106,7 +106,7 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
         // Subscriptions
         openNavDrawer();
         solo.clickOnText(solo.getString(R.string.subscriptions_label));
-        solo.waitForView(R.id.subscriptions_grid);
+        solo.waitForView(R.id.relativeLayoutSubscriptions);
         assertEquals(solo.getString(R.string.subscriptions_label), getActionbarTitle());
 
         // downloads
