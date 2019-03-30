@@ -15,10 +15,11 @@ import android.widget.Toast;
 import de.danoeh.antennapod.R;
 import de.danoeh.antennapod.core.feed.Category;
 import de.danoeh.antennapod.core.storage.DBWriter;
+import de.danoeh.antennapod.fragment.SubscriptionFragment;
 
 public class CreateCategoryDialog {
 
-    public void showCreateCategoryDialog(Activity context) {
+    public void showCreateCategoryDialog(Activity context, SubscriptionFragment subscriptionFragment) {
         // Create category alert dialog
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle(R.string.category_alert_title);
@@ -58,6 +59,7 @@ public class CreateCategoryDialog {
                             DBWriter.setCategory(new Category(-1, inputCategoryName));
                             dialog.dismiss();
                             Toast.makeText(context, context.getString(R.string.category_success) + inputCategoryName, Toast.LENGTH_LONG).show();
+                            subscriptionFragment.refresh();
                         } else {
                             Toast.makeText(context, context.getString(R.string.category_error_toast), Toast.LENGTH_SHORT).show();
                         }
