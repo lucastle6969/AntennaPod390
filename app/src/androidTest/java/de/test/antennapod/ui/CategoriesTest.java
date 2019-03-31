@@ -9,6 +9,7 @@ import com.robotium.solo.Solo;
 import de.danoeh.antennapod.R;
 import de.danoeh.antennapod.activity.MainActivity;
 import de.danoeh.antennapod.core.feed.Category;
+import de.danoeh.antennapod.core.preferences.UserPreferences;
 import de.danoeh.antennapod.core.storage.DBWriter;
 import de.danoeh.antennapod.core.storage.PodDBAdapter;
 
@@ -48,6 +49,7 @@ public class CategoriesTest extends ActivityInstrumentationTestCase2<MainActivit
         // do this BEFORE calling getActivity()!
         prefs = getInstrumentation().getTargetContext().getSharedPreferences(MainActivity.PREF_NAME, Context.MODE_PRIVATE);
         prefs.edit().putBoolean(MainActivity.PREF_IS_FIRST_LAUNCH, false).commit();
+        UserPreferences.setCategoryToggle(false);
 
         solo = new Solo(getInstrumentation(), getActivity());
     }
@@ -157,4 +159,36 @@ public class CategoriesTest extends ActivityInstrumentationTestCase2<MainActivit
 
     }
 
+    public void testToggleBetweenCategoryAndAllFeedsView() {
+        try {
+            goingToSubscriptionPage();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        solo.clickOnView(solo.getView(R.id.toggleCategoryView));
+        solo.sleep(2000);
+        assertTrue(solo.searchText("Uncategorized Section", true));
+    }
+
+    public void testCollapseCategoryView(){
+        String title = "new bookmark";
+
+        try {
+            goingToSubscriptionPage();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        solo.clickOnView(solo.getView(R.id.toggleCategoryView));
+        solo.clickOnView(solo.getView(R.id.addCategory));
+
+        solo.waitForDialogToOpen();
+        solo.enterText(0, title);
+        solo.clickOnText(solo.getString(R.string.confirm_label));
+        solo.sleep(2000);
+        solo.clickLongOnText("Title 1");
+        solo.clickOnText(solo.getString(R.string.move_to_category_label));
+        solo.clickOnText(solo.getString(R.string.confirm_label));
+        solo.clickOnText(title);
+        assertFalse(solo.searchText("Title 1", true));
+    }
 }
