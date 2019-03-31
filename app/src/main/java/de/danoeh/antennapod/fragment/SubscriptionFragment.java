@@ -344,18 +344,7 @@ public class SubscriptionFragment extends Fragment {
                     for(SubscriptionsAdapter adapter: subscriptionsAdapterList){
                         adapter.notifyDataSetChanged();
                     }
-                    categorizeSubscriptions();
                 }, error -> Log.e(TAG, Log.getStackTraceString(error)));
-    }
-
-    private void categorizeSubscriptions() {
-        List<Long> feedIdsInCategories = DBReader.getAllFeedIdsInCategories();
-        for (Feed f : navDrawerData.feeds) {
-            if(!feedIdsInCategories.contains(f.getId())) {
-                // Insert new subscriptions into uncategorized category
-                DBWriter.addFeedToUncategorized(f.getId());
-            }
-        }
     }
 
     private void updateFeeds(){
@@ -409,16 +398,19 @@ public class SubscriptionFragment extends Fragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-
-        if (id == R.id.addCategory) {
-            CreateCategoryDialog categoryDialog = new CreateCategoryDialog();
-            SubscriptionFragment sf = (SubscriptionFragment) getFragmentManager().findFragmentById(fragmentId);
-            categoryDialog.showCreateCategoryDialog(getActivity(), sf);
-        }
-        if (id == R.id.toggleCategoryView){
-            categoryView = categoryView ? false : true;
-            UserPreferences.setCategoryToggle(categoryView);
-            getFragmentManager().beginTransaction().detach(this).attach(this).commit();
+        switch(id) {
+            case R.id.addCategory:
+                CreateCategoryDialog categoryDialog = new CreateCategoryDialog();
+                SubscriptionFragment sf = (SubscriptionFragment) getFragmentManager().findFragmentById(fragmentId);
+                categoryDialog.showCreateCategoryDialog(getActivity(), sf);
+                break;
+            case R.id.toggleCategoryView:
+                categoryView = categoryView ? false : true;
+                UserPreferences.setCategoryToggle(categoryView);
+                getFragmentManager().beginTransaction().detach(this).attach(this).commit();
+                break;
+            default:
+                break;
         }
         return super.onOptionsItemSelected(item);
     }
