@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 import de.danoeh.antennapod.R;
 import de.danoeh.antennapod.core.feed.Category;
+import de.danoeh.antennapod.core.storage.DBReader;
 import de.danoeh.antennapod.core.storage.DBWriter;
 import de.danoeh.antennapod.fragment.SubscriptionFragment;
 
@@ -109,14 +110,20 @@ public class EditCategoryDialog {
                     @Override
                     public void onClick(View v) {
                         String newCategoryName = renameCategory.getText().toString();
-                        if(!newCategoryName.isEmpty()) {
+                        boolean isDuplicateCategoryName = DBReader.isDuplicateCategoryName(newCategoryName);
+
+                        if(!newCategoryName.isEmpty() && !isDuplicateCategoryName) {
                             Category updatedCategory = new Category(categoryId, newCategoryName);
                             DBWriter.updateCategory(updatedCategory);
                             dialog.dismiss();
                             Toast.makeText(activity, activity.getString(R.string.category_renamed_toast) + newCategoryName, Toast.LENGTH_LONG).show();
                             fragment.refresh();
                         } else {
-                            Toast.makeText(activity, activity.getString(R.string.category_error_toast), Toast.LENGTH_SHORT).show();
+                            if (isDuplicateCategoryName) {
+                                Toast.makeText(activity, activity.getString(R.string.duplicate_category_error), Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(activity, activity.getString(R.string.category_error_toast), Toast.LENGTH_SHORT).show();
+                            }
                         }
 
                     }
