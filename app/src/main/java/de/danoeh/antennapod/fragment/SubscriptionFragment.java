@@ -3,6 +3,7 @@ package de.danoeh.antennapod.fragment;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -21,6 +22,7 @@ import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -165,13 +167,17 @@ public class SubscriptionFragment extends Fragment {
         LinearLayout layout = new LinearLayout(getActivity());
         layout.setOrientation(LinearLayout.HORIZONTAL);
         layout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
-        layout.setGravity(Gravity.FILL_HORIZONTAL);
+        layout.setGravity(Gravity.NO_GRAVITY);
         layout.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
                 toggle_contents(v);
             }
         });
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.FILL_PARENT
+        );
+        layout.setLayoutParams(layoutParams);
 
         ImageView expandButton = new ImageView(getActivity());
         expandButton.setImageResource(R.drawable.ic_expand_more_grey600_36dp);
@@ -182,7 +188,13 @@ public class SubscriptionFragment extends Fragment {
         TextView title = new TextView(getActivity());
         title.setText(category.getName());
         title.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 18);
-        title.setPadding(70, 4, 400, 4);
+        LinearLayout.LayoutParams textParams = new LinearLayout.LayoutParams(
+                700, LinearLayout.LayoutParams.WRAP_CONTENT
+        );
+//        textParams.setMargins(100,0,100, 0);
+        title.setLayoutParams(textParams);
+        title.setPadding(50, 8, 0, 4);
+        title.setGravity(Gravity.LEFT);
         title.setTypeface(Typeface.SANS_SERIF, Typeface.BOLD);
         title.setId(R.id.category_title_view);
         layout.addView(title);
@@ -191,7 +203,13 @@ public class SubscriptionFragment extends Fragment {
             ImageButton editCategoryButton = new ImageButton(getActivity());
             editCategoryButton.setImageResource(R.drawable.ic_edit_category_light);
             editCategoryButton.setId(R.id.edit_category_button);
-
+            editCategoryButton.setRight(10);
+            editCategoryButton.setBackgroundColor(0x00000000);
+            LinearLayout.LayoutParams editParams = new LinearLayout.LayoutParams(
+                    150, LinearLayout.LayoutParams.FILL_PARENT
+            );
+            editParams.setMargins(100,0,10, 0);
+            editCategoryButton.setLayoutParams(editParams);
 
             editCategoryButton.setOnClickListener(new View.OnClickListener() {
                 @Override
