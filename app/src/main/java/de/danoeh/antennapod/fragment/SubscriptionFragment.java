@@ -164,11 +164,13 @@ public class SubscriptionFragment extends Fragment {
     public TableRow addRowTitle(Category category){
         TableRow rowTitle = new TableRow(getActivity());
         rowTitle.setGravity(Gravity.FILL_HORIZONTAL);
-        LinearLayout layout = new LinearLayout(getActivity());
-        layout.setOrientation(LinearLayout.HORIZONTAL);
-        layout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
-        layout.setGravity(Gravity.NO_GRAVITY);
-        layout.setOnClickListener(new View.OnClickListener(){
+
+        LinearLayout rowLayout = new LinearLayout(getActivity());
+        rowLayout.setOrientation(LinearLayout.HORIZONTAL);
+        rowLayout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
+        rowLayout.setGravity(Gravity.NO_GRAVITY);
+        rowLayout.setPadding(25,0,50,0);
+        rowLayout.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
                 toggle_contents(v);
@@ -177,39 +179,38 @@ public class SubscriptionFragment extends Fragment {
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.FILL_PARENT
         );
-        layout.setLayoutParams(layoutParams);
+        rowLayout.setLayoutParams(layoutParams);
 
         ImageView expandButton = new ImageView(getActivity());
         expandButton.setImageResource(R.drawable.ic_expand_more_grey600_36dp);
         expandButton.setId(R.id.category_collapse_button);
 
-        layout.addView(expandButton);
+        rowLayout.addView(expandButton);
 
         TextView title = new TextView(getActivity());
         title.setText(category.getName());
         title.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 18);
         LinearLayout.LayoutParams textParams = new LinearLayout.LayoutParams(
-                700, LinearLayout.LayoutParams.WRAP_CONTENT
+                700, LinearLayout.LayoutParams.MATCH_PARENT
         );
-//        textParams.setMargins(100,0,100, 0);
         title.setLayoutParams(textParams);
-        title.setPadding(50, 8, 0, 4);
-        title.setGravity(Gravity.LEFT);
+        title.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
+
         title.setTypeface(Typeface.SANS_SERIF, Typeface.BOLD);
         title.setId(R.id.category_title_view);
-        layout.addView(title);
+
+        rowLayout.addView(title);
 
         if(category.getId() != 0) {
+            LinearLayout editLinearLayout = new LinearLayout(getActivity());
+            editLinearLayout.setOrientation(LinearLayout.HORIZONTAL);
+            editLinearLayout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
+            editLinearLayout.setGravity(Gravity.RIGHT);
+
             ImageButton editCategoryButton = new ImageButton(getActivity());
             editCategoryButton.setImageResource(R.drawable.ic_edit_category_light);
             editCategoryButton.setId(R.id.edit_category_button);
-            editCategoryButton.setRight(10);
             editCategoryButton.setBackgroundColor(0x00000000);
-            LinearLayout.LayoutParams editParams = new LinearLayout.LayoutParams(
-                    150, LinearLayout.LayoutParams.FILL_PARENT
-            );
-            editParams.setMargins(100,0,10, 0);
-            editCategoryButton.setLayoutParams(editParams);
 
             editCategoryButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -217,13 +218,15 @@ public class SubscriptionFragment extends Fragment {
                     new EditCategoryDialog().showEditCategoryDialog(getActivity(), category, (SubscriptionFragment)getFragmentManager().findFragmentById(fragmentId));
                 }
             });
-            layout.addView(editCategoryButton);
+
+            editLinearLayout.addView(editCategoryButton);
+            rowLayout.addView(editLinearLayout);
         }
 
         TableRow.LayoutParams params = new TableRow.LayoutParams();
         params.span = 6;
 
-        rowTitle.addView(layout, params);
+        rowTitle.addView(rowLayout, params);
         return rowTitle;
     }
 
