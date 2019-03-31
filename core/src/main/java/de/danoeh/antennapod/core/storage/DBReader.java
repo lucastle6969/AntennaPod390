@@ -846,25 +846,29 @@ public final class DBReader {
     }
 
     public static List<Long> getAllFeedIdsInCategories() {
-        List<Long> result = new ArrayList<>();
+
         PodDBAdapter adapter = PodDBAdapter.getInstance();
         adapter.open();
-        Cursor cursor;
+        Cursor cursor = null;
         try {
             cursor = adapter.getAllFeedIdsInCategories();
-            if (cursor.moveToFirst()) {
-                do {
-                    int feedItemId = cursor.getColumnIndex(PodDBAdapter.KEY_FEEDITEM);
-                    result.add(cursor.getLong(feedItemId));
-                } while (cursor.moveToNext());
+            List<Long> result = new ArrayList<>(cursor.getCount());
+            while(cursor.moveToNext()) {
+                int feedItemId = cursor.getColumnIndex(PodDBAdapter.KEY_FEED);
+                result.add(cursor.getLong(feedItemId));
             }
-            cursor.close();
-
+            return result;
         } finally {
-            adapter.close();
+            if(cursor != null) {
+                cursor.close();
+                adapter.close();
+            }
         }
-        return result;
+
     }
+
+
+
 
     /**
      * Returns all categories containing their feedIds
@@ -875,25 +879,27 @@ public final class DBReader {
         Category category;
         PodDBAdapter adapter = PodDBAdapter.getInstance();
         adapter.open();
-        Cursor categoryCursor;
-        Cursor associationCursor;
+        Cursor categoryCursor = null;
+        Cursor associationCursor = null;
         try {
             categoryCursor = adapter.getAllCategories();
-            if (categoryCursor.moveToFirst()) {
-                do {
-                    category = Category.fromCursor(categoryCursor);
-                    associationCursor = adapter.getFeedIdsForCategory(category.getId());
-                    if (associationCursor.moveToFirst()) {
-                        do {
-                            int indexFeedId = associationCursor.getColumnIndex(PodDBAdapter.KEY_FEED);
-                            long feedId = associationCursor.getLong(indexFeedId);
-                            category.addFeedId(feedId);
-                        } while (associationCursor.moveToNext());
-                    }
-                    result.add(category);
-                } while (categoryCursor.moveToNext());
+            while(categoryCursor.moveToNext()){
+                category = Category.fromCursor(categoryCursor);
+                associationCursor = adapter.getFeedIdsForCategory(category.getId());
+                while(associationCursor.moveToNext()) {
+                    int indexFeedId = associationCursor.getColumnIndex(PodDBAdapter.KEY_FEED);
+                    long feedId = associationCursor.getLong(indexFeedId);
+                    category.addFeedId(feedId);
+                }
+                result.add(category);
             }
         } finally {
+            if(categoryCursor != null) {
+                categoryCursor.close();
+            }
+            if(associationCursor != null) {
+                associationCursor.close();
+            }
             adapter.close();
         }
         return result;

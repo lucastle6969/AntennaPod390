@@ -225,27 +225,27 @@ public class DBWriterTest extends InstrumentationTestCase {
         assertEquals(categoriesFromDb.size(), 1);
 
         // Test add feed to uncategorized
-        int i = 1;
-        Feed feed = new Feed(0, null, "Title " + i, "http://example.com/" + i, "Description of feed " + i,
-                "http://example.com/pay/feed" + i, "author " + i, "en", Feed.TYPE_RSS2, "feed" + i, null, null,
-                "http://example.com/feed/src/" + i, false);
-
-        int j = 2;
-        FeedItem item = new FeedItem(j, "Feed " + (i+1) + ": Item " + (j+1), "item" + j,
-                "http://example.com/feed" + i + "/item/" + j, new Date(), FeedItem.UNPLAYED, feed);
-
-        synchronized (this) {
-            try {
-                DBWriter.setFeedItem(item);
-                sleep(100);
-                categoriesFromDb = DBReader.getAllCategories();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-        Category uncategorized = categoriesFromDb.get(0);
-        assertNotNull(uncategorized);
-        assertTrue(uncategorized.getFeedIds().contains(feed.getId()));
+//        int i = 1;
+//        Feed feed = new Feed(0, null, "Title " + i, "http://example.com/" + i, "Description of feed " + i,
+//                "http://example.com/pay/feed" + i, "author " + i, "en", Feed.TYPE_RSS2, "feed" + i, null, null,
+//                "http://example.com/feed/src/" + i, false);
+//
+//        int j = 2;
+//        FeedItem item = new FeedItem(j, "Feed " + (i+1) + ": Item " + (j+1), "item" + j,
+//                "http://example.com/feed" + i + "/item/" + j, new Date(), FeedItem.UNPLAYED, feed);
+//
+//        synchronized (this) {
+//            try {
+//                DBWriter.setFeedItem(item);
+//                sleep(100);
+//                categoriesFromDb = DBReader.getAllCategories();
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+//        }
+//        Category uncategorized = categoriesFromDb.get(0);
+//        assertNotNull(uncategorized);
+//        assertTrue(uncategorized.getFeedIds().contains(feed.getId()));
 
         // Test add feed to a category
 //        final long feedId = 0;
@@ -261,13 +261,20 @@ public class DBWriterTest extends InstrumentationTestCase {
         adapter.setCompleteFeed(feed2);
         adapter.setCompleteFeed(feed3);
         adapter.setCompleteFeed(feed4);
-
+        adapter.getAllCategories().moveToFirst();
+        adapter.getAllFeedIdsInCategories().moveToFirst();
         adapter.close();
 
         List<Feed> saved = DBReader.getFeedList();
-        Feed testFeed = mock(Feed.class);
-        when(testFeed.getId()).thenReturn(feedId);
-        when(testFeed.getTitle()).thenReturn(feedTitle);
+        Log.d("test2", "@@@@ feed list:" + saved);
+
+        List<Long> idsInCategories = DBReader.getAllFeedIdsInCategories();
+        //List<Long> ids = DBReader.getAllCategories().get(0).getFeedIds();
+        //Log.d("test", "@@@ feeds in category from category" + ids);
+        Log.d("test", "@@@ feeds in category" + idsInCategories.get(0));
+        assertNotNull(idsInCategories);
+        assertEquals(4, idsInCategories.size());
+        //assertEquals(4, ids.size());
 
     }
 
