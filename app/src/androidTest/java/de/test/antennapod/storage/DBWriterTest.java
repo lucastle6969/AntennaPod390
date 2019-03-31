@@ -5,8 +5,6 @@ import android.database.Cursor;
 import android.test.InstrumentationTestCase;
 import android.util.Log;
 
-import org.mockito.Mock;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -27,8 +25,6 @@ import de.danoeh.antennapod.core.storage.DBWriter;
 import de.danoeh.antennapod.core.storage.PodDBAdapter;
 
 import static java.lang.Thread.sleep;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 /**
  * Test class for DBWriter
@@ -38,6 +34,8 @@ public class DBWriterTest extends InstrumentationTestCase {
     private static final String TAG = "DBWriterTest";
     private static final String TEST_FOLDER = "testDBWriter";
     private static final long TIMEOUT = 5L;
+    private List<Category> categoriesFromDb = null;
+    private Category testingCategory;
 
     @Override
     protected void tearDown() throws Exception {
@@ -171,32 +169,60 @@ public class DBWriterTest extends InstrumentationTestCase {
         }
     }
 
-    public void testCategoriesCRUD() {
-        final int id = 1;
-        final String title = "categoryTitle";
-        List<Category> categoriesFromDb = null;
+    private List<Feed> insertTestingFeeds() {
+        PodDBAdapter adapter = PodDBAdapter.getInstance();
+        adapter.open();
+        Feed feed1 = new Feed(0, null, "A", "link", "d", null, null, null, "rss", "A", null, "", "", true);
+        Feed feed2 = new Feed(0, null, "b", "link", "d", null, null, null, "rss", "b", null, "", "", true);
+        Feed feed3 = new Feed(0, null, "C", "link", "d", null, null, null, "rss", "C", null, "", "", true);
+        Feed feed4 = new Feed(0, null, "d", "link", "d", null, null, null, "rss", "d", null, "", "", true);
+        adapter.setCompleteFeed(feed1);
+        adapter.setCompleteFeed(feed2);
+        adapter.setCompleteFeed(feed3);
+        adapter.setCompleteFeed(feed4);
+        adapter.close();
 
-        Category testingCategory = new Category(id, title);
+        List<Feed> feeds = new ArrayList<>();
+        feeds.add(feed1);
+        feeds.add(feed2);
+        feeds.add(feed3);
+        feeds.add(feed4);
 
-        //Test to insert a new category and make sure that it is retrieved properly.
+        return feeds;
+    }
+
+    private Category addTestCategory(String title) {
+        Category testingCategory = new Category(-1, title);
         synchronized (this) {
             try {
                 DBWriter.setCategory(testingCategory);
                 sleep(100);
-                categoriesFromDb = DBReader.getAllCategoriesTest();
+                categoriesFromDb = DBReader.getAllCategories();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
+        this.testingCategory = testingCategory;
+        return testingCategory;
+    }
 
+    public void testCreateCategory() {
+        final int expectedId = 2;
+        final String expectedTitle = "categoryTitle";
+
+        addTestCategory(expectedTitle);
         Category retrievedCategory = categoriesFromDb.get(1);
-        assertNotNull(retrievedCategory);
-        assertEquals(testingCategory.getId(), retrievedCategory.getId());
-        assertEquals(testingCategory.getName(), retrievedCategory.getName());
 
-//        //Testing editing category name.
-        final String newCategoryName = "Another title";
+        assertNotNull(retrievedCategory);
+        assertEquals(expectedId, retrievedCategory.getId());
+        assertEquals(expectedTitle, retrievedCategory.getName());
+    }
+
+    public void testRenameCategory() {
+        addTestCategory("Old title");
+        final String newCategoryName = "New title";
         testingCategory.setName(newCategoryName);
+
         synchronized (this) {
             try {
                 DBWriter.updateCategory(testingCategory);
@@ -207,11 +233,12 @@ public class DBWriterTest extends InstrumentationTestCase {
             }
         }
 
-        retrievedCategory = categoriesFromDb.get(1);
+        Category retrievedCategory = categoriesFromDb.get(1);
         assertEquals(newCategoryName, retrievedCategory.getName());
+    }
 
-
-        //Testing delete category
+    public void testDeleteCategory() {
+        addTestCategory("test");
         synchronized (this) {
             try {
                 DBWriter.deleteCategory(testingCategory);
@@ -222,33 +249,60 @@ public class DBWriterTest extends InstrumentationTestCase {
             }
         }
 
-        assertEquals(categoriesFromDb.size(), 1);
+        assertEquals(1, categoriesFromDb.size());
+        assertEquals(PodDBAdapter.UNCATEGORIZED_CATEGORY_NAME, categoriesFromDb.get(0).getName());
+    }
 
-        PodDBAdapter adapter = PodDBAdapter.getInstance();
-        adapter.open();
+    public void testMoveFeedsToCategory() {
+        List<Feed> insertedFeeds = insertTestingFeeds();
 
-        Feed feed1 = new Feed(0, null, "A", "link", "d", null, null, null, "rss", "A", null, "", "", true);
-        Feed feed2 = new Feed(0, null, "b", "link", "d", null, null, null, "rss", "b", null, "", "", true);
-        Feed feed3 = new Feed(0, null, "C", "link", "d", null, null, null, "rss", "C", null, "", "", true);
-        Feed feed4 = new Feed(0, null, "d", "link", "d", null, null, null, "rss", "d", null, "", "", true);
-        adapter.setCompleteFeed(feed1);
-        adapter.setCompleteFeed(feed2);
-        adapter.setCompleteFeed(feed3);
-        adapter.setCompleteFeed(feed4);
-        adapter.getAllCategories().moveToFirst();
-        adapter.getAllFeedIdsInCategories().moveToFirst();
-        adapter.close();
+        categoriesFromDb = DBReader.getAllCategories();
+        Category uncategorized = categoriesFromDb.get(0);
 
-        List<Feed> saved = DBReader.getFeedList();
-        Log.d("test2", "@@@@ feed list:" + saved);
+        List<Long> uncategorizedFeeds = uncategorized.getFeedIds();
+        assertEquals(4, uncategorizedFeeds.size());
 
-        List<Long> idsInCategories = DBReader.getAllFeedIdsInCategories();
-        List<Long> ids = DBReader.getAllCategoriesTest().get(0).getFeedIds();
-        Log.d("test", "@@@ feeds in category" + idsInCategories.get(0));
-        assertNotNull(idsInCategories);
-        assertEquals(4, idsInCategories.size());
-        assertEquals(4, ids.size());
+        String testCategoryName = "Comedy";
+        Category category = addTestCategory(testCategoryName);
 
+        Category retrievedCategory = categoriesFromDb.get(1);
+        assertEquals(testCategoryName, retrievedCategory.getName());
+        assertEquals(0, retrievedCategory.getFeedIds().size());
+
+        long categoryId = retrievedCategory.getId();
+
+        synchronized (this) {
+            try {
+                for (Feed feed : insertedFeeds) {
+                    DBWriter.updateFeedCategory(feed.getId(), categoryId);
+                    sleep(100);
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            categoriesFromDb = DBReader.getAllCategories();
+        }
+
+        retrievedCategory = categoriesFromDb.get(1);
+        assertEquals(testCategoryName, retrievedCategory.getName());
+        assertEquals(4, retrievedCategory.getFeedIds().size());
+    }
+
+    public void testRemoveFeedFromCategoryWhenUnsubscribed() {
+        List<Feed> insertedFeeds = insertTestingFeeds();
+        Feed feedToUnsubscribe = insertedFeeds.get(0);
+
+        synchronized (this) {
+            try {
+                DBWriter.removeFeedFromSubscriptions(feedToUnsubscribe);
+                sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            categoriesFromDb = DBReader.getAllCategories();
+        }
+        Category uncategorized = categoriesFromDb.get(0);
+        assertFalse(uncategorized.getFeedIds().contains(feedToUnsubscribe.getId()));
     }
 
     public void testDeleteFeedMediaOfItemFileExists()

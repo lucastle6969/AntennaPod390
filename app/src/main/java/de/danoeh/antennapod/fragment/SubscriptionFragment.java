@@ -445,15 +445,16 @@ public class SubscriptionFragment extends Fragment {
         MenuInflater inflater = getActivity().getMenuInflater();
         inflater.inflate(R.menu.nav_feed_context, menu);
 
-        long currentCategoryId = 0;
+        long currentCategoryId = -1;
         for(int i=0; i < categoryArrayList.size(); i++){
             if(categoryArrayList.get(i).getFeedIds().contains(feed.getId())){
                 currentCategoryId = categoryArrayList.get(i).getId();
             }
         }
-        if(currentCategoryId ==0) {
-            menu.getItem(5).setVisible(false);
+        if(currentCategoryId == PodDBAdapter.UNCATEGORIZED_CATEGORY_ID) {
+            menu.findItem(R.id.remove_from_category_item).setVisible(false);
         }
+
         menu.setHeaderTitle(feed.getTitle());
 
         mPosition = position;

@@ -43,7 +43,6 @@ public class CategoriesTest extends ActivityInstrumentationTestCase2<MainActivit
         PodDBAdapter adapter = PodDBAdapter.getInstance();
         adapter.open();
         insertUncategorized();
-        PodDBAdapter.UNCATEGORIZED_CATEGORY_ID = 1;
         adapter.close();
 
         // override first launch preference

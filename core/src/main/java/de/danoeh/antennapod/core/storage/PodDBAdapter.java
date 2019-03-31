@@ -135,7 +135,7 @@ public class PodDBAdapter {
     static final String TABLE_NAME_ASSOCIATION_FOR_CATEGORIES = "AssociationForCategories";
 
     // Default values
-    public static int UNCATEGORIZED_CATEGORY_ID = 0;
+    public static final int UNCATEGORIZED_CATEGORY_ID = 1;
     public static final String UNCATEGORIZED_CATEGORY_NAME = "Uncategorized Section";
 
     // SQL Statements for creating new tables
@@ -440,7 +440,6 @@ public class PodDBAdapter {
             // Create new entry
             Log.d(this.toString(), "Inserting new Feed into db");
             feed.setId(db.insert(TABLE_NAME_FEEDS, null, values));
-//            addToUncategorizedCategory(feed.getId());
         } else {
             Log.d(this.toString(), "Updating existing Feed in db");
             db.update(TABLE_NAME_FEEDS, values, KEY_ID + "=?",

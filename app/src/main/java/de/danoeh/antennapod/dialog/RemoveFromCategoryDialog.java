@@ -13,6 +13,7 @@ import java.util.List;
 import de.danoeh.antennapod.R;
 import de.danoeh.antennapod.core.feed.Category;
 import de.danoeh.antennapod.core.storage.DBWriter;
+import de.danoeh.antennapod.core.storage.PodDBAdapter;
 import de.danoeh.antennapod.fragment.SubscriptionFragment;
 
 public class RemoveFromCategoryDialog {
@@ -49,7 +50,7 @@ public class RemoveFromCategoryDialog {
         builder.setPositiveButton(R.string.confirm_label, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                DBWriter.updateFeedCategory(feedId, 0);
+                DBWriter.updateFeedCategory(feedId, PodDBAdapter.UNCATEGORIZED_CATEGORY_ID);
                 Toast.makeText(activity, activity.getString(R.string.successfully_removed_from_category), Toast.LENGTH_LONG).show();
                 fragment.refresh();
             }

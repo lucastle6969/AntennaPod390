@@ -845,28 +845,6 @@ public final class DBReader {
         return result;
     }
 
-    public static List<Long> getAllFeedIdsInCategories() {
-
-        PodDBAdapter adapter = PodDBAdapter.getInstance();
-        adapter.open();
-        Cursor cursor = null;
-        try {
-            cursor = adapter.getAllFeedIdsInCategories();
-            List<Long> result = new ArrayList<>(cursor.getCount());
-            while(cursor.moveToNext()) {
-                int feedItemId = cursor.getColumnIndex(PodDBAdapter.KEY_FEED);
-                result.add(cursor.getLong(feedItemId));
-            }
-            return result;
-        } finally {
-            if(cursor != null) {
-                cursor.close();
-                adapter.close();
-            }
-        }
-
-    }
-
     /**
      * Returns all categories containing their feedIds
      * @return  returns a list of all categories
@@ -888,49 +866,10 @@ public final class DBReader {
                     long feedId = associationCursor.getLong(indexFeedId);
                     category.addFeedId(feedId);
                 }
-                result.add(category);
-            }
-        } finally {
-            if(categoryCursor != null) {
-                categoryCursor.close();
-            }
-            if(associationCursor != null) {
                 associationCursor.close();
-            }
-            adapter.close();
-        }
-        return result;
-    }
-
-
-    public static List<Category> getAllCategoriesTest() {
-        List<Category> result = new ArrayList<>();
-        Category category;
-        PodDBAdapter adapter = PodDBAdapter.getInstance();
-        adapter.open();
-        Cursor categoryCursor = null;
-        Cursor associationCursor = null;
-        try {
-            categoryCursor = adapter.getAllCategories();
-            while(categoryCursor.moveToNext()){
-                category = Category.fromCursor(categoryCursor);
                 result.add(category);
             }
             categoryCursor.close();
-//            for(Category categoryTest: result) {
-//               Log.d("**********", categoryTest.getName());
-//               Log.d("********** id ->", String.valueOf(categoryTest.getId()));
-//            }
-            for(Category categoryTest: result) {
-                associationCursor = adapter.getFeedIdsForCategory(categoryTest.getId()-1);
-                Log.d("********** id ->", String.valueOf(categoryTest.getId()));
-                while(associationCursor.moveToNext()) {
-                    int indexFeedId = associationCursor.getColumnIndex(PodDBAdapter.KEY_FEED);
-                    long feedId = associationCursor.getLong(indexFeedId);
-                    categoryTest.addFeedId(feedId);
-                }
-                associationCursor.close();
-            }
         } finally {
             if(categoryCursor != null) {
                 categoryCursor.close();
