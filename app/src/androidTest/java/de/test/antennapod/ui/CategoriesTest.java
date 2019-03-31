@@ -1,10 +1,12 @@
 package de.test.antennapod.ui;
 
 import android.content.SharedPreferences;
+import android.graphics.Point;
 import android.test.ActivityInstrumentationTestCase2;
 
 import android.content.Context;
-import android.support.v7.widget.SearchView;
+import android.view.Display;
+import android.widget.SearchView;
 
 import com.robotium.solo.Solo;
 
@@ -123,9 +125,14 @@ public class CategoriesTest extends ActivityInstrumentationTestCase2<MainActivit
 
     public void testCategorySearch() throws Exception{
         goingToSubscriptionPage();
-        SearchView sv = (SearchView) solo.getView(R.id.subscriptionSearch);
-        solo.clickOnView(sv);
-        solo.clickOnScreen(40, 300);
+        Display display = solo.getCurrentActivity().getWindowManager().getDefaultDisplay();
+        Point maxSize = new Point();
+        display.getSize(maxSize);
+        int blocksX = maxSize.x/23;
+        int blocksY = maxSize.y/32;
+        int pixelX = blocksX*2;
+        int pixelY = blocksY*6;
+        solo.clickOnScreen(pixelX, pixelY);
         solo.typeText(0, "2");
         assertFalse(solo.searchText("Title 1", true));
         solo.clickOnText("Title 2");
