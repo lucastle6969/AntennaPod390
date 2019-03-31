@@ -439,12 +439,13 @@ public class PodDBAdapter {
             // Create new entry
             Log.d(this.toString(), "Inserting new Feed into db");
             feed.setId(db.insert(TABLE_NAME_FEEDS, null, values));
-            addToUncategorizedCategory(feed.getId());
+//            addToUncategorizedCategory(feed.getId());
         } else {
             Log.d(this.toString(), "Updating existing Feed in db");
             db.update(TABLE_NAME_FEEDS, values, KEY_ID + "=?",
                     new String[]{String.valueOf(feed.getId())});
         }
+        addToUncategorizedCategory(feed.getId());
         return feed.getId();
     }
 

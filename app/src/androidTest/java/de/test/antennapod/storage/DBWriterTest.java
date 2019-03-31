@@ -5,6 +5,8 @@ import android.database.Cursor;
 import android.test.InstrumentationTestCase;
 import android.util.Log;
 
+import org.mockito.Mock;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -209,20 +211,32 @@ public class DBWriterTest extends InstrumentationTestCase {
         retrievedCategory = categoriesFromDb.get(1);
         assertEquals(newCategoryName, retrievedCategory.getName());
 
-        // Test remove feed from category
-        final long feedId = 0;
-        final String feedTitle = "feed title";
+        //Testing delete category
+        synchronized (this) {
+            try {
+                DBWriter.deleteCategory(testingCategory);
+                sleep(100);
+                categoriesFromDb = DBReader.getAllCategories();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
 
-        Feed testFeed = mock(Feed.class);
-        when(testFeed.getId()).thenReturn(feedId);
-        when(testFeed.getTitle()).thenReturn(feedTitle);
+        assertEquals(categoriesFromDb.size(), 1);
 
-        FeedItem feedItem = mock(FeedItem.class);
-        when(feedItem.getFeed()).thenReturn(testFeed);
+        // Test add feed to uncategorized
+        int i = 1;
+        Feed feed = new Feed(0, null, "Title " + i, "http://example.com/" + i, "Description of feed " + i,
+                "http://example.com/pay/feed" + i, "author " + i, "en", Feed.TYPE_RSS2, "feed" + i, null, null,
+                "http://example.com/feed/src/" + i, false);
+
+        int j = 2;
+        FeedItem item = new FeedItem(j, "Feed " + (i+1) + ": Item " + (j+1), "item" + j,
+                "http://example.com/feed" + i + "/item/" + j, new Date(), FeedItem.UNPLAYED, feed);
 
         synchronized (this) {
             try {
-                DBWriter.setFeedItem(feedItem);
+                DBWriter.setFeedItem(item);
                 sleep(100);
                 categoriesFromDb = DBReader.getAllCategories();
             } catch (InterruptedException e) {
@@ -231,7 +245,7 @@ public class DBWriterTest extends InstrumentationTestCase {
         }
         Category uncategorized = categoriesFromDb.get(0);
         assertNotNull(uncategorized);
-        assertTrue(uncategorized.getFeedIds().contains(feedId));
+        assertTrue(uncategorized.getFeedIds().contains(feed.getId()));
     }
 
     public void testDeleteFeedMediaOfItemFileExists()
