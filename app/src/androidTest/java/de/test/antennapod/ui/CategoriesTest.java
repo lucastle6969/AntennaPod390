@@ -6,8 +6,7 @@ import android.test.ActivityInstrumentationTestCase2;
 
 import android.content.Context;
 import android.view.Display;
-import android.widget.SearchView;
-
+import android.support.v7.widget.SearchView;
 import com.robotium.solo.Solo;
 
 import de.danoeh.antennapod.R;
@@ -98,29 +97,67 @@ public class CategoriesTest extends ActivityInstrumentationTestCase2<MainActivit
         assertEquals(solo.getString(R.string.subscriptions_label), getActionbarTitle());
     }
 
-    public void testGoToSubscriptionsPage() throws Exception{
+    public void testCategories() throws Exception{
         goingToSubscriptionPage();
-        assertEquals(solo.getString(R.string.subscriptions_label), getActionbarTitle());
-    }
+        solo.clickOnView(solo.getView(R.id.toggleCategoryView));
 
-    public void testRenameCategoryValidation() {
-        //goingToSubscriptionPage();
-        //TODO: click on pen icon, erase the name of the category and try to save a blank category name.
-        //solo.clickOnText("Confirm");
-        //TODO: assert
-    }
+        // Create new category
+        String testCategoryName = "Test";
+        solo.clickOnView(solo.getView(R.id.addCategory));
+        solo.clickOnText(solo.getString(R.string.category_hint));
+        solo.enterText(0, testCategoryName);
+        solo.clickOnText(solo.getString(R.string.confirm_label));
 
-    public void testRenameCategorySuccess() {
-        //goingToSubscriptionPage();
-        //TODO: click on pen icon, write a new category title, and save
-        //solo.clickOnText("Confirm");
-        //TODO: assert
-    }
+        assertTrue(solo.searchText(testCategoryName));
 
-    public void testMoveFeedToDifferentCategory() {
-        //goingToSubscriptionPage();
-        //TODO: clickLong on a podcast in a Category, and selecting a new category
-        //solo.clickOnText("Confirm");
+        // Move feed into newly created category
+        String feedTitle = "Title 0";
+        solo.clickLongOnText(feedTitle);
+        solo.clickOnText(solo.getString(R.string.move_to_category_label));
+        solo.clickOnText(solo.getString(R.string.confirm_label));
+        solo.clickOnText(PodDBAdapter.UNCATEGORIZED_CATEGORY_NAME);
+
+        assertTrue(solo.searchText(feedTitle));
+
+        solo.clickOnText(PodDBAdapter.UNCATEGORIZED_CATEGORY_NAME);
+
+        // Rename category
+        String newCategoryName = "Comedy";
+        solo.clickOnView(solo.getView(R.id.edit_category_button));
+        solo.clickOnText(testCategoryName);
+        solo.enterText(0, "");
+        solo.enterText(0, newCategoryName);
+        solo.clickOnText(solo.getString(R.string.confirm_label));
+
+        assertTrue(solo.searchText(newCategoryName));
+
+        // Delete category
+        solo.clickOnView(solo.getView(R.id.edit_category_button));
+        solo.clickOnView(solo.getImageButton(2));
+        solo.clickOnText(solo.getString(R.string.confirm_label));
+
+        solo.sleep(1000);
+        assertFalse(solo.searchText(newCategoryName));
+
+        // Create new category while moving feed to category
+        solo.clickLongOnText(feedTitle);
+        solo.clickOnText(solo.getString(R.string.move_to_category_label));
+        solo.clickOnView(solo.getImageButton(1));
+        solo.clickOnText(solo.getString(R.string.category_hint));
+        solo.enterText(0, newCategoryName);
+        solo.clickOnText(solo.getString(R.string.confirm_label));
+        solo.clickOnText(solo.getString(R.string.confirm_label));
+
+        assertTrue(solo.searchText(newCategoryName));
+
+        // Unsubscribe to a feed which is in a category
+        solo.clickLongOnText(feedTitle);
+        solo.clickOnText(solo.getString(R.string.remove_feed_label));
+        solo.clickOnText(solo.getString(R.string.confirm_label));
+
+        solo.sleep(1000);
+        assertFalse(solo.searchText(feedTitle));
+
     }
 
     public void testCategorySearch() throws Exception{
@@ -137,4 +174,5 @@ public class CategoriesTest extends ActivityInstrumentationTestCase2<MainActivit
         assertFalse(solo.searchText("Title 1", true));
         solo.clickOnText("Title 2");
     }
+
 }
