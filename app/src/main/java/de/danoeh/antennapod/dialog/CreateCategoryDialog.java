@@ -17,6 +17,7 @@ import java.util.concurrent.Future;
 
 import de.danoeh.antennapod.R;
 import de.danoeh.antennapod.core.feed.Category;
+import de.danoeh.antennapod.core.preferences.UserPreferences;
 import de.danoeh.antennapod.core.storage.DBReader;
 import de.danoeh.antennapod.core.storage.DBWriter;
 import de.danoeh.antennapod.fragment.SubscriptionFragment;
@@ -76,6 +77,8 @@ public class CreateCategoryDialog {
                                 openMoveDialog = false;
                                 lastSelectedFeedId = -1;
                             }
+
+                            subscriptionFragment.setUserPreferencesToCategoryView();
 
                         } else {
                             if (isDuplicateCategoryName) {
