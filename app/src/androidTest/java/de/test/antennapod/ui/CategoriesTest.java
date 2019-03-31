@@ -4,6 +4,7 @@ import android.content.SharedPreferences;
 import android.test.ActivityInstrumentationTestCase2;
 
 import android.content.Context;
+import android.support.v7.widget.SearchView;
 
 import com.robotium.solo.Solo;
 
@@ -118,5 +119,15 @@ public class CategoriesTest extends ActivityInstrumentationTestCase2<MainActivit
         //goingToSubscriptionPage();
         //TODO: clickLong on a podcast in a Category, and selecting a new category
         //solo.clickOnText("Confirm");
+    }
+
+    public void testCategorySearch() throws Exception{
+        goingToSubscriptionPage();
+        SearchView sv = (SearchView) solo.getView(R.id.subscriptionSearch);
+        solo.clickOnView(sv);
+        solo.clickOnScreen(40, 300);
+        solo.typeText(0, "2");
+        assertFalse(solo.searchText("Title 1", true));
+        solo.clickOnText("Title 2");
     }
 }
