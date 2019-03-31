@@ -143,6 +143,14 @@ public class Feed extends FeedFile implements FlattrThing, ImageResource {
     }
 
     /**
+     * This constructor can be used for testing purposes for when only the title is relevant.
+     */
+    public Feed(String title) {
+        super();
+        this.feedTitle = title;
+    }
+
+    /**
      * This constructor is used for requesting a feed download (it must not be used for anything else!). It should NOT be
      * used if the title of the feed is already known.
      */
