@@ -905,6 +905,47 @@ public final class DBReader {
         return result;
     }
 
+
+    public static List<Category> getAllCategoriesTest() {
+        List<Category> result = new ArrayList<>();
+        Category category;
+        PodDBAdapter adapter = PodDBAdapter.getInstance();
+        adapter.open();
+        Cursor categoryCursor = null;
+        Cursor associationCursor = null;
+        try {
+            categoryCursor = adapter.getAllCategories();
+            while(categoryCursor.moveToNext()){
+                category = Category.fromCursor(categoryCursor);
+                result.add(category);
+            }
+            categoryCursor.close();
+//            for(Category categoryTest: result) {
+//               Log.d("**********", categoryTest.getName());
+//               Log.d("********** id ->", String.valueOf(categoryTest.getId()));
+//            }
+            for(Category categoryTest: result) {
+                associationCursor = adapter.getFeedIdsForCategory(categoryTest.getId()-1);
+                Log.d("********** id ->", String.valueOf(categoryTest.getId()));
+                while(associationCursor.moveToNext()) {
+                    int indexFeedId = associationCursor.getColumnIndex(PodDBAdapter.KEY_FEED);
+                    long feedId = associationCursor.getLong(indexFeedId);
+                    categoryTest.addFeedId(feedId);
+                }
+                associationCursor.close();
+            }
+        } finally {
+            if(categoryCursor != null) {
+                categoryCursor.close();
+            }
+            if(associationCursor != null) {
+                associationCursor.close();
+            }
+            adapter.close();
+        }
+        return result;
+    }
+
     /**
      * Searches the DB for a FeedMedia of the given id.
      *

@@ -395,6 +395,7 @@ public class PodDBAdapter {
         try {
             for (String tableName : ALL_TABLES) {
                 db.delete(tableName, "1", null);
+                db.execSQL("DELETE FROM SQLITE_SEQUENCE WHERE NAME = '" + tableName + "'");
             }
             return true;
         } finally {
