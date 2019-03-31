@@ -482,6 +482,14 @@ public class SubscriptionFragment extends Fragment {
         return super.onOptionsItemSelected(item);
     }
 
+    public void setUserPreferencesToCategoryView(){
+        if(!categoryView) {
+            categoryView = !categoryView;
+            UserPreferences.setCategoryToggle(categoryView);
+            refresh();
+        }
+    }
+
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
