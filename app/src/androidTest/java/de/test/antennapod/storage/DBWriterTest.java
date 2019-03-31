@@ -16,6 +16,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import de.danoeh.antennapod.core.feed.Bookmark;
+import de.danoeh.antennapod.core.feed.Category;
 import de.danoeh.antennapod.core.feed.Feed;
 import de.danoeh.antennapod.core.feed.FeedItem;
 import de.danoeh.antennapod.core.feed.FeedMedia;
@@ -33,6 +34,8 @@ public class DBWriterTest extends InstrumentationTestCase {
     private static final String TAG = "DBWriterTest";
     private static final String TEST_FOLDER = "testDBWriter";
     private static final long TIMEOUT = 5L;
+    private List<Category> categoriesFromDb = null;
+    private Category testingCategory;
 
     @Override
     protected void tearDown() throws Exception {
@@ -52,11 +55,12 @@ public class DBWriterTest extends InstrumentationTestCase {
     protected void setUp() throws Exception {
         super.setUp();
 
-        // create new database
+//      create new database
         PodDBAdapter.init(getInstrumentation().getTargetContext());
         PodDBAdapter.deleteDatabase();
         PodDBAdapter adapter = PodDBAdapter.getInstance();
         adapter.open();
+        insertUncategorized();
         adapter.close();
     }
 
@@ -106,7 +110,7 @@ public class DBWriterTest extends InstrumentationTestCase {
         //every separate test execution.
 
         //Test to insert a new bookmark and make sure that it is retrieved properly.
-        synchronized (this){
+        synchronized (this) {
             try {
                 DBWriter.setBookmark(testingBookmark);
                 sleep(100);
@@ -125,7 +129,7 @@ public class DBWriterTest extends InstrumentationTestCase {
 
         //Testing editing.
         testingBookmark.setTimestamp(456);
-        synchronized (this){
+        synchronized (this) {
             try {
                 DBWriter.updateBookmark(testingBookmark);
                 sleep(100);
@@ -139,7 +143,7 @@ public class DBWriterTest extends InstrumentationTestCase {
         assertEquals(testingBookmark.getTimestamp(), retrievedBookmark.getTimestamp());
 
         //Testing deletion.
-        synchronized (this){
+        synchronized (this) {
             try {
                 DBWriter.deleteBookmark(testingBookmark);
                 sleep(100);
@@ -150,6 +154,155 @@ public class DBWriterTest extends InstrumentationTestCase {
         }
         assertEquals(0, bookmarksFromDb.size());
 
+    }
+
+    private void insertUncategorized() {
+        Category uncategorizedCategory = new Category(PodDBAdapter.UNCATEGORIZED_CATEGORY_ID, PodDBAdapter.UNCATEGORIZED_CATEGORY_NAME);
+
+        synchronized (this) {
+            try {
+                DBWriter.setCategory(uncategorizedCategory);
+                sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private List<Feed> insertTestingFeeds() {
+        PodDBAdapter adapter = PodDBAdapter.getInstance();
+        adapter.open();
+        Feed feed1 = new Feed(0, null, "A", "link", "d", null, null, null, "rss", "A", null, "", "", true);
+        Feed feed2 = new Feed(0, null, "b", "link", "d", null, null, null, "rss", "b", null, "", "", true);
+        Feed feed3 = new Feed(0, null, "C", "link", "d", null, null, null, "rss", "C", null, "", "", true);
+        Feed feed4 = new Feed(0, null, "d", "link", "d", null, null, null, "rss", "d", null, "", "", true);
+        adapter.setCompleteFeed(feed1);
+        adapter.setCompleteFeed(feed2);
+        adapter.setCompleteFeed(feed3);
+        adapter.setCompleteFeed(feed4);
+        adapter.close();
+
+        List<Feed> feeds = new ArrayList<>();
+        feeds.add(feed1);
+        feeds.add(feed2);
+        feeds.add(feed3);
+        feeds.add(feed4);
+
+        return feeds;
+    }
+
+    private Category addTestCategory(String title) {
+        Category testingCategory = new Category(-1, title);
+        synchronized (this) {
+            try {
+                DBWriter.setCategory(testingCategory);
+                sleep(100);
+                categoriesFromDb = DBReader.getAllCategories();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        this.testingCategory = testingCategory;
+        return testingCategory;
+    }
+
+    public void testCreateCategory() {
+        final int expectedId = 2;
+        final String expectedTitle = "categoryTitle";
+
+        addTestCategory(expectedTitle);
+        Category retrievedCategory = categoriesFromDb.get(1);
+
+        assertNotNull(retrievedCategory);
+        assertEquals(expectedId, retrievedCategory.getId());
+        assertEquals(expectedTitle, retrievedCategory.getName());
+    }
+
+    public void testRenameCategory() {
+        addTestCategory("Old title");
+        final String newCategoryName = "New title";
+        testingCategory.setName(newCategoryName);
+
+        synchronized (this) {
+            try {
+                DBWriter.updateCategory(testingCategory);
+                sleep(100);
+                categoriesFromDb = DBReader.getAllCategories();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        Category retrievedCategory = categoriesFromDb.get(1);
+        assertEquals(newCategoryName, retrievedCategory.getName());
+    }
+
+    public void testDeleteCategory() {
+        addTestCategory("test");
+        synchronized (this) {
+            try {
+                DBWriter.deleteCategory(testingCategory);
+                sleep(100);
+                categoriesFromDb = DBReader.getAllCategories();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        assertEquals(1, categoriesFromDb.size());
+        assertEquals(PodDBAdapter.UNCATEGORIZED_CATEGORY_NAME, categoriesFromDb.get(0).getName());
+    }
+
+    public void testMoveFeedsToCategory() {
+        List<Feed> insertedFeeds = insertTestingFeeds();
+
+        categoriesFromDb = DBReader.getAllCategories();
+        Category uncategorized = categoriesFromDb.get(0);
+
+        List<Long> uncategorizedFeeds = uncategorized.getFeedIds();
+        assertEquals(4, uncategorizedFeeds.size());
+
+        String testCategoryName = "Comedy";
+        Category category = addTestCategory(testCategoryName);
+
+        Category retrievedCategory = categoriesFromDb.get(1);
+        assertEquals(testCategoryName, retrievedCategory.getName());
+        assertEquals(0, retrievedCategory.getFeedIds().size());
+
+        long categoryId = retrievedCategory.getId();
+
+        synchronized (this) {
+            try {
+                for (Feed feed : insertedFeeds) {
+                    DBWriter.updateFeedCategory(feed.getId(), categoryId);
+                    sleep(100);
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            categoriesFromDb = DBReader.getAllCategories();
+        }
+
+        retrievedCategory = categoriesFromDb.get(1);
+        assertEquals(testCategoryName, retrievedCategory.getName());
+        assertEquals(4, retrievedCategory.getFeedIds().size());
+    }
+
+    public void testRemoveFeedFromCategoryWhenUnsubscribed() {
+        List<Feed> insertedFeeds = insertTestingFeeds();
+        Feed feedToUnsubscribe = insertedFeeds.get(0);
+
+        synchronized (this) {
+            try {
+                DBWriter.removeFeedFromSubscriptions(feedToUnsubscribe);
+                sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            categoriesFromDb = DBReader.getAllCategories();
+        }
+        Category uncategorized = categoriesFromDb.get(0);
+        assertFalse(uncategorized.getFeedIds().contains(feedToUnsubscribe.getId()));
     }
 
     public void testDeleteFeedMediaOfItemFileExists()
