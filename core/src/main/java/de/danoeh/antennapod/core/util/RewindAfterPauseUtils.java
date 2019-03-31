@@ -24,7 +24,7 @@ public class RewindAfterPauseUtils {
      * @param lastPlayedTime  timestamp when was media paused
      * @return  new rewinded position for playback in milliseconds
      */
-    public static int calculatePositionWithRewind(int currentPosition, long lastPlayedTime) {
+    public static int calculatePositionWithVariableRewind(int currentPosition, long lastPlayedTime) {
         if (currentPosition > 0 && lastPlayedTime > 0) {
             long elapsedTime = System.currentTimeMillis() - lastPlayedTime;
             long rewindTime = 0;
@@ -44,5 +44,10 @@ public class RewindAfterPauseUtils {
         else {
             return currentPosition;
         }
+    }
+
+    public static int calculatePositionWithFixedRewind(int currentPosition, int rewindSeconds){
+        long rewindTime = TimeUnit.SECONDS.toMillis(rewindSeconds);
+        return currentPosition - (int) rewindTime;
     }
 }

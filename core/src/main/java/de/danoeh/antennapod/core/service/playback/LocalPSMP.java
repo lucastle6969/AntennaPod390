@@ -13,7 +13,6 @@ import android.util.Pair;
 import android.view.SurfaceHolder;
 
 import org.antennapod.audio.MediaPlayer;
-import org.shredzone.flattr4j.model.User;
 
 import java.io.File;
 import java.io.IOException;
@@ -240,10 +239,21 @@ public class LocalPSMP extends PlaybackServiceMediaPlayer {
                 setSpeed(speed);
                 setVolume(UserPreferences.getLeftVolume(), UserPreferences.getRightVolume());
 
-                if (playerStatus == PlayerStatus.PREPARED && media.getPosition() > 0) {
-                    int newPosition = RewindAfterPauseUtils.calculatePositionWithRewind(
-                        media.getPosition(),
-                        media.getLastPlayedTime());
+                int automaticRewindPreference = UserPreferences.getAutomaticRewindSeconds();
+
+                if ((playerStatus == PlayerStatus.PREPARED || playerStatus == PlayerStatus.PAUSED) &&
+                        media.getPosition() > 0 &&
+                        automaticRewindPreference != UserPreferences.AUTOMATIC_REWIND_DISABLED) {
+                    int newPosition;
+                    if(automaticRewindPreference == UserPreferences.AUTOMATIC_REWIND_VARIABLE){
+                        newPosition = RewindAfterPauseUtils.calculatePositionWithVariableRewind(
+                                media.getPosition(),
+                                media.getLastPlayedTime());
+                    } else {
+                        newPosition = RewindAfterPauseUtils.calculatePositionWithFixedRewind(
+                                media.getPosition(),
+                                automaticRewindPreference);
+                    }
                     seekToSync(newPosition);
                 }
                 mediaPlayer.start();
@@ -276,13 +286,8 @@ public class LocalPSMP extends PlaybackServiceMediaPlayer {
             releaseWifiLockIfNecessary();
             if (playerStatus == PlayerStatus.PLAYING) {
                 Log.d(TAG, "Pausing playback.");
-                int resumePosition = getPosition() - (UserPreferences.getAutomaticRewindSecs() * 1000);
-                if(resumePosition < 0){
-                    resumePosition = 0;
-                }
                 mediaPlayer.pause();
-                mediaPlayer.seekTo(resumePosition);
-                setPlayerStatus(PlayerStatus.PAUSED, media, resumePosition);
+                setPlayerStatus(PlayerStatus.PAUSED, media, getPosition());
 
                 if (abandonFocus) {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

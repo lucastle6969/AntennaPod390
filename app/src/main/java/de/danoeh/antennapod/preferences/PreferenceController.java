@@ -859,8 +859,9 @@ public class PreferenceController implements SharedPreferences.OnSharedPreferenc
         String[] values = res.getStringArray(R.array.automatic_rewind_values);
         String[] entries = new String[values.length];
 
-        entries[0] = res.getString(R.string.pref_smart_mark_as_played_disabled);
-        for (int index = 1; index < values.length; index++) {
+        entries[0] = res.getString(R.string.automatic_rewind_disabled);
+        entries[1] = res.getString(R.string.automatic_rewind_variable);
+        for (int index = 2; index < values.length; index++) {
             int value = Integer.parseInt(values[index]);
             if(value < 60) {
                 entries[index] = res.getQuantityString(R.plurals.time_seconds_quantified, value, value);

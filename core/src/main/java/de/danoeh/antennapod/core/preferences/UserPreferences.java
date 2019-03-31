@@ -129,6 +129,8 @@ public class UserPreferences {
     public static final int FEED_COUNTER_SHOW_UNPLAYED = 2;
     public static final int FEED_COUNTER_SHOW_NONE = 3;
     public static final int FEED_COUNTER_SHOW_DOWNLOADED = 4;
+    public static final int AUTOMATIC_REWIND_DISABLED = 0;
+    public static final int AUTOMATIC_REWIND_VARIABLE = -1;
 
     private static Context context;
     private static SharedPreferences prefs;
@@ -425,7 +427,7 @@ public class UserPreferences {
         return prefs.getInt(PREF_REWIND_SECS, 30);
     }
 
-    public static int getAutomaticRewindSecs() {
+    public static int getAutomaticRewindSeconds() {
         return Integer.parseInt(prefs.getString(PREF_AUTOMATIC_REWIND, "0"));
     }
 

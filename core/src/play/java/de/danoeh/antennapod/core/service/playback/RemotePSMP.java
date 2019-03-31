@@ -365,11 +365,11 @@ public class RemotePSMP extends PlaybackServiceMediaPlayer {
         try {
             // TODO see comment on prepare()
             // setVolume(UserPreferences.getLeftVolume(), UserPreferences.getRightVolume());
-            if (playerStatus == PlayerStatus.PREPARED && media.getPosition() > 0) {
-                int newPosition = RewindAfterPauseUtils.calculatePositionWithRewind(
-                        media.getPosition(),
-                        media.getLastPlayedTime());
-                castMgr.play(newPosition);
+            int automaticRewindPreference = UserPreferences.getAutomaticRewindSeconds();
+            if ((playerStatus == PlayerStatus.PREPARED || playerStatus == PlayerStatus.PAUSED) &&
+                    media.getPosition() > 0 &&
+                    automaticRewindPreference != UserPreferences.AUTOMATIC_REWIND_DISABLED){
+                castMgr.play(getAutomaticRewindTime(automaticRewindPreference));
             } else {
                 castMgr.play();
             }
@@ -396,10 +396,11 @@ public class RemotePSMP extends PlaybackServiceMediaPlayer {
             setPlayerStatus(PlayerStatus.PREPARING, media);
             try {
                 int position = media.getPosition();
-                if (position > 0) {
-                    position = RewindAfterPauseUtils.calculatePositionWithRewind(
-                            position,
-                            media.getLastPlayedTime());
+                int automaticRewindPreference = UserPreferences.getAutomaticRewindSeconds();
+
+                if (position > 0 &&
+                        automaticRewindPreference != UserPreferences.AUTOMATIC_REWIND_DISABLED){
+                    position = getAutomaticRewindTime(automaticRewindPreference);
                 }
                 // TODO We're not supporting user set stream volume yet, as we need to make a UI
                 // that doesn't allow changing playback speed or have different values for left/right
@@ -672,5 +673,17 @@ public class RemotePSMP extends PlaybackServiceMediaPlayer {
     @Override
     protected boolean shouldLockWifi() {
         return false;
+    }
+
+    private int getAutomaticRewindTime(int automaticRewindPreference){
+        if(automaticRewindPreference == UserPreferences.AUTOMATIC_REWIND_VARIABLE){
+            return RewindAfterPauseUtils.calculatePositionWithVariableRewind(
+                    media.getPosition(),
+                    media.getLastPlayedTime());
+        } else {
+            return RewindAfterPauseUtils.calculatePositionWithFixedRewind(
+                    media.getPosition(),
+                    automaticRewindPreference);
+        }
     }
 }
