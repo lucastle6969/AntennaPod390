@@ -116,6 +116,9 @@ public class MoveToCategoryDialog {
                         fragment.refresh();
                     }
                 }
+
+                fragment.setUserPreferencesToCategoryView();
+
                 dialog.dismiss();
 
             }
@@ -137,6 +140,7 @@ public class MoveToCategoryDialog {
                 createCategoryDialog.setOpenMoveDialogStatus(true);
                 createCategoryDialog.setLastSelectedFeedId(feedId);
                 createCategoryDialog.showCreateCategoryDialog(activity, fragment);
+                fragment.setUserPreferencesToCategoryView();
             }
         });
 
