@@ -3,6 +3,7 @@ package de.danoeh.antennapod.fragment;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -21,6 +22,7 @@ import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -162,36 +164,53 @@ public class SubscriptionFragment extends Fragment {
     public TableRow addRowTitle(Category category){
         TableRow rowTitle = new TableRow(getActivity());
         rowTitle.setGravity(Gravity.FILL_HORIZONTAL);
-        LinearLayout layout = new LinearLayout(getActivity());
-        layout.setOrientation(LinearLayout.HORIZONTAL);
-        layout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
-        layout.setGravity(Gravity.FILL_HORIZONTAL);
-        layout.setOnClickListener(new View.OnClickListener(){
+
+        LinearLayout rowLayout = new LinearLayout(getActivity());
+        rowLayout.setOrientation(LinearLayout.HORIZONTAL);
+        rowLayout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
+        rowLayout.setGravity(Gravity.NO_GRAVITY);
+        rowLayout.setPadding(25,0,50,0);
+        rowLayout.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
                 toggle_contents(v);
             }
         });
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.FILL_PARENT
+        );
+        rowLayout.setLayoutParams(layoutParams);
 
         ImageView expandButton = new ImageView(getActivity());
         expandButton.setImageResource(R.drawable.ic_expand_more_grey600_36dp);
         expandButton.setId(R.id.category_collapse_button);
 
-        layout.addView(expandButton);
+        rowLayout.addView(expandButton);
 
         TextView title = new TextView(getActivity());
         title.setText(category.getName());
         title.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 18);
-        title.setPadding(70, 4, 400, 4);
+        LinearLayout.LayoutParams textParams = new LinearLayout.LayoutParams(
+                700, LinearLayout.LayoutParams.MATCH_PARENT
+        );
+        title.setLayoutParams(textParams);
+        title.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
+
         title.setTypeface(Typeface.SANS_SERIF, Typeface.BOLD);
         title.setId(R.id.category_title_view);
-        layout.addView(title);
+
+        rowLayout.addView(title);
 
         if(category.getId() != 0) {
+            LinearLayout editLinearLayout = new LinearLayout(getActivity());
+            editLinearLayout.setOrientation(LinearLayout.HORIZONTAL);
+            editLinearLayout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
+            editLinearLayout.setGravity(Gravity.RIGHT);
+
             ImageButton editCategoryButton = new ImageButton(getActivity());
             editCategoryButton.setImageResource(R.drawable.ic_edit_category_light);
             editCategoryButton.setId(R.id.edit_category_button);
-
+            editCategoryButton.setBackgroundColor(0x00000000);
 
             editCategoryButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -199,13 +218,15 @@ public class SubscriptionFragment extends Fragment {
                     new EditCategoryDialog().showEditCategoryDialog(getActivity(), category, (SubscriptionFragment)getFragmentManager().findFragmentById(fragmentId));
                 }
             });
-            layout.addView(editCategoryButton);
+
+            editLinearLayout.addView(editCategoryButton);
+            rowLayout.addView(editLinearLayout);
         }
 
         TableRow.LayoutParams params = new TableRow.LayoutParams();
         params.span = 6;
 
-        rowTitle.addView(layout, params);
+        rowTitle.addView(rowLayout, params);
         return rowTitle;
     }
 
@@ -326,18 +347,7 @@ public class SubscriptionFragment extends Fragment {
                     for(SubscriptionsAdapter adapter: subscriptionsAdapterList){
                         adapter.notifyDataSetChanged();
                     }
-                    categorizeSubscriptions();
                 }, error -> Log.e(TAG, Log.getStackTraceString(error)));
-    }
-
-    private void categorizeSubscriptions() {
-        List<Long> feedIdsInCategories = DBReader.getAllFeedIdsInCategories();
-        for (Feed f : navDrawerData.feeds) {
-            if(!feedIdsInCategories.contains(f.getId())) {
-                // Insert new subscriptions into uncategorized category
-                DBWriter.addFeedToUncategorized(f.getId());
-            }
-        }
     }
 
     private void updateFeeds(){
@@ -391,16 +401,19 @@ public class SubscriptionFragment extends Fragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-
-        if (id == R.id.addCategory) {
-            CreateCategoryDialog categoryDialog = new CreateCategoryDialog();
-            SubscriptionFragment sf = (SubscriptionFragment) getFragmentManager().findFragmentById(fragmentId);
-            categoryDialog.showCreateCategoryDialog(getActivity(), sf);
-        }
-        if (id == R.id.toggleCategoryView){
-            categoryView = categoryView ? false : true;
-            UserPreferences.setCategoryToggle(categoryView);
-            getFragmentManager().beginTransaction().detach(this).attach(this).commit();
+        switch(id) {
+            case R.id.addCategory:
+                CreateCategoryDialog categoryDialog = new CreateCategoryDialog();
+                SubscriptionFragment sf = (SubscriptionFragment) getFragmentManager().findFragmentById(fragmentId);
+                categoryDialog.showCreateCategoryDialog(getActivity(), sf);
+                break;
+            case R.id.toggleCategoryView:
+                categoryView = categoryView ? false : true;
+                UserPreferences.setCategoryToggle(categoryView);
+                getFragmentManager().beginTransaction().detach(this).attach(this).commit();
+                break;
+            default:
+                break;
         }
         return super.onOptionsItemSelected(item);
     }
