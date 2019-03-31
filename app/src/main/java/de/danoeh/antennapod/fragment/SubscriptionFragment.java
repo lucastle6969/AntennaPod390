@@ -207,7 +207,7 @@ public class SubscriptionFragment extends Fragment {
         return gridRow;
     }
 
-    public List search(String searchQuery, List<Feed> feeds) {
+    public List<Feed> search(String searchQuery, List<Feed> feeds) {
         Iterator<Feed> feedIterator = feeds.iterator();
         int i = 0;
         while(feedIterator.hasNext()){
