@@ -27,34 +27,40 @@ public class EditCategoryDialog {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
 
-        TextView title = new TextView(activity);
-        title.setText(R.string.edit_category_dialog_title);
-        title.setPadding(100,10,10,10);
-        title.setTextSize(20);
-        title.setTypeface(title.getTypeface(), Typeface.BOLD);
+        LinearLayout headerLinearLayout = new LinearLayout(activity);
+        headerLinearLayout.setOrientation(LinearLayout.HORIZONTAL);
+        headerLinearLayout.setLayoutParams(new LinearLayout.LayoutParams(150, 150));
+        headerLinearLayout.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL);
+        headerLinearLayout.setPadding(50,30,25,10);
+
+        final TextView dialogTitle = new TextView(activity);
+        dialogTitle.setText(R.string.edit_category_dialog_title);
+        dialogTitle.setGravity(Gravity.CENTER);
+        dialogTitle.setTextSize(18);
+        dialogTitle.setTypeface(null, Typeface.BOLD);
+        headerLinearLayout.addView(dialogTitle);
+
+        LinearLayout deleteLinearLayout = new LinearLayout(activity);
+        deleteLinearLayout.setOrientation(LinearLayout.HORIZONTAL);
+        deleteLinearLayout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
+        deleteLinearLayout.setGravity(Gravity.RIGHT);
+
+        ImageButton deleteTrashCan = new ImageButton(activity);
+        deleteTrashCan.setBackgroundResource(R.drawable.ic_delete_grey600_24dp);
+        deleteLinearLayout.addView(deleteTrashCan);
+
+        headerLinearLayout.addView(deleteLinearLayout);
+        builder.setCustomTitle(headerLinearLayout);
 
         LinearLayout layout = new LinearLayout(activity);
         layout.setOrientation(LinearLayout.VERTICAL);
-        layout.setLayoutParams(new LinearLayout.LayoutParams(900,400));
+        layout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
         layout.setGravity(Gravity.CENTER_HORIZONTAL);
-
-        layout.addView(title);
-
-        LinearLayout layoutForTrashCan = new LinearLayout(activity);
-        layoutForTrashCan.setOrientation(LinearLayout.HORIZONTAL);
-        layoutForTrashCan.setLayoutParams(new LinearLayout.LayoutParams(150, 150));
-        layoutForTrashCan.setGravity(Gravity.LEFT);
-        layoutForTrashCan.setPadding(10,30,10,10);
 
         LinearLayout overallLayout = new LinearLayout(activity);
         overallLayout.setOrientation(LinearLayout.HORIZONTAL);
         overallLayout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.FILL_PARENT));
         overallLayout.setGravity(Gravity.CENTER_HORIZONTAL);
-
-        ImageButton deleteTrashCan = new ImageButton(activity);
-        deleteTrashCan.setBackgroundResource(R.drawable.ic_delete_grey600_24dp);
-
-        layoutForTrashCan.addView(deleteTrashCan);
 
         final TextView renameCategoryHint = new TextView(activity);
         renameCategoryHint.setText(R.string.rename_category_hint);
@@ -71,7 +77,6 @@ public class EditCategoryDialog {
         layout.addView(renameCategory);
 
         overallLayout.addView(layout);
-        overallLayout.addView(layoutForTrashCan);
         builder.setView(overallLayout);
 
         builder.setPositiveButton(R.string.confirm_label, null);
