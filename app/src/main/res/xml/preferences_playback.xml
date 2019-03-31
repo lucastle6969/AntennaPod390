@@ -45,7 +45,7 @@
                 android:title="@string/pref_videoBehavior_title"
                 app:useStockLayout="true"/>
         <ListPreference
-            android:defaultValue="stop"
+            android:defaultValue="0"
             android:entries="@array/automatic_rewind_values"
             android:entryValues="@array/automatic_rewind_values"
             android:key="prefAutomaticRewind"

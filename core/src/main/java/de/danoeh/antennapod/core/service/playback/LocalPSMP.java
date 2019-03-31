@@ -239,13 +239,8 @@ public class LocalPSMP extends PlaybackServiceMediaPlayer {
                 }
                 setSpeed(speed);
                 setVolume(UserPreferences.getLeftVolume(), UserPreferences.getRightVolume());
-
-                if (playerStatus == PlayerStatus.PREPARED && media.getPosition() > 0) {
-                    int newPosition = RewindAfterPauseUtils.calculatePositionWithRewind(
-                        media.getPosition(),
-                        media.getLastPlayedTime());
-                    seekToSync(newPosition);
-                }
+                int newPosition = rewindOnPause();
+                seekToSync(newPosition);
                 mediaPlayer.start();
 
                 setPlayerStatus(PlayerStatus.PLAYING, media);
@@ -275,15 +270,10 @@ public class LocalPSMP extends PlaybackServiceMediaPlayer {
             playerLock.lock();
             releaseWifiLockIfNecessary();
             if (playerStatus == PlayerStatus.PLAYING) {
-                Log.d(TAG, "Pausing playback.");
-                int resumePosition = getPosition() - (UserPreferences.getAutomaticRewindSecs() * 1000);
-                if(resumePosition < 0){
-                    resumePosition = 0;
-                }
                 mediaPlayer.pause();
+                int resumePosition = rewindOnPause();
                 mediaPlayer.seekTo(resumePosition);
                 setPlayerStatus(PlayerStatus.PAUSED, media, resumePosition);
-
                 if (abandonFocus) {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                         AudioFocusRequest.Builder builder = new AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN)
@@ -303,6 +293,27 @@ public class LocalPSMP extends PlaybackServiceMediaPlayer {
 
             playerLock.unlock();
         });
+    }
+
+    int rewindOnPause() {
+        int automaticRewindPreference = UserPreferences.getAutomaticRewindSecs();
+        if (automaticRewindPreference != -1 && playerStatus == PlayerStatus.PLAYING){
+            Log.d(TAG, "Pausing playback.");
+            int resumePosition = getPosition() - (UserPreferences.getAutomaticRewindSecs() * 1000);
+            if(resumePosition < 0){
+                resumePosition = 0;
+            }
+            return resumePosition;
+        } else {
+            if (playerStatus == PlayerStatus.PREPARED && media.getPosition() > 0) {
+                int newPosition = RewindAfterPauseUtils.calculatePositionWithRewind(
+                        media.getPosition(),
+                        media.getLastPlayedTime());
+                return newPosition;
+            }
+        }
+
+        return getPosition();
     }
 
     /**

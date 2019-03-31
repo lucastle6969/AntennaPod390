@@ -497,6 +497,7 @@
     <string name="pref_automaticRewind_title">Automatic rewind when resuming playback</string>
     <string name="pref_automaticRewind_sum">When resuming the player, automatically rewinds the player by a few seconds.</string>
     <string name="automatic_rewind_disabled">Disabled</string>
+    <string name="automatic_rewind_variable">Automatic</string>
     <string name="automatic_rewind_5_seconds">5 seconds</string>
     <string name="automatic_rewind_10_seconds">10 seconds</string>
     <string name="automatic_rewind_15_seconds">15 seconds</string>
