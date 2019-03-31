@@ -93,14 +93,11 @@ public class CategoriesTest extends ActivityInstrumentationTestCase2<MainActivit
         solo.clickOnText(solo.getString(R.string.subscriptions_label));
         solo.waitForView(android.R.id.list);
         assertEquals(solo.getString(R.string.subscriptions_label), getActionbarTitle());
-
-        solo.sleep(400000);
-        assertEquals(solo.getString(R.string.subscriptions_label), getActionbarTitle());
-
     }
 
     public void testGoToSubscriptionsPage() throws Exception{
         goingToSubscriptionPage();
+        assertEquals(solo.getString(R.string.subscriptions_label), getActionbarTitle());
     }
 
     public void testRenameCategoryValidation() {
