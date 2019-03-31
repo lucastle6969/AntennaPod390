@@ -601,12 +601,7 @@ public abstract class PlaybackController {
         }
         switch (status) {
             case PLAYING:
-                int curr = playbackService.getCurrentPosition();
                 playbackService.pause(true, reinitOnPause);
-                int autoRewindSeconds = UserPreferences.getAutomaticRewindSecs();
-                if(autoRewindSeconds > 0){
-                    playbackService.seekTo(curr - (autoRewindSeconds * 1000));
-                }
                 break;
             case PAUSED:
             case PREPARED:

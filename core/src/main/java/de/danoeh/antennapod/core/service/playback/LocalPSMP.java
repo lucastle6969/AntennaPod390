@@ -13,6 +13,7 @@ import android.util.Pair;
 import android.view.SurfaceHolder;
 
 import org.antennapod.audio.MediaPlayer;
+import org.shredzone.flattr4j.model.User;
 
 import java.io.File;
 import java.io.IOException;
@@ -275,10 +276,13 @@ public class LocalPSMP extends PlaybackServiceMediaPlayer {
             releaseWifiLockIfNecessary();
             if (playerStatus == PlayerStatus.PLAYING) {
                 Log.d(TAG, "Pausing playback.");
+                int resumePosition = getPosition() - (UserPreferences.getAutomaticRewindSecs() * 1000);
+                if(resumePosition < 0){
+                    resumePosition = 0;
+                }
                 mediaPlayer.pause();
-                int posToSet = getPosition()-5000;
-                mediaPlayer.seekTo(posToSet);
-                setPlayerStatus(PlayerStatus.PAUSED, media, posToSet);
+                mediaPlayer.seekTo(resumePosition);
+                setPlayerStatus(PlayerStatus.PAUSED, media, resumePosition);
 
                 if (abandonFocus) {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
