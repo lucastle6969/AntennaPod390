@@ -2,6 +2,7 @@ package de.danoeh.antennapod.dialog;
 
 import android.app.Activity;
 import android.content.DialogInterface;
+import android.graphics.Typeface;
 import android.support.v7.app.AlertDialog;
 import android.view.Gravity;
 import android.view.View;
@@ -9,6 +10,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -22,8 +24,6 @@ import de.danoeh.antennapod.fragment.SubscriptionFragment;
 
 public class MoveToCategoryDialog {
 
-    public void MoveToCategoryDialog(){ }
-
     public void showMoveToCategoryDialog(Activity activity, long feedId, SubscriptionFragment fragment) {
         String currentCategory = "";
 
@@ -35,7 +35,13 @@ public class MoveToCategoryDialog {
         }
 
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-        builder.setTitle(R.string.move_to_category_dialog_title);
+
+        final TextView dialogTitle = new TextView(activity);
+        dialogTitle.setText(R.string.move_to_category_dialog_title);
+        dialogTitle.setGravity(Gravity.CENTER);
+        dialogTitle.setTextSize(18);
+        dialogTitle.setTypeface(null, Typeface.BOLD);
+        builder.setCustomTitle(dialogTitle);
 
         // Parent linear layout contains two child linear layouts
         LinearLayout parentLinearLayout = new LinearLayout(activity);
@@ -49,7 +55,6 @@ public class MoveToCategoryDialog {
         spinnerLinearLayout.setLayoutParams(new LinearLayout.LayoutParams(900, LinearLayout.LayoutParams.FILL_PARENT));
         spinnerLinearLayout.setGravity(Gravity.CENTER_HORIZONTAL);
 
-        //Dropdown to choose the Category to which the podcast will be moved
         final Spinner categoriesDropdown = new Spinner(activity);
 
         List<String> categoryTitles = new ArrayList<>();
@@ -59,9 +64,10 @@ public class MoveToCategoryDialog {
             }
         }
 
-        ArrayAdapter<String> dataAdapter = new ArrayAdapter<>(activity, android.R.layout.simple_spinner_item, categoryTitles);
-        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        ArrayAdapter<String> dataAdapter = new ArrayAdapter<>(activity, R.layout.spinner_item, categoryTitles);
+        dataAdapter.setDropDownViewResource(R.layout.spinner_item);
         categoriesDropdown.setAdapter(dataAdapter);
+
         spinnerLinearLayout.addView(categoriesDropdown);
 
         parentLinearLayout.addView(spinnerLinearLayout);
@@ -85,7 +91,8 @@ public class MoveToCategoryDialog {
         builder.setPositiveButton(R.string.confirm_label, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                if(categories.size() != 1) {
+                if(!categoriesDropdown.getAdapter().isEmpty()) {
+
                     String chosenCategoryName = categoriesDropdown.getSelectedItem().toString();
                     long categoryId = 0;
                     for (int i = 0; i < categories.size(); i++) {
