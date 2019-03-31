@@ -149,7 +149,6 @@ public class CategoriesTest extends ActivityInstrumentationTestCase2<MainActivit
         solo.sleep(2000);
         solo.clickLongOnText("Title 1");
         solo.clickOnText(solo.getString(R.string.move_to_category_label));
-        //solo.waitForDialogToOpen();
         solo.clickOnText(solo.getString(R.string.confirm_label));
         solo.clickOnText(title);
         assertFalse(solo.searchText("Title 1", true));
