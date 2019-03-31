@@ -20,6 +20,7 @@ import de.danoeh.antennapod.R;
 import de.danoeh.antennapod.core.feed.Category;
 import de.danoeh.antennapod.core.storage.DBReader;
 import de.danoeh.antennapod.core.storage.DBWriter;
+import de.danoeh.antennapod.core.storage.PodDBAdapter;
 import de.danoeh.antennapod.fragment.SubscriptionFragment;
 
 public class MoveToCategoryDialog {
@@ -61,10 +62,16 @@ public class MoveToCategoryDialog {
         final Spinner categoriesDropdown = new Spinner(activity);
 
         List<String> categoryTitles = new ArrayList<>();
-        for(int i=1; i < categories.size(); i++) {
-            if(!(categories.get(i).getName().equals(currentCategory))) {
-                categoryTitles.add(categories.get(i).getName());
+        for (Category category : categories) {
+            if (category.getName().equals(PodDBAdapter.UNCATEGORIZED_CATEGORY_NAME)) {
+                continue;
             }
+
+            if (category.getName().equals(currentCategory)) {
+                continue;
+            }
+
+            categoryTitles.add(category.getName());
         }
 
         ArrayAdapter<String> dataAdapter = new ArrayAdapter<>(activity, R.layout.spinner_item, categoryTitles);
@@ -97,13 +104,13 @@ public class MoveToCategoryDialog {
                 if(!categoriesDropdown.getAdapter().isEmpty()) {
 
                     String chosenCategoryName = categoriesDropdown.getSelectedItem().toString();
-                    long categoryId = 0;
+                    long categoryId = -1;
                     for (int i = 0; i < categories.size(); i++) {
                         if (categories.get(i).getName().equals(chosenCategoryName)) {
                             categoryId = categories.get(i).getId();
                         }
                     }
-                    if (categoryId != 0) {
+                    if (categoryId != -1) {
                         DBWriter.updateFeedCategory(feedId, categoryId);
                         Toast.makeText(activity, activity.getString(R.string.podcast_moved_toast) + chosenCategoryName, Toast.LENGTH_LONG).show();
                         fragment.refresh();

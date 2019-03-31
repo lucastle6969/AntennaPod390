@@ -44,6 +44,7 @@ import de.danoeh.antennapod.core.preferences.UserPreferences;
 import de.danoeh.antennapod.core.service.playback.PlaybackService;
 import de.danoeh.antennapod.core.storage.DBReader;
 import de.danoeh.antennapod.core.storage.DBWriter;
+import de.danoeh.antennapod.core.storage.PodDBAdapter;
 import de.danoeh.antennapod.core.util.FeedItemUtil;
 import de.danoeh.antennapod.core.util.IntentUtils;
 import de.danoeh.antennapod.dialog.CreateCategoryDialog;
@@ -201,7 +202,7 @@ public class SubscriptionFragment extends Fragment {
 
         rowLayout.addView(title);
 
-        if(category.getId() != 0) {
+        if(!category.getName().equals(PodDBAdapter.UNCATEGORIZED_CATEGORY_NAME)) {
             LinearLayout editLinearLayout = new LinearLayout(getActivity());
             editLinearLayout.setOrientation(LinearLayout.HORIZONTAL);
             editLinearLayout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
@@ -408,7 +409,7 @@ public class SubscriptionFragment extends Fragment {
                 categoryDialog.showCreateCategoryDialog(getActivity(), sf);
                 break;
             case R.id.toggleCategoryView:
-                categoryView = categoryView ? false : true;
+                categoryView = !categoryView;
                 UserPreferences.setCategoryToggle(categoryView);
                 getFragmentManager().beginTransaction().detach(this).attach(this).commit();
                 break;
@@ -444,15 +445,16 @@ public class SubscriptionFragment extends Fragment {
         MenuInflater inflater = getActivity().getMenuInflater();
         inflater.inflate(R.menu.nav_feed_context, menu);
 
-        long currentCategoryId = 0;
+        long currentCategoryId = -1;
         for(int i=0; i < categoryArrayList.size(); i++){
             if(categoryArrayList.get(i).getFeedIds().contains(feed.getId())){
                 currentCategoryId = categoryArrayList.get(i).getId();
             }
         }
-        if(currentCategoryId ==0) {
-            menu.getItem(5).setVisible(false);
+        if(currentCategoryId == PodDBAdapter.UNCATEGORIZED_CATEGORY_ID) {
+            menu.findItem(R.id.remove_from_category_item).setVisible(false);
         }
+
         menu.setHeaderTitle(feed.getTitle());
 
         mPosition = position;

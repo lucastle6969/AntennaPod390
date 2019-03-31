@@ -101,8 +101,6 @@ public class EditCategoryDialog {
                 }
         );
 
-        alertDialog.show();
-
         alertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
             @Override
             public void onShow(final DialogInterface dialog) {
