@@ -883,6 +883,21 @@ public final class DBReader {
     }
 
     /**
+     * This method is used to check whether a category already exists with a certain name
+     * @param name Name to check if it already exists
+     * @return Returns true if parameter name is a duplicate category name. False otherwise
+     */
+    public static boolean isDuplicateCategoryName(String name) {
+        List<Category> categoriesInDb = getAllCategories();
+        for (Category category : categoriesInDb) {
+            if (category.getName().equalsIgnoreCase(name)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Searches the DB for a FeedMedia of the given id.
      *
      * @param mediaId The id of the object

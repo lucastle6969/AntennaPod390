@@ -62,15 +62,7 @@ public class CreateCategoryDialog {
                     @Override
                     public void onClick(View v) {
                         String inputCategoryName = input.getText().toString();
-
-                        boolean isDuplicateCategoryName = false;
-                        List<Category> categoriesInDb = DBReader.getAllCategories();
-                        for (Category category : categoriesInDb) {
-                            if (category.getName().equalsIgnoreCase(inputCategoryName)) {
-                                isDuplicateCategoryName = true;
-                                break;
-                            }
-                        }
+                        boolean isDuplicateCategoryName = DBReader.isDuplicateCategoryName(inputCategoryName);
 
                         if (!inputCategoryName.isEmpty() && !isDuplicateCategoryName) {
                             Future<?> task = DBWriter.setCategory(new Category(-1, inputCategoryName));
