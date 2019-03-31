@@ -119,7 +119,7 @@ public class SubscriptionFragment extends Fragment {
         TableLayout table = root.findViewById(R.id.tableLayout);
         table.setStretchAllColumns(true);
         table.setShrinkAllColumns(true);
-        final TableRow[] tableGridRow = new TableRow[1];
+        TableRow[] tableGridRow = new TableRow[1];
         subscriptionSearch.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -133,6 +133,8 @@ public class SubscriptionFragment extends Fragment {
             public boolean onQueryTextChange(String newText) {
                 if (newText.equals("") || newText == null) {
                     table.removeAllViews();
+                    subscriptionsAdapterList = new ArrayList<>();
+                    gridViewList = new ArrayList<>();
                     if(categoryView) {
                         for(int i=0; i<categoryArrayList.size(); i++) {
                             Category category = categoryArrayList.get(i);
