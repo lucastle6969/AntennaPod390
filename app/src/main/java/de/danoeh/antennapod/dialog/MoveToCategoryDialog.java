@@ -38,6 +38,7 @@ public class MoveToCategoryDialog {
 
         final TextView dialogTitle = new TextView(activity);
         dialogTitle.setText(R.string.move_to_category_dialog_title);
+        dialogTitle.setPadding(0, 30, 0, 20);
         dialogTitle.setGravity(Gravity.CENTER);
         dialogTitle.setTextSize(18);
         dialogTitle.setTypeface(null, Typeface.BOLD);
@@ -45,6 +46,8 @@ public class MoveToCategoryDialog {
 
         // Parent linear layout contains two child linear layouts
         LinearLayout parentLinearLayout = new LinearLayout(activity);
+        parentLinearLayout.setPadding(50,0,25,0);
+
         parentLinearLayout.setOrientation(LinearLayout.HORIZONTAL);
         parentLinearLayout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.FILL_PARENT));
         parentLinearLayout.setGravity(Gravity.CENTER_HORIZONTAL);
@@ -52,7 +55,7 @@ public class MoveToCategoryDialog {
         // This linear layout contains the dropdown menu for selecting a categoy
         LinearLayout spinnerLinearLayout = new LinearLayout(activity);
         spinnerLinearLayout.setOrientation(LinearLayout.VERTICAL);
-        spinnerLinearLayout.setLayoutParams(new LinearLayout.LayoutParams(900, LinearLayout.LayoutParams.FILL_PARENT));
+        spinnerLinearLayout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.FILL_PARENT));
         spinnerLinearLayout.setGravity(Gravity.CENTER_HORIZONTAL);
 
         final Spinner categoriesDropdown = new Spinner(activity);
