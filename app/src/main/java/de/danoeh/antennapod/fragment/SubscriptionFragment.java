@@ -123,7 +123,6 @@ public class SubscriptionFragment extends Fragment {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 table.removeAllViews();
-                Log.d(TAG, "onQueryTextSubmit: "+query);
                 tableGridRow[0] = addGridRowSimple(query);
                 table.addView(tableGridRow[0]);
                 return false;
@@ -147,7 +146,6 @@ public class SubscriptionFragment extends Fragment {
                     }
                 } else {
                     table.removeAllViews();
-                    Log.d(TAG, "Onchange: " + newText);
                     tableGridRow[0] = addGridRowSimple(newText);
                     table.addView(tableGridRow[0]);
                 }
@@ -191,7 +189,6 @@ public class SubscriptionFragment extends Fragment {
         if (!searchQuery.equals("")) {
             feedList = search(searchQuery, feedList);
         }
-        Log.d(TAG, "SIZE" + feedList.size());
         if (subscriptionsAdapterList.size() == 0) {
             subscriptionsAdapterList.add(new SubscriptionsAdapterAdd((MainActivity) getActivity(), feedList, counterList));
         } else {
@@ -212,9 +209,7 @@ public class SubscriptionFragment extends Fragment {
         int i = 0;
         while(feedIterator.hasNext()){
             Feed feed = feedIterator.next();
-            Log.d(TAG, "first: " + feed.getTitle());
             if(!feed.getTitle().toUpperCase().contains(searchQuery.toUpperCase())) {
-                Log.d(TAG, "DOES NOT CONTAIN.");
                 feedIterator.remove();
             }
             i++;
