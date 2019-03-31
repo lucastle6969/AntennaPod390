@@ -2,6 +2,7 @@ package de.danoeh.antennapod.dialog;
 
 import android.app.Activity;
 import android.content.DialogInterface;
+import android.graphics.Typeface;
 import android.support.v7.app.AlertDialog;
 import android.view.Gravity;
 import android.view.View;
@@ -9,6 +10,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -33,7 +35,13 @@ public class MoveToCategoryDialog {
         }
 
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-        builder.setTitle(R.string.move_to_category_dialog_title);
+
+        final TextView dialogTitle = new TextView(activity);
+        dialogTitle.setText(R.string.move_to_category_dialog_title);
+        dialogTitle.setGravity(Gravity.CENTER);
+        dialogTitle.setTextSize(18);
+        dialogTitle.setTypeface(null, Typeface.BOLD);
+        builder.setCustomTitle(dialogTitle);
 
         // Parent linear layout contains two child linear layouts
         LinearLayout parentLinearLayout = new LinearLayout(activity);
