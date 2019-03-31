@@ -44,6 +44,7 @@ import de.danoeh.antennapod.core.preferences.UserPreferences;
 import de.danoeh.antennapod.core.service.playback.PlaybackService;
 import de.danoeh.antennapod.core.storage.DBReader;
 import de.danoeh.antennapod.core.storage.DBWriter;
+import de.danoeh.antennapod.core.storage.PodDBAdapter;
 import de.danoeh.antennapod.core.util.FeedItemUtil;
 import de.danoeh.antennapod.core.util.IntentUtils;
 import de.danoeh.antennapod.dialog.CreateCategoryDialog;
@@ -201,7 +202,7 @@ public class SubscriptionFragment extends Fragment {
 
         rowLayout.addView(title);
 
-        if(category.getId() != 0) {
+        if(!category.getName().equals(PodDBAdapter.UNCATEGORIZED_CATEGORY_NAME)) {
             LinearLayout editLinearLayout = new LinearLayout(getActivity());
             editLinearLayout.setOrientation(LinearLayout.HORIZONTAL);
             editLinearLayout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
@@ -408,7 +409,7 @@ public class SubscriptionFragment extends Fragment {
                 categoryDialog.showCreateCategoryDialog(getActivity(), sf);
                 break;
             case R.id.toggleCategoryView:
-                categoryView = categoryView ? false : true;
+                categoryView = !categoryView;
                 UserPreferences.setCategoryToggle(categoryView);
                 getFragmentManager().beginTransaction().detach(this).attach(this).commit();
                 break;

@@ -135,7 +135,7 @@ public class PodDBAdapter {
     static final String TABLE_NAME_ASSOCIATION_FOR_CATEGORIES = "AssociationForCategories";
 
     // Default values
-    public static final int UNCATEGORIZED_CATEGORY_ID = 0;
+    public static int UNCATEGORIZED_CATEGORY_ID = 0;
     public static final String UNCATEGORIZED_CATEGORY_NAME = "Uncategorized Section";
 
     // SQL Statements for creating new tables

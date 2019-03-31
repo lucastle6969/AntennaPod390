@@ -867,9 +867,6 @@ public final class DBReader {
 
     }
 
-
-
-
     /**
      * Returns all categories containing their feedIds
      * @return  returns a list of all categories

@@ -9,7 +9,11 @@ import com.robotium.solo.Solo;
 
 import de.danoeh.antennapod.R;
 import de.danoeh.antennapod.activity.MainActivity;
+import de.danoeh.antennapod.core.feed.Category;
+import de.danoeh.antennapod.core.storage.DBWriter;
 import de.danoeh.antennapod.core.storage.PodDBAdapter;
+
+import static java.lang.Thread.sleep;
 
 /**
  * User interface tests for Categories Feature
@@ -38,6 +42,8 @@ public class CategoriesTest extends ActivityInstrumentationTestCase2<MainActivit
         PodDBAdapter.deleteDatabase();
         PodDBAdapter adapter = PodDBAdapter.getInstance();
         adapter.open();
+        insertUncategorized();
+        PodDBAdapter.UNCATEGORIZED_CATEGORY_ID = 1;
         adapter.close();
 
         // override first launch preference
@@ -69,6 +75,19 @@ public class CategoriesTest extends ActivityInstrumentationTestCase2<MainActivit
         return ((MainActivity) solo.getCurrentActivity()).getSupportActionBar().getTitle().toString();
     }
 
+    private void insertUncategorized() {
+        Category uncategorizedCategory = new Category(PodDBAdapter.UNCATEGORIZED_CATEGORY_ID, PodDBAdapter.UNCATEGORIZED_CATEGORY_NAME);
+
+        synchronized (this) {
+            try {
+                DBWriter.setCategory(uncategorizedCategory);
+                sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     private void goingToSubscriptionPage() throws Exception{
         uiTestUtils.addLocalFeedData(true);
         openNavDrawer();
@@ -76,13 +95,13 @@ public class CategoriesTest extends ActivityInstrumentationTestCase2<MainActivit
         solo.waitForView(android.R.id.list);
         assertEquals(solo.getString(R.string.subscriptions_label), getActionbarTitle());
 
-        solo.sleep(4000);
+        solo.sleep(400000);
+        assertEquals(solo.getString(R.string.subscriptions_label), getActionbarTitle());
+
     }
 
     public void testGoToSubscriptionsPage() throws Exception{
-        
-      goingToSubscriptionPage();
-
+        goingToSubscriptionPage();
     }
 
     public void testRenameCategoryValidation() {
