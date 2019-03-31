@@ -145,6 +145,7 @@
     <string name="category_alert_title">Create new category</string>
     <string name="category_hint">New category title</string>
     <string name="category_error_toast">Please enter a category title</string>
+    <string name="duplicate_category_error">There already exists a category with that name</string>
     <string name="category_success">Category Created: </string>
     <string name="category_renamed_toast">Category renamed to: </string>
     <string name="podcast_moved_toast">Podcast was moved to category: </string>
