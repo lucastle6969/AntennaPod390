@@ -498,7 +498,6 @@ public class SubscriptionFragment extends Fragment {
                 return true;
             case R.id.move_to_category:
                 new MoveToCategoryDialog().showMoveToCategoryDialog(getActivity(), feed.getId(), (SubscriptionFragment)getFragmentManager().findFragmentById(fragmentId));
-                refresh();
                 return true;
             default:
                 return super.onContextItemSelected(item);
