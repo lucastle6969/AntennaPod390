@@ -52,7 +52,9 @@ public class RemoveFromCategoryDialog {
             public void onClick(DialogInterface dialog, int which) {
                 DBWriter.updateFeedCategory(feedId, PodDBAdapter.UNCATEGORIZED_CATEGORY_ID);
                 Toast.makeText(activity, activity.getString(R.string.successfully_removed_from_category), Toast.LENGTH_LONG).show();
-                fragment.refresh();
+
+                fragment.setUserPreferencesToCategoryView();
+
             }
         });
         builder.setNegativeButton(R.string.cancel_label, new DialogInterface.OnClickListener() {
