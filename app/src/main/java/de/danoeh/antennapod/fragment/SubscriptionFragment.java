@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.ContextMenu;
@@ -28,6 +29,7 @@ import android.widget.TableRow;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import de.danoeh.antennapod.R;
@@ -78,6 +80,8 @@ public class SubscriptionFragment extends Fragment {
 
     private boolean categoryView;
 
+    private SearchView subscriptionSearch;
+
     private List<Category> categoryArrayList = new ArrayList<>();
 
     private static final int GRID_COL_NUM = 3;
@@ -108,17 +112,52 @@ public class SubscriptionFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_subscriptions, container, false);
-
+        subscriptionSearch = root.findViewById(R.id.subscriptionSearch);
+        subscriptionSearch.setQueryHint(getResources().getString(R.string.search_subscription));
         subscriptionsAdapterList = new ArrayList<>();
         gridViewList = new ArrayList<>();
         TableLayout table = root.findViewById(R.id.tableLayout);
         table.setStretchAllColumns(true);
         table.setShrinkAllColumns(true);
+        TableRow[] tableGridRow = new TableRow[1];
+        subscriptionSearch.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                table.removeAllViews();
+                tableGridRow[0] = addGridRowSimple(query);
+                table.addView(tableGridRow[0]);
+                return false;
+            }
 
-        TableRow tableGridRow;
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                if (newText.equals("") || newText == null) {
+                    table.removeAllViews();
+                    subscriptionsAdapterList = new ArrayList<>();
+                    gridViewList = new ArrayList<>();
+                    if(categoryView) {
+                        for(int i=0; i<categoryArrayList.size(); i++) {
+                            Category category = categoryArrayList.get(i);
+                            TableRow tableRowTitle = addRowTitle(category);
+                            table.addView(tableRowTitle);
+                            tableGridRow[0] = addGridRow(i, category);
+                            table.addView(tableGridRow[0]);
+                        }
+                    } else {
+                        tableGridRow[0] = addGridRowSimple("");
+                        table.addView(tableGridRow[0]);
+                    }
+                } else {
+                    table.removeAllViews();
+                    tableGridRow[0] = addGridRowSimple(newText);
+                    table.addView(tableGridRow[0]);
+                }
+                return false;
+            }
+        });
         if(!categoryView){
-            tableGridRow = addGridRowSimple();
-            table.addView(tableGridRow);
+            tableGridRow[0] = addGridRowSimple("");
+            table.addView(tableGridRow[0]);
             return root;
         }
 
@@ -128,14 +167,14 @@ public class SubscriptionFragment extends Fragment {
             Category category = categoryArrayList.get(i);
             TableRow tableRowTitle = addRowTitle(category);
             table.addView(tableRowTitle);
-            tableGridRow = addGridRow(i, category);
-            table.addView(tableGridRow);
+            tableGridRow[0] = addGridRow(i, category);
+            table.addView(tableGridRow[0]);
         }
 
         return root;
     }
 
-    public TableRow addGridRowSimple(){
+    public TableRow addGridRowSimple(String searchQuery){
         TableRow gridRow = new TableRow(getActivity());
         WrappedGridView gridView = new WrappedGridView(getActivity());
         gridView.setNumColumns(GRID_COL_NUM);
@@ -150,8 +189,14 @@ public class SubscriptionFragment extends Fragment {
         }else{
             Log.d("ITEM_ACCESS", "navDrawerData was null in addGridRowSimple");
         }
-
-        subscriptionsAdapterList.add(new SubscriptionsAdapterAdd((MainActivity) getActivity(), feedList, counterList));
+        if (!searchQuery.equals("")) {
+            feedList = search(searchQuery, feedList);
+        }
+        if (subscriptionsAdapterList.size() == 0) {
+            subscriptionsAdapterList.add(new SubscriptionsAdapterAdd((MainActivity) getActivity(), feedList, counterList));
+        } else {
+            subscriptionsAdapterList.set(0, new SubscriptionsAdapterAdd((MainActivity) getActivity(), feedList, counterList));
+        }
 
         gridView.setAdapter(subscriptionsAdapterList.get(0));
         gridView.setOnItemClickListener(subscriptionsAdapterList.get(0));
@@ -160,6 +205,19 @@ public class SubscriptionFragment extends Fragment {
         gridRow.addView(gridView);
 
         return gridRow;
+    }
+
+    public List<Feed> search(String searchQuery, List<Feed> feeds) {
+        Iterator<Feed> feedIterator = feeds.iterator();
+        int i = 0;
+        while(feedIterator.hasNext()){
+            Feed feed = feedIterator.next();
+            if(!feed.getTitle().toUpperCase().contains(searchQuery.toUpperCase())) {
+                feedIterator.remove();
+            }
+            i++;
+        }
+        return feeds;
     }
 
     public TableRow addRowTitle(Category category){
@@ -259,7 +317,11 @@ public class SubscriptionFragment extends Fragment {
         if(rowNumber!=0) {
             subscriptionsAdapterList.add(new SubscriptionsAdapter((MainActivity) getActivity(), feedList, counterList));
         }else{
-            subscriptionsAdapterList.add(new SubscriptionsAdapterAdd((MainActivity) getActivity(), feedList, counterList));
+            if(subscriptionsAdapterList.size() == 0) {
+                subscriptionsAdapterList.add(new SubscriptionsAdapterAdd((MainActivity) getActivity(), feedList, counterList));
+            } else {
+                subscriptionsAdapterList.set(0, new SubscriptionsAdapterAdd((MainActivity) getActivity(), feedList, counterList));
+            }
         }
         gridView.setAdapter(subscriptionsAdapterList.get(rowNumber));
         gridView.setOnItemClickListener(subscriptionsAdapterList.get(rowNumber));
@@ -411,7 +473,8 @@ public class SubscriptionFragment extends Fragment {
             case R.id.toggleCategoryView:
                 categoryView = !categoryView;
                 UserPreferences.setCategoryToggle(categoryView);
-                getFragmentManager().beginTransaction().detach(this).attach(this).commit();
+                refresh();
+                subscriptionSearch.setQuery("", false);
                 break;
             default:
                 break;
