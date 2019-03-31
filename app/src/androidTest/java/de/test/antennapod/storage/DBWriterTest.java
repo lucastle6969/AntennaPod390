@@ -174,7 +174,6 @@ public class DBWriterTest extends InstrumentationTestCase {
     public void testCategoriesCRUD() {
         final int id = 1;
         final String title = "categoryTitle";
-        List<Long> feedIds = null;
         List<Category> categoriesFromDb = null;
 
         Category testingCategory = new Category(id, title);
@@ -211,6 +210,7 @@ public class DBWriterTest extends InstrumentationTestCase {
         retrievedCategory = categoriesFromDb.get(1);
         assertEquals(newCategoryName, retrievedCategory.getName());
 
+
         //Testing delete category
         synchronized (this) {
             try {
@@ -246,6 +246,29 @@ public class DBWriterTest extends InstrumentationTestCase {
         Category uncategorized = categoriesFromDb.get(0);
         assertNotNull(uncategorized);
         assertTrue(uncategorized.getFeedIds().contains(feed.getId()));
+
+        // Test add feed to a category
+//        final long feedId = 0;
+//        final String feedTitle = "feed title";
+        PodDBAdapter adapter = PodDBAdapter.getInstance();
+        adapter.open();
+
+        Feed feed1 = new Feed(0, null, "A", "link", "d", null, null, null, "rss", "A", null, "", "", true);
+        Feed feed2 = new Feed(0, null, "b", "link", "d", null, null, null, "rss", "b", null, "", "", true);
+        Feed feed3 = new Feed(0, null, "C", "link", "d", null, null, null, "rss", "C", null, "", "", true);
+        Feed feed4 = new Feed(0, null, "d", "link", "d", null, null, null, "rss", "d", null, "", "", true);
+        adapter.setCompleteFeed(feed1);
+        adapter.setCompleteFeed(feed2);
+        adapter.setCompleteFeed(feed3);
+        adapter.setCompleteFeed(feed4);
+
+        adapter.close();
+
+        List<Feed> saved = DBReader.getFeedList();
+        Feed testFeed = mock(Feed.class);
+        when(testFeed.getId()).thenReturn(feedId);
+        when(testFeed.getTitle()).thenReturn(feedTitle);
+
     }
 
     public void testDeleteFeedMediaOfItemFileExists()
