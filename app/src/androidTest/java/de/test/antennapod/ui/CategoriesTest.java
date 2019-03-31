@@ -162,15 +162,10 @@ public class CategoriesTest extends ActivityInstrumentationTestCase2<MainActivit
 
     public void testCategorySearch() throws Exception{
         goingToSubscriptionPage();
-        Display display = solo.getCurrentActivity().getWindowManager().getDefaultDisplay();
-        Point maxSize = new Point();
-        display.getSize(maxSize);
-        int blocksX = maxSize.x/23;
-        int blocksY = maxSize.y/32;
-        int pixelX = blocksX*2;
-        int pixelY = blocksY*6;
-        solo.clickOnScreen(pixelX, pixelY);
-        solo.typeText(0, "2");
+        solo.clickOnView(solo.getView(R.id.search_button));
+        solo.clickOnText(solo.getString(R.string.search_subscription));
+        solo.enterText(0, "2");
+        solo.sendKey(Solo.ENTER);
         assertFalse(solo.searchText("Title 1", true));
         solo.clickOnText("Title 2");
     }
