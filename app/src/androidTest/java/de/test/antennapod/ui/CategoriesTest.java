@@ -133,6 +133,7 @@ public class CategoriesTest extends ActivityInstrumentationTestCase2<MainActivit
         solo.clickOnView(solo.getImageButton(2));
         solo.clickOnText(solo.getString(R.string.confirm_label));
 
+        solo.sleep(1000);
         assertFalse(solo.searchText(newCategoryName));
 
         // Create new category while moving feed to category
@@ -150,6 +151,8 @@ public class CategoriesTest extends ActivityInstrumentationTestCase2<MainActivit
         solo.clickLongOnText(feedTitle);
         solo.clickOnText(solo.getString(R.string.remove_feed_label));
         solo.clickOnText(solo.getString(R.string.confirm_label));
+
+        solo.sleep(1000);
         assertFalse(solo.searchText(feedTitle));
 
     }
