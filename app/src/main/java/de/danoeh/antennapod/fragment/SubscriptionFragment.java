@@ -319,7 +319,11 @@ public class SubscriptionFragment extends Fragment {
         if(rowNumber!=0) {
             subscriptionsAdapterList.add(new SubscriptionsAdapter((MainActivity) getActivity(), feedList, counterList));
         }else{
-            subscriptionsAdapterList.add(new SubscriptionsAdapterAdd((MainActivity) getActivity(), feedList, counterList));
+            if(subscriptionsAdapterList.size() == 0) {
+                subscriptionsAdapterList.add(new SubscriptionsAdapterAdd((MainActivity) getActivity(), feedList, counterList));
+            } else {
+                subscriptionsAdapterList.set(0, new SubscriptionsAdapterAdd((MainActivity) getActivity(), feedList, counterList));
+            }
         }
         gridView.setAdapter(subscriptionsAdapterList.get(rowNumber));
         gridView.setOnItemClickListener(subscriptionsAdapterList.get(rowNumber));
@@ -471,7 +475,8 @@ public class SubscriptionFragment extends Fragment {
             case R.id.toggleCategoryView:
                 categoryView = categoryView ? false : true;
                 UserPreferences.setCategoryToggle(categoryView);
-                getFragmentManager().beginTransaction().detach(this).attach(this).commit();
+                refresh();
+                subscriptionSearch.setQuery("", false);
                 break;
             default:
                 break;
