@@ -30,6 +30,7 @@ import de.danoeh.antennapod.core.event.FeedItemEvent;
 import de.danoeh.antennapod.core.event.MessageEvent;
 import de.danoeh.antennapod.core.event.QueueEvent;
 import de.danoeh.antennapod.core.feed.Bookmark;
+import de.danoeh.antennapod.core.feed.Category;
 import de.danoeh.antennapod.core.feed.EventDistributor;
 import de.danoeh.antennapod.core.feed.Feed;
 import de.danoeh.antennapod.core.feed.FeedEvent;
@@ -786,6 +787,91 @@ public class DBWriter {
             adapter.open();
             adapter.deleteSingleBookmark(bookmark);
             adapter.close();
+        });
+    }
+
+    /**
+     * Saves a Category object in the database. This method will save all attributes of Category object.
+     *
+     * @param category  The Category object.
+     */
+    public static Future<?> setCategory(final Category category){
+        return dbExec.submit(()-> {
+            PodDBAdapter adapter = PodDBAdapter.getInstance();
+            adapter.open();
+            adapter.setSingleCategory(category);
+            adapter.close();
+        });
+    }
+
+    /**
+     * Delete a Feed from a category in db
+     *
+     * @param category  Category to be deleted.
+     */
+    public static Future<?> deleteCategory(final Category category){
+        return dbExec.submit(()-> {
+            PodDBAdapter adapter = PodDBAdapter.getInstance();
+            adapter.open();
+            adapter.deleteACategory(category);
+            adapter.close();
+        });
+    }
+
+    /**
+     * Remove feed from subscriptions
+     *
+     * @param feed  Feed to be removed.
+     */
+    public static Future<?> removeFeedFromSubscriptions(final Feed feed){
+        return dbExec.submit(()-> {
+            PodDBAdapter adapter = PodDBAdapter.getInstance();
+            adapter.open();
+            adapter.removeAFeed(feed);
+            adapter.close();
+        });
+    }
+
+    /**
+     * Add new Feed (subscription) to uncategorized category in db
+     *
+     * @param feedId  Feed (Subscription) id.
+     */
+    public static Future<?> addFeedToUncategorized(final long feedId){
+        return dbExec.submit(()-> {
+            PodDBAdapter adapter = PodDBAdapter.getInstance();
+            adapter.open();
+            adapter.addFeedIntoUncategorizedCategory(feedId);
+            adapter.close();
+        });
+    }
+
+    /**
+     * Updates Category object in the database by overwriting all changed and unchanged attribute
+     * values of the passed Category object.
+     * @param category The Category object used to overwrite the previous one.
+     */
+    public static Future<?> updateCategory(final Category category) {
+        return dbExec.submit(() -> {
+            PodDBAdapter adapter = PodDBAdapter.getInstance();
+            adapter.open();
+            adapter.updateSingleCategory(category);
+            adapter.close();
+        });
+    }
+
+    /**
+     * Update the association between a feed and a category in the database
+     * @param feedId the id of the feed whose association is to change
+     * @param categoryId the id of the new category to which the feed will be associated
+     * @return
+     */
+    public static Future<?> updateFeedCategory(final long feedId, final long categoryId) {
+        return dbExec.submit(() -> {
+           PodDBAdapter adapter = PodDBAdapter.getInstance();
+           adapter.open();
+           adapter.updateFeedCategory(feedId, categoryId);
+           adapter.close();
         });
     }
 
