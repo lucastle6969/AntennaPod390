@@ -37,7 +37,7 @@
                 android:summary="@string/pref_resumeAfterCall_sum"
                 android:title="@string/pref_resumeAfterCall_title"/>
         <ListPreference
-                android:defaultValue="stop"
+                android:defaultValue="@string/automatic_rewind_disabled"
                 android:entries="@array/video_background_behavior_options"
                 android:entryValues="@array/video_background_behavior_values"
                 android:key="prefVideoBehavior"

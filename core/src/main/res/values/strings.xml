@@ -494,10 +494,10 @@
     <string name="media_player_exoplayer" translatable="false">ExoPlayer</string>
     <string name="pref_videoBehavior_title">Upon exiting video</string>
     <string name="pref_videoBehavior_sum">Behavior when leaving video playback</string>
-    <string name="pref_automaticRewind_title">Automatic rewind when resuming playback</string>
-    <string name="pref_automaticRewind_sum">When resuming the player, automatically rewinds the player by a few seconds.</string>
+    <string name="pref_automaticRewind_title">Automatic rewind when pausing playback</string>
+    <string name="pref_automaticRewind_sum">When pausing, automatically rewinds the player by the time specified.</string>
     <string name="automatic_rewind_disabled">Disabled</string>
-    <string name="automatic_rewind_variable">Automatic</string>
+    <string name="automatic_rewind_variable">Automatic (based on time since last played)</string>
     <string name="stop_playback">Stop playback</string>
     <string name="continue_playback">Continue audio playback</string>
 
