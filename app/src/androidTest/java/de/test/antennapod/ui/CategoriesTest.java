@@ -1,9 +1,12 @@
 package de.test.antennapod.ui;
 
 import android.content.SharedPreferences;
+import android.graphics.Point;
 import android.test.ActivityInstrumentationTestCase2;
 
 import android.content.Context;
+import android.view.Display;
+import android.support.v7.widget.SearchView;
 import com.robotium.solo.Solo;
 
 import de.danoeh.antennapod.R;
@@ -159,6 +162,18 @@ public class CategoriesTest extends ActivityInstrumentationTestCase2<MainActivit
 
     }
 
+
+    public void testCategorySearch() throws Exception{
+        goingToSubscriptionPage();
+        solo.clickOnView(solo.getView(R.id.search_button));
+        solo.clickOnText(solo.getString(R.string.search_subscription));
+        solo.enterText(0, "2");
+        solo.sendKey(Solo.ENTER);
+        assertFalse(solo.searchText("Title 1", true));
+        solo.clickOnText("Title 2");
+    }
+
+
     public void testToggleBetweenCategoryAndAllFeedsView() {
         try {
             goingToSubscriptionPage();
@@ -191,4 +206,5 @@ public class CategoriesTest extends ActivityInstrumentationTestCase2<MainActivit
         solo.clickOnText(title);
         assertFalse(solo.searchText("Title 1", true));
     }
+
 }
