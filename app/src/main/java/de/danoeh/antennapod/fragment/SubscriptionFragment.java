@@ -75,20 +75,21 @@ public class SubscriptionFragment extends Fragment {
     private ArrayList<SubscriptionsAdapter> subscriptionsAdapterList = new ArrayList<>();
     private ArrayList<GridView> gridViewList = new ArrayList<>();
 
+    private List<Category> categoryArrayList = new ArrayList<>();
+    private List<Feed> feedList = new ArrayList<>();
+    private List<Integer> counterList = new ArrayList<>();
+
+    private static final int GRID_COL_NUM = 3;
+
     private int mPosition = -1;
     private int aPosition = -1;
+    private int fragmentId;
 
     private boolean categoryView;
 
     private SearchView subscriptionSearch;
 
-    private List<Category> categoryArrayList = new ArrayList<>();
-
-    private static final int GRID_COL_NUM = 3;
-
     private Subscription subscription;
-
-    private int fragmentId;
 
     public SubscriptionFragment() {
     }
@@ -136,13 +137,7 @@ public class SubscriptionFragment extends Fragment {
                     subscriptionsAdapterList = new ArrayList<>();
                     gridViewList = new ArrayList<>();
                     if(categoryView) {
-                        for(int i=0; i<categoryArrayList.size(); i++) {
-                            Category category = categoryArrayList.get(i);
-                            TableRow tableRowTitle = addRowTitle(category);
-                            table.addView(tableRowTitle);
-                            tableGridRow[0] = addGridRow(i, category);
-                            table.addView(tableGridRow[0]);
-                        }
+                        addCategoryViewsToViewTable(tableGridRow, table);
                     } else {
                         tableGridRow[0] = addGridRowSimple("");
                         table.addView(tableGridRow[0]);
@@ -163,13 +158,7 @@ public class SubscriptionFragment extends Fragment {
 
         categoryArrayList = DBReader.getAllCategories();
 
-        for(int i=0; i<categoryArrayList.size(); i++){
-            Category category = categoryArrayList.get(i);
-            TableRow tableRowTitle = addRowTitle(category);
-            table.addView(tableRowTitle);
-            tableGridRow[0] = addGridRow(i, category);
-            table.addView(tableGridRow[0]);
-        }
+        addCategoryViewsToViewTable(tableGridRow, table);
 
         return root;
     }
@@ -178,17 +167,10 @@ public class SubscriptionFragment extends Fragment {
         TableRow gridRow = new TableRow(getActivity());
         WrappedGridView gridView = new WrappedGridView(getActivity());
         gridView.setNumColumns(GRID_COL_NUM);
+        feedAndCounterReset();
 
-        List<Feed> feedList = new ArrayList<>();
-        List<Integer> counterList = new ArrayList<>();
-        if(navDrawerData!=null){
-            for(int i=0; i<navDrawerData.feeds.size(); i++){
-                feedList.add(navDrawerData.feeds.get(i));
-                counterList.add(navDrawerData.feedCounters.get(navDrawerData.feeds.get(i).getId()));
-            }
-        }else{
-            Log.d("ITEM_ACCESS", "navDrawerData was null in addGridRowSimple");
-        }
+        populateFeedAndCounterWithAllNavDrawerFeeds();
+
         if (!searchQuery.equals("")) {
             feedList = search(searchQuery, feedList);
         }
@@ -202,6 +184,7 @@ public class SubscriptionFragment extends Fragment {
         gridView.setOnItemClickListener(subscriptionsAdapterList.get(0));
 
         registerForContextMenu(gridView);
+
         gridRow.addView(gridView);
 
         return gridRow;
@@ -249,14 +232,13 @@ public class SubscriptionFragment extends Fragment {
         TextView title = new TextView(getActivity());
         title.setText(category.getName());
         title.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 18);
+        title.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
+        title.setTypeface(Typeface.SANS_SERIF, Typeface.BOLD);
+        title.setId(R.id.category_title_view);
         LinearLayout.LayoutParams textParams = new LinearLayout.LayoutParams(
                 700, LinearLayout.LayoutParams.MATCH_PARENT
         );
         title.setLayoutParams(textParams);
-        title.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
-
-        title.setTypeface(Typeface.SANS_SERIF, Typeface.BOLD);
-        title.setId(R.id.category_title_view);
 
         rowLayout.addView(title);
 
@@ -299,20 +281,9 @@ public class SubscriptionFragment extends Fragment {
         WrappedGridView gridView = new WrappedGridView(getActivity());
         gridView.setNumColumns(GRID_COL_NUM);
 
-        List<Feed> feedList = new ArrayList<>();
-        List<Integer> counterList = new ArrayList<>();
-        if(navDrawerData!=null){
-            List<Long> categoryFeedIds = category.getFeedIds();
-            for(Long feedId:categoryFeedIds){
-                Feed feedToAdd = navDrawerData.getFeedById(feedId);
-                if(feedToAdd != null){
-                    feedList.add(feedToAdd);
-                    counterList.add(navDrawerData.feedCounters.get(feedId));
-                }
-            }
-        }else{
-            Log.d("ITEM_ACCESS", "navDrawerData was null in addGridRow");
-        }
+        feedAndCounterReset();
+
+        populateFeedAndCounterWithCategoryFeeds(category);
 
         if(rowNumber!=0) {
             subscriptionsAdapterList.add(new SubscriptionsAdapter((MainActivity) getActivity(), feedList, counterList));
@@ -385,7 +356,6 @@ public class SubscriptionFragment extends Fragment {
         if (getActivity() instanceof MainActivity) {
             ((MainActivity) getActivity()).getSupportActionBar().setTitle(R.string.subscriptions_label);
         }
-
         EventDistributor.getInstance().register(contentUpdate);
     }
 
@@ -414,18 +384,10 @@ public class SubscriptionFragment extends Fragment {
     }
 
     private void updateFeeds(){
-        List<Feed> feedList = new ArrayList<>();
-        List<Integer> counterList = new ArrayList<>();
+        feedAndCounterReset();
 
         if(!categoryView){
-            if (navDrawerData != null) {
-                for (int i = 0; i < navDrawerData.feeds.size(); i++) {
-                    feedList.add(navDrawerData.feeds.get(i));
-                    counterList.add(navDrawerData.feedCounters.get(navDrawerData.feeds.get(i).getId()));
-                }
-            } else {
-                Log.d("ITEM_ACCESS", "navDrawerData was null in updateFeeds");
-            }
+            populateFeedAndCounterWithAllNavDrawerFeeds();
             subscriptionsAdapterList.get(0).updateFeeds(feedList, counterList);
 
             return;
@@ -433,21 +395,10 @@ public class SubscriptionFragment extends Fragment {
 
         for(int rowNumber=0; rowNumber<categoryArrayList.size(); rowNumber++) {
             Category category = categoryArrayList.get(rowNumber);
-            feedList = new ArrayList<>();
-            counterList = new ArrayList<>();
+            feedAndCounterReset();
 
-            List<Long> categoryFeedIds = category.getFeedIds();
-          if (navDrawerData != null) {
-              for (Long feedId:categoryFeedIds) {
-                  Feed feedToAdd = navDrawerData.getFeedById(feedId);
-                  if(feedToAdd != null){
-                      feedList.add(feedToAdd);
-                      counterList.add(navDrawerData.feedCounters.get(feedId));
-                  }
-              }
-          } else {
-              Log.d("ITEM_ACCESS", "navDrawerData was null in updateFeeds");
-          }
+          populateFeedAndCounterWithCategoryFeeds(category);
+
           subscriptionsAdapterList.get(rowNumber).updateFeeds(feedList, counterList);
         }
     }
@@ -636,6 +587,43 @@ public class SubscriptionFragment extends Fragment {
     public void onResume() {
         super.onResume();
         loadSubscriptions();
+    }
+
+    private final void feedAndCounterReset(){
+        feedList = new ArrayList<>();
+        counterList = new ArrayList<>();
+    }
+
+    private final void addCategoryViewsToViewTable(TableRow[] tableGridRow, TableLayout table) {
+        for (int i = 0; i < categoryArrayList.size(); i++) {
+            Category category = categoryArrayList.get(i);
+            TableRow tableRowTitle = addRowTitle(category);
+            table.addView(tableRowTitle);
+            tableGridRow[0] = addGridRow(i, category);
+            table.addView(tableGridRow[0]);
+        }
+    }
+
+    private final void populateFeedAndCounterWithAllNavDrawerFeeds(){
+        if(navDrawerData!=null){
+            for(int i=0; i<navDrawerData.feeds.size(); i++){
+                feedList.add(navDrawerData.feeds.get(i));
+                counterList.add(navDrawerData.feedCounters.get(navDrawerData.feeds.get(i).getId()));
+            }
+        }
+    }
+
+    private final void populateFeedAndCounterWithCategoryFeeds(Category category){
+        if (navDrawerData != null) {
+            List<Long> categoryFeedIds = category.getFeedIds();
+            for (Long feedId:categoryFeedIds) {
+                Feed feedToAdd = navDrawerData.getFeedById(feedId);
+                if(feedToAdd != null){
+                    feedList.add(feedToAdd);
+                    counterList.add(navDrawerData.feedCounters.get(feedId));
+                }
+            }
+        }
     }
 
     private final EventDistributor.EventListener contentUpdate = new EventDistributor.EventListener() {
