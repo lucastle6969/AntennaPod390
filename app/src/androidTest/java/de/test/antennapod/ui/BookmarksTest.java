@@ -1,12 +1,17 @@
 package de.test.antennapod.ui;
 
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Point;
 import android.graphics.PointF;
 import android.test.ActivityInstrumentationTestCase2;
+
+import android.content.Context;
 import android.view.Display;
+
 import android.widget.CheckBox;
+
+import android.widget.EditText;
+
 import android.widget.ImageButton;
 
 import com.robotium.solo.Solo;
@@ -83,7 +88,7 @@ public class BookmarksTest extends ActivityInstrumentationTestCase2<MainActivity
 
         ImageButton PlaybackBookmarkButton = (ImageButton) solo.getView("imgBookmarkPlay");
         solo.clickOnView(PlaybackBookmarkButton);
-        solo.waitForDialogToOpen(5000);
+        solo.waitForDialogToOpen();
 
         assertEquals(solo.getString(R.id.txtvTimestamp), solo.getString(R.id.txtvPosition));
     }
@@ -104,10 +109,10 @@ public class BookmarksTest extends ActivityInstrumentationTestCase2<MainActivity
         solo.clickOnText("Confirm");
 
         scrollingToBookmarkTab();
-        solo.sleep(6000);
+
         ImageButton SingleDeleteBookmarkButton = (ImageButton) solo.getView("imgBookmarkDelete");
         solo.clickOnView(SingleDeleteBookmarkButton);
-        solo.waitForDialogToOpen(5000);
+        solo.waitForDialogToOpen();
         solo.clickOnText("Confirm");
 
         //Verifies the bookmark has been deleted
@@ -121,7 +126,7 @@ public class BookmarksTest extends ActivityInstrumentationTestCase2<MainActivity
         solo.sleep(6000);
         ImageButton AddBookmarkButton = (ImageButton) solo.getView("butBookmark");
         solo.clickOnView(AddBookmarkButton);
-        solo.waitForDialogToOpen(5000);
+        solo.waitForDialogToOpen();
         solo.clickOnText("Confirm");
 
         scrollingToBookmarkTab();
@@ -129,7 +134,7 @@ public class BookmarksTest extends ActivityInstrumentationTestCase2<MainActivity
         CheckBox deleteCheckbox = (CheckBox) solo.getView("bookmarkCheckBox");
         solo.clickOnView(deleteCheckbox);
         solo.clickOnView(solo.getView(R.id.confirmDelete));
-        solo.waitForDialogToOpen(5000);
+        solo.waitForDialogToOpen();
         solo.clickOnText("Confirm");
 
         assertFalse(solo.searchText("Bookmark 1", false));
@@ -141,25 +146,25 @@ public class BookmarksTest extends ActivityInstrumentationTestCase2<MainActivity
 
         openNavDrawer();
         solo.clickOnText("Add Podcast");
-        solo.waitForDialogToOpen(5000);
+        solo.waitForDialogToOpen();
         solo.waitForView(R.id.sliding_tabs);
         solo.enterText(0, query);
         solo.sendKey(Solo.ENTER);
         solo.waitForView(R.id.gridView);
 
         solo.clickOnText("Educational");
-        solo.waitForDialogToOpen(5000);
+        solo.waitForDialogToOpen();
         solo.clickOnText("Subscribe");
         solo.sleep(5000);
         solo.clickOnText("Open Podcast");
-        solo.waitForDialogToOpen(5000);
+        solo.waitForDialogToOpen();
         solo.clickOnText("Twelve Drummers Drumming");
-        solo.waitForDialogToOpen(5000);
+        solo.waitForDialogToOpen();
         solo.clickOnText("Stream");
         solo.sleep(6000);
         ImageButton AddBookmarkButton = (ImageButton) solo.getView("butBookmark");
         solo.clickOnView(AddBookmarkButton);
-        solo.waitForDialogToOpen(5000);
+        solo.waitForDialogToOpen();
     }
 
     public void scrollingToBookmarkTab(){
@@ -189,7 +194,7 @@ public class BookmarksTest extends ActivityInstrumentationTestCase2<MainActivity
         scrollingToBookmarkTab();
         ImageButton EditButton = (ImageButton) solo.getView("imgBookmarkEdit");
         solo.clickOnView(EditButton);
-        solo.waitForDialogToOpen(5000);
+        solo.waitForDialogToOpen();
         solo.clearEditText(0);
         solo.sleep(5000);
         solo.enterText(0,"My renamed bookmark");
