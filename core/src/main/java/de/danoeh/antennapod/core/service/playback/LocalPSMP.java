@@ -239,13 +239,14 @@ public class LocalPSMP extends PlaybackServiceMediaPlayer {
                 }
                 setSpeed(speed);
                 setVolume(UserPreferences.getLeftVolume(), UserPreferences.getRightVolume());
-
-                if (playerStatus == PlayerStatus.PREPARED && media.getPosition() > 0) {
+                if (playerStatus == PlayerStatus.PREPARED && media.getPosition() > 0 &&
+                    UserPreferences.getAutomaticRewindSecs() == UserPreferences.AUTOMATIC_REWIND_VARIABLE) {
                     int newPosition = RewindAfterPauseUtils.calculatePositionWithRewind(
-                        media.getPosition(),
-                        media.getLastPlayedTime());
+                            media.getPosition(),
+                            media.getLastPlayedTime());
                     seekToSync(newPosition);
                 }
+
                 mediaPlayer.start();
 
                 setPlayerStatus(PlayerStatus.PLAYING, media);
@@ -276,14 +277,14 @@ public class LocalPSMP extends PlaybackServiceMediaPlayer {
             releaseWifiLockIfNecessary();
             if (playerStatus == PlayerStatus.PLAYING) {
                 Log.d(TAG, "Pausing playback.");
-                int resumePosition = getPosition() - (UserPreferences.getAutomaticRewindSecs() * 1000);
-                if(resumePosition < 0){
-                    resumePosition = 0;
-                }
                 mediaPlayer.pause();
-                mediaPlayer.seekTo(resumePosition);
+                int currentPosition = getPosition();
+                int resumePosition = RewindAfterPauseUtils.calculatePositionWithFixedRewind(currentPosition, UserPreferences.getAutomaticRewindSecs());
+                if(resumePosition != currentPosition){
+                    Log.d(TAG, "Rewinding playback after pause.");
+                    mediaPlayer.seekTo(resumePosition);
+                }
                 setPlayerStatus(PlayerStatus.PAUSED, media, resumePosition);
-
                 if (abandonFocus) {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                         AudioFocusRequest.Builder builder = new AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN)
