@@ -10,5 +10,5 @@ Version 1.0
 
 Version 2.0
 -------------
-* Single Search Page for all 3 providers, displayed in a tabbed view allowing the user to swipe between provider search fragments. A forth tab allows for URL input podcast subscription
-* Podcast of the Day provides users with a new daily podcast suggestion, with the ability to generate new suggestions without waiting for a new day.
+* Single Search Page for all 3 providers, displayed in a tabbed view allowing the user to swipe between provider search fragments. A forth tab allows for URL input podcast subscription. [#13]
+* Podcast of the Day provides users with a new daily podcast suggestion, with the ability to generate new suggestions without waiting for a new day.[#36]
