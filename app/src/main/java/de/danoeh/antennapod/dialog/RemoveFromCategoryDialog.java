@@ -54,7 +54,7 @@ public class RemoveFromCategoryDialog {
                 Toast.makeText(activity, activity.getString(R.string.successfully_removed_from_category), Toast.LENGTH_LONG).show();
 
                 fragment.setUserPreferencesToCategoryView();
-
+                fragment.refresh();
             }
         });
         builder.setNegativeButton(R.string.cancel_label, new DialogInterface.OnClickListener() {
