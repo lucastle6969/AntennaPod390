@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 import de.danoeh.antennapod.core.feed.Bookmark;
+import de.danoeh.antennapod.core.feed.Category;
 import de.danoeh.antennapod.core.feed.Chapter;
 import de.danoeh.antennapod.core.feed.Feed;
 import de.danoeh.antennapod.core.feed.FeedItem;
@@ -46,7 +47,6 @@ public final class DBReader {
      * Maximum size of the list returned by {@link #getDownloadLog()}.
      */
     private static final int DOWNLOAD_LOG_SIZE = 200;
-
 
     private DBReader() {
     }
@@ -85,6 +85,10 @@ public final class DBReader {
                 cursor.close();
             }
         }
+    }
+
+    public static int getFeedListSize(){
+        return getFeedList().size();
     }
 
     /**
@@ -842,6 +846,58 @@ public final class DBReader {
     }
 
     /**
+     * Returns all categories containing their feedIds
+     * @return  returns a list of all categories
+     */
+    public static List<Category> getAllCategories() {
+        List<Category> result = new ArrayList<>();
+        Category category;
+        PodDBAdapter adapter = PodDBAdapter.getInstance();
+        adapter.open();
+        Cursor categoryCursor = null;
+        Cursor associationCursor = null;
+        try {
+            categoryCursor = adapter.getAllCategories();
+            while(categoryCursor.moveToNext()){
+                category = Category.fromCursor(categoryCursor);
+                associationCursor = adapter.getFeedIdsForCategory(category.getId());
+                while(associationCursor.moveToNext()) {
+                    int indexFeedId = associationCursor.getColumnIndex(PodDBAdapter.KEY_FEED);
+                    long feedId = associationCursor.getLong(indexFeedId);
+                    category.addFeedId(feedId);
+                }
+                associationCursor.close();
+                result.add(category);
+            }
+            categoryCursor.close();
+        } finally {
+            if(categoryCursor != null) {
+                categoryCursor.close();
+            }
+            if(associationCursor != null) {
+                associationCursor.close();
+            }
+            adapter.close();
+        }
+        return result;
+    }
+
+    /**
+     * This method is used to check whether a category already exists with a certain name
+     * @param name Name to check if it already exists
+     * @return Returns true if parameter name is a duplicate category name. False otherwise
+     */
+    public static boolean isDuplicateCategoryName(String name) {
+        List<Category> categoriesInDb = getAllCategories();
+        for (Category category : categoriesInDb) {
+            if (category.getName().equalsIgnoreCase(name)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Searches the DB for a FeedMedia of the given id.
      *
      * @param mediaId The id of the object
@@ -1161,6 +1217,15 @@ public final class DBReader {
             this.numDownloadedItems = numDownloadedItems;
             this.feedCounters = feedIndicatorValues;
             this.reclaimableSpace = reclaimableSpace;
+        }
+
+        public Feed getFeedById(Long id){
+            for(Feed feed:feeds){
+                if(feed.getId() == id){
+                    return feed;
+                }
+            }
+            return null;
         }
     }
 }

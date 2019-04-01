@@ -109,6 +109,9 @@ public class UserPreferences {
     private static final String PREF_LEFT_VOLUME = "prefLeftVolume";
     private static final String PREF_RIGHT_VOLUME = "prefRightVolume";
 
+    // Categories
+    public static final String PREF_CATEGORY_TOGGLE = "prefCategoryToggle";
+
     // Experimental
     private static final String PREF_STEREO_TO_MONO = "PrefStereoToMono";
     public static final String PREF_CAST_ENABLED = "prefCast"; //Used for enabling Chromecast support
@@ -221,6 +224,9 @@ public class UserPreferences {
         return Integer.parseInt(value);
     }
 
+    public static boolean getCategoryToggle(){
+        return prefs.getBoolean(PREF_CATEGORY_TOGGLE, false);
+    }
     /**
      * Returns notification priority.
      *
@@ -521,6 +527,12 @@ public class UserPreferences {
              .putInt(PREF_LEFT_VOLUME, leftVolume)
              .putInt(PREF_RIGHT_VOLUME, rightVolume)
              .apply();
+    }
+
+    public static void setCategoryToggle(boolean categoryToggle){
+        prefs.edit()
+                .putBoolean(PREF_CATEGORY_TOGGLE, categoryToggle)
+                .apply();
     }
 
     public static void setAutodownloadSelectedNetworks(String[] value) {

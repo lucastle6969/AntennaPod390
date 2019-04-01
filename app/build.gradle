@@ -128,8 +128,13 @@ android {
         unitTests {
             includeAndroidResources = true
         }
-    }
+        unitTests.all {
+            jacoco {
+                includeNoLocationClasses = true
+            }
+        }
 
+    }
     flavorDimensions "market"
     productFlavors {
         free {
