@@ -69,6 +69,7 @@ public class UserPreferences {
     private static final String PREF_PAUSE_PLAYBACK_FOR_FOCUS_LOSS = "prefPauseForFocusLoss";
     private static final String PREF_RESUME_AFTER_CALL = "prefResumeAfterCall";
     public static final String PREF_VIDEO_BEHAVIOR = "prefVideoBehavior";
+    public static final String PREF_AUTOMATIC_REWIND = "prefAutomaticRewind";
 
     // Network
     private static final String PREF_ENQUEUE_DOWNLOADED = "prefEnqueueDownloaded";
@@ -108,6 +109,9 @@ public class UserPreferences {
     private static final String PREF_LEFT_VOLUME = "prefLeftVolume";
     private static final String PREF_RIGHT_VOLUME = "prefRightVolume";
 
+    // Categories
+    public static final String PREF_CATEGORY_TOGGLE = "prefCategoryToggle";
+
     // Experimental
     private static final String PREF_STEREO_TO_MONO = "PrefStereoToMono";
     public static final String PREF_CAST_ENABLED = "prefCast"; //Used for enabling Chromecast support
@@ -128,6 +132,8 @@ public class UserPreferences {
     public static final int FEED_COUNTER_SHOW_UNPLAYED = 2;
     public static final int FEED_COUNTER_SHOW_NONE = 3;
     public static final int FEED_COUNTER_SHOW_DOWNLOADED = 4;
+    public static final int AUTOMATIC_REWIND_DISABLED = 0;
+    public static final int AUTOMATIC_REWIND_VARIABLE = -1;
 
     private static Context context;
     private static SharedPreferences prefs;
@@ -218,6 +224,9 @@ public class UserPreferences {
         return Integer.parseInt(value);
     }
 
+    public static boolean getCategoryToggle(){
+        return prefs.getBoolean(PREF_CATEGORY_TOGGLE, false);
+    }
     /**
      * Returns notification priority.
      *
@@ -424,6 +433,9 @@ public class UserPreferences {
         return prefs.getInt(PREF_REWIND_SECS, 30);
     }
 
+    public static int getAutomaticRewindSecs() {
+        return Integer.parseInt(prefs.getString(PREF_AUTOMATIC_REWIND, "0"));
+    }
 
     /**
      * Returns the time after which an episode should be auto-flattr'd in percent of the episode's
@@ -515,6 +527,12 @@ public class UserPreferences {
              .putInt(PREF_LEFT_VOLUME, leftVolume)
              .putInt(PREF_RIGHT_VOLUME, rightVolume)
              .apply();
+    }
+
+    public static void setCategoryToggle(boolean categoryToggle){
+        prefs.edit()
+                .putBoolean(PREF_CATEGORY_TOGGLE, categoryToggle)
+                .apply();
     }
 
     public static void setAutodownloadSelectedNetworks(String[] value) {

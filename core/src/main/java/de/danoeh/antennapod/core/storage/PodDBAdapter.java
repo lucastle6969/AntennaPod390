@@ -26,6 +26,7 @@ import java.util.Set;
 import de.danoeh.antennapod.core.R;
 import de.danoeh.antennapod.core.event.ProgressEvent;
 import de.danoeh.antennapod.core.feed.Bookmark;
+import de.danoeh.antennapod.core.feed.Category;
 import de.danoeh.antennapod.core.feed.Chapter;
 import de.danoeh.antennapod.core.feed.Feed;
 import de.danoeh.antennapod.core.feed.FeedItem;
@@ -59,6 +60,7 @@ public class PodDBAdapter {
 
     // Key-constants
     public static final String KEY_ID = "id";
+    public static final String KEY_CATEGORY_ID = "category_id";
     public static final String KEY_TITLE = "title";
     public static final String KEY_CUSTOM_TITLE = "custom_title";
     public static final String KEY_NAME = "name";
@@ -116,6 +118,8 @@ public class PodDBAdapter {
     public static final String KEY_BOOKMARK_TIMESTAMP = "timestamp";
     public static final String KEY_BOOKMARK_UID = "uid";
     public static final String KEY_BOOKMARK_PODCAST = "podcast_title";
+    public static final String KEY_CATEGORY_NAME = "category_name";
+    public static final String KEY_CATEGORY_FK = "category_fk";
 
     // Table names
     static final String TABLE_NAME_FEEDS = "Feeds";
@@ -127,6 +131,12 @@ public class PodDBAdapter {
     static final String TABLE_NAME_SIMPLECHAPTERS = "SimpleChapters";
     static final String TABLE_NAME_FAVORITES = "Favorites";
     static final String TABLE_NAME_BOOKMARKS = "Bookmarks";
+    static final String TABLE_NAME_CATEGORIES = "Categories";
+    static final String TABLE_NAME_ASSOCIATION_FOR_CATEGORIES = "AssociationForCategories";
+
+    // Default values
+    public static final int UNCATEGORIZED_CATEGORY_ID = 1;
+    public static final String UNCATEGORIZED_CATEGORY_NAME = "Uncategorized Section";
 
     // SQL Statements for creating new tables
     private static final String TABLE_PRIMARY_KEY = KEY_ID
@@ -136,6 +146,15 @@ public class PodDBAdapter {
             + TABLE_NAME_BOOKMARKS + " (" + KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
             + KEY_BOOKMARK_TITLE + " VARCHAR," + KEY_BOOKMARK_TIMESTAMP + " INTEGER,"
             + KEY_BOOKMARK_UID + " VARCHAR," + KEY_BOOKMARK_PODCAST + " VARCHAR)";
+
+    private static final String CREATE_TABLE_CATEGORIES = "CREATE TABLE "
+            + TABLE_NAME_CATEGORIES + " (" + KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+            + KEY_CATEGORY_NAME + " VARCHAR)";
+
+    private static final String CREATE_TABLE_ASSOCIATION_FOR_CATEGORIES = "CREATE TABLE "
+            + TABLE_NAME_ASSOCIATION_FOR_CATEGORIES + " (" + KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+            + KEY_FEED + " INTEGER," + KEY_CATEGORY_ID + " INTEGER," + " CONSTRAINT " + KEY_CATEGORY_FK
+            + " FOREIGN KEY (" + KEY_CATEGORY_ID + ") REFERENCES " + TABLE_NAME_CATEGORIES + "(" + KEY_ID + "))";
 
     private static final String CREATE_TABLE_FEEDS = "CREATE TABLE "
             + TABLE_NAME_FEEDS + " (" + TABLE_PRIMARY_KEY + KEY_TITLE
@@ -224,6 +243,12 @@ public class PodDBAdapter {
             + TABLE_NAME_FAVORITES + "(" + KEY_ID + " INTEGER PRIMARY KEY,"
             + KEY_FEEDITEM + " INTEGER," + KEY_FEED + " INTEGER)";
 
+
+    // Additional sql statements
+    private static final String INSERT_UNCATEGORIZED_CATEGORY = "INSERT INTO " + TABLE_NAME_CATEGORIES
+            + " (" + KEY_ID + ", " + KEY_CATEGORY_NAME + ") VALUES (" + UNCATEGORIZED_CATEGORY_ID
+            + ", '" + UNCATEGORIZED_CATEGORY_NAME + "')";
+
     /**
      * Select all columns from the feed-table
      */
@@ -288,7 +313,9 @@ public class PodDBAdapter {
             TABLE_NAME_QUEUE,
             TABLE_NAME_SIMPLECHAPTERS,
             TABLE_NAME_FAVORITES,
-            TABLE_NAME_BOOKMARKS
+            TABLE_NAME_BOOKMARKS,
+            TABLE_NAME_CATEGORIES,
+            TABLE_NAME_ASSOCIATION_FOR_CATEGORIES
     };
 
     /**
@@ -368,6 +395,7 @@ public class PodDBAdapter {
         try {
             for (String tableName : ALL_TABLES) {
                 db.delete(tableName, "1", null);
+                db.execSQL("DELETE FROM SQLITE_SEQUENCE WHERE NAME = '" + tableName + "'");
             }
             return true;
         } finally {
@@ -417,6 +445,7 @@ public class PodDBAdapter {
             db.update(TABLE_NAME_FEEDS, values, KEY_ID + "=?",
                     new String[]{String.valueOf(feed.getId())});
         }
+        addToUncategorizedCategory(feed.getId());
         return feed.getId();
     }
 
@@ -634,6 +663,101 @@ public class PodDBAdapter {
         return result;
     }
 
+    public long setSingleCategory(Category category) {
+        long result = 0;
+        try {
+            db.beginTransactionNonExclusive();
+            result = setCategory(category);
+            db.setTransactionSuccessful();
+        } catch (SQLException e) {
+            Log.e(TAG, Log.getStackTraceString(e));
+        } finally {
+            db.endTransaction();
+        }
+        return result;
+    }
+
+    public long deleteACategory(Category category) {
+        long result = 0;
+        try {
+            db.beginTransactionNonExclusive();
+            result = deleteCategory(category);
+            db.setTransactionSuccessful();
+        } catch (SQLException e) {
+            Log.e(TAG, Log.getStackTraceString(e));
+        } finally {
+            db.endTransaction();
+        }
+        return result;
+    }
+
+    public long removeAFeed(Feed feed) {
+        long result = 0;
+        try {
+            db.beginTransactionNonExclusive();
+            result = removeFeedFromSubscriptions(feed);
+            db.setTransactionSuccessful();
+        } catch (SQLException e) {
+            Log.e(TAG, Log.getStackTraceString(e));
+        } finally {
+            db.endTransaction();
+        }
+        return result;
+    }
+
+    public long addFeedIntoUncategorizedCategory(long feedId) {
+        long result = 0;
+        try {
+            db.beginTransactionNonExclusive();
+            result = addToUncategorizedCategory(feedId);
+            db.setTransactionSuccessful();
+        } catch (SQLException e) {
+            Log.e(TAG, Log.getStackTraceString(e));
+        } finally {
+            db.endTransaction();
+        }
+        return result;
+    }
+
+    /**
+     * Update a category
+     * @param category the category to be updated
+     * @return
+     */
+    public long updateSingleCategory(Category category) {
+        long result = 0;
+        try {
+            db.beginTransactionNonExclusive();
+            result = updateCategory(category);
+            db.setTransactionSuccessful();
+        } catch (SQLException e) {
+            Log.e(TAG, Log.getStackTraceString(e));
+        } finally {
+            db.endTransaction();
+        }
+        return result;
+    }
+
+    /**
+     * Update a feed and category association
+     * @param feedId
+     * @param categoryId
+     * @return
+     */
+    public long updateFeedCategory(long feedId, long categoryId) {
+        long result = 0;
+        try {
+            db.beginTransactionNonExclusive();
+            result = updateFeedCategoryAssociation(feedId, categoryId);
+            db.setTransactionSuccessful();
+        }catch(SQLException e) {
+            Log.e(TAG, Log.getStackTraceString(e));
+        } finally {
+            db.endTransaction();
+        }
+        return result;
+    }
+
     /**
      * Update the flattr status of a FeedItem
      */
@@ -782,6 +906,68 @@ public class PodDBAdapter {
                 new String[]{String.valueOf(bookmark.getId())});
         return bookmark.getId();
     }
+
+    /**
+     * Insert Category object into the TABLE_NAME_CATEGORIES table of the database
+     * @param category  The Category object
+     * @return the id of the entry
+     */
+    private long setCategory(Category category) {
+        ContentValues categoryValue = new ContentValues();
+        categoryValue.put(KEY_CATEGORY_NAME, category.getName());
+        category.setId(db.insert(TABLE_NAME_CATEGORIES, null, categoryValue));
+        return category.getId();
+    }
+
+    /**
+     * Delete Category object in the TABLE_NAME_CATEGORIES table of the database
+     * @param category  The Category object
+     * @return the id of the entry
+     */
+    private long deleteCategory(Category category) {
+        db.delete(TABLE_NAME_CATEGORIES, KEY_ID + "=?",
+                new String[]{String.valueOf(category.getId())});
+        return category.getId();
+    }
+
+    /**
+     * Remove Feed object in the CREATE_TABLE_ASSOCIATION_FOR_CATEGORIES table of the database
+     * @param feed  The Feed object
+     * @return the id of the entry
+     */
+    private long removeFeedFromSubscriptions(Feed feed) {
+        db.delete(TABLE_NAME_ASSOCIATION_FOR_CATEGORIES, KEY_FEED + "=?",
+                new String[]{String.valueOf(feed.getId())});
+        return feed.getId();
+    }
+
+    private long addToUncategorizedCategory(long feedId) {
+        ContentValues associationValue = new ContentValues();
+        associationValue.put(KEY_FEED, feedId);
+        associationValue.put(KEY_CATEGORY_ID, UNCATEGORIZED_CATEGORY_ID);
+        return db.insert(TABLE_NAME_ASSOCIATION_FOR_CATEGORIES, null, associationValue);
+    }
+
+    /**
+     * Update a Category object in the TABLE_NAME_CATEGORIES table of the database
+     * @param category The Category object
+     * @return The id of that Category object
+     */
+    private long updateCategory(Category category) {
+        ContentValues categoryValue = new ContentValues();
+        categoryValue.put(KEY_CATEGORY_NAME, category.getName());
+        db.update(TABLE_NAME_CATEGORIES, categoryValue, KEY_ID + "=?",
+                new String[]{String.valueOf(category.getId())});
+        return category.getId();
+    }
+
+    private long updateFeedCategoryAssociation(long feedId, long categoryId) {
+        ContentValues associationValue = new ContentValues();
+        associationValue.put(KEY_CATEGORY_ID, categoryId);
+        return db.update(TABLE_NAME_ASSOCIATION_FOR_CATEGORIES, associationValue,KEY_FEED
+                + "=?", new String[]{String.valueOf(feedId)});
+    }
+
 
     public void setFeedItemRead(int played, long itemId, long mediaId,
                                 boolean resetMediaPosition) {
@@ -1455,6 +1641,31 @@ public class PodDBAdapter {
     }
 
     /**
+     * Get a cursor to all categories and their feed ids
+     * @return Cursor of the first category and feed association
+     */
+    public final Cursor getAllCategories() {
+        String query = "SELECT * FROM " + TABLE_NAME_CATEGORIES;
+        return db.rawQuery(query, null);
+    }
+
+    public final Cursor getFeedIdsForCategory(long categoryId) {
+        String query = "SELECT * FROM " + TABLE_NAME_ASSOCIATION_FOR_CATEGORIES
+                     + " WHERE " + KEY_CATEGORY_ID + " = " + categoryId;
+
+        return db.rawQuery(query, null);
+    }
+
+    /**
+     * Get a cursor to all the feed ids that are categorized
+     * @return Cursor of the first categorized feed
+     */
+    public final Cursor getAllFeedIdsInCategories() {
+        final String query = "SELECT " + KEY_FEED + " FROM " + TABLE_NAME_ASSOCIATION_FOR_CATEGORIES;
+        return db.rawQuery(query, null);
+    }
+
+    /**
      * Uses DatabaseUtils to escape a search query and removes ' at the
      * beginning and the end of the string returned by the escape method.
      */
@@ -1668,6 +1879,12 @@ public class PodDBAdapter {
         }
 
         @Override
+        public void onOpen(SQLiteDatabase db){
+            super.onOpen(db);
+            db.execSQL("PRAGMA foreign_keys = ON;");
+        }
+
+        @Override
         public void onCreate(final SQLiteDatabase db) {
             db.execSQL(CREATE_TABLE_FEEDS);
             db.execSQL(CREATE_TABLE_FEED_ITEMS);
@@ -1677,6 +1894,10 @@ public class PodDBAdapter {
             db.execSQL(CREATE_TABLE_SIMPLECHAPTERS);
             db.execSQL(CREATE_TABLE_FAVORITES);
             db.execSQL(CREATE_TABLE_BOOKMARKS);
+            db.execSQL(CREATE_TABLE_CATEGORIES);
+            db.execSQL(INSERT_UNCATEGORIZED_CATEGORY);
+
+            db.execSQL(CREATE_TABLE_ASSOCIATION_FOR_CATEGORIES);
 
             db.execSQL(CREATE_INDEX_FEEDITEMS_FEED);
             db.execSQL(CREATE_INDEX_FEEDITEMS_PUBDATE);

@@ -200,6 +200,30 @@ public class PreferencesTest extends ActivityInstrumentationTestCase2<Preference
         solo.waitForDialogToClose(1000);
     }
 
+    public void testRewindSettings() {
+        solo.clickOnText(solo.getString(R.string.playback_pref));
+        solo.clickOnText(solo.getString(R.string.pref_automaticRewind_title));
+        solo.waitForDialogToOpen(3000);
+        String[] values = res.getStringArray(R.array.automatic_rewind_values);
+        String[] entries = new String[values.length];
+        entries[0] = res.getString(R.string.automatic_rewind_disabled);
+        entries[1] = res.getString(R.string.automatic_rewind_variable);
+        for (int index = 2; index < values.length; index++) {
+            int value = Integer.parseInt(values[index]);
+            if(value < 60) {
+                entries[index] = res.getQuantityString(R.plurals.time_seconds_quantified, value, value);
+            } else {
+                value /= 60;
+                entries[index] = res.getQuantityString(R.plurals.time_minutes_quantified, value, value);
+            }
+        }
+
+        for (String entry : entries){
+            assertTrue(solo.searchText(entry));
+        }
+
+    }
+
     public void testPauseForInterruptions() {
         solo.clickOnText(solo.getString(R.string.playback_pref));
         final boolean pauseForFocusLoss = UserPreferences.shouldPauseForFocusLoss();

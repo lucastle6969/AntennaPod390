@@ -2,6 +2,8 @@ package de.danoeh.antennapod.core.util;
 
 import java.util.concurrent.TimeUnit;
 
+import de.danoeh.antennapod.core.preferences.UserPreferences;
+
 /**
  * This class calculates the proper rewind time after the pause and resume.
  * <p>
@@ -43,6 +45,26 @@ public class RewindAfterPauseUtils {
         }
         else {
             return currentPosition;
+        }
+    }
+
+    /**
+     * @param currentPosition  current position in a media file in ms
+     * @param rewindSeconds  seconds by which to calculate the time to rewind to
+     * @return  new rewinded position for playback in milliseconds, guaranteed to be non-negative.
+     */
+    public static int calculatePositionWithFixedRewind(int currentPosition, int rewindSeconds){
+        if(rewindSeconds == UserPreferences.AUTOMATIC_REWIND_DISABLED || rewindSeconds == UserPreferences.AUTOMATIC_REWIND_VARIABLE){
+            return currentPosition;
+        } else if(rewindSeconds > 0) {
+            long rewindTime = TimeUnit.SECONDS.toMillis(rewindSeconds);
+            int newPosition = currentPosition - ((int) rewindTime);
+            if(newPosition < 0){
+                newPosition = 0;
+            }
+            return newPosition;
+        } else {
+            throw(new RuntimeException("Expected input to be positive or a predefined constant!"));
         }
     }
 }

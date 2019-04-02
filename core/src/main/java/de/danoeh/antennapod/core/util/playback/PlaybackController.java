@@ -7,12 +7,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
-import android.content.SharedPreferences;
 import android.content.res.TypedArray;
 import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.IBinder;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
@@ -24,10 +22,8 @@ import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
-import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import de.danoeh.antennapod.core.R;
@@ -42,12 +38,10 @@ import de.danoeh.antennapod.core.service.playback.PlayerStatus;
 import de.danoeh.antennapod.core.storage.DBTasks;
 import de.danoeh.antennapod.core.util.Converter;
 import de.danoeh.antennapod.core.util.playback.Playable.PlayableUtils;
-import rx.Completable;
 import rx.Observable;
 import rx.Single;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.observers.Subscribers;
 import rx.schedulers.Schedulers;
 
 /**
@@ -83,6 +77,13 @@ public abstract class PlaybackController {
      * pressed.
      */
     private final boolean reinitOnPause;
+
+    private int autoRewindSeconds = 0;
+
+    public PlaybackController(@NonNull Activity activity, boolean reinitOnPause, int autoRewindSeconds) {
+        this(activity,reinitOnPause);
+        this.autoRewindSeconds = autoRewindSeconds;
+    }
 
     public PlaybackController(@NonNull Activity activity, boolean reinitOnPause) {
 
@@ -583,6 +584,10 @@ public abstract class PlaybackController {
      */
     protected void setScreenOn(boolean enable) {
 
+    }
+
+    public void setAutomaticRewindSeconds(int autoRewindSeconds){
+        this.autoRewindSeconds = autoRewindSeconds;
     }
 
     public void playPause() {
