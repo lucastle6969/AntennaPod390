@@ -834,6 +834,21 @@ public class DBWriter {
     }
 
     /**
+     * Saves RadioStream object in the recommended radio stream table for unit testing purposes.
+     * This method will save all attributes of RadioStream object.
+     *
+     * @param radioStream
+     */
+    public static Future<?> setRecommendedRadioStreamTest(final RadioStream radioStream){
+        return dbExec.submit(()-> {
+            PodDBAdapter adapter = PodDBAdapter.getInstance();
+            adapter.open();
+            adapter.setSingleRecommendedRadioStreamsTest(radioStream);
+            adapter.close();
+        });
+    }
+
+    /**
      * Updates RadioStream object in the database by overwriting all changed and unchanged attribute
      * values using the passed RadioStream object.
      * @param radioStream The RadioStream object used to overwrite the previous one.

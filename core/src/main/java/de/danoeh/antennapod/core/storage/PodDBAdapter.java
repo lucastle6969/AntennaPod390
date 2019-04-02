@@ -18,9 +18,12 @@ import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import de.danoeh.antennapod.core.R;
@@ -142,6 +145,10 @@ public class PodDBAdapter {
     // Default values
     public static final int UNCATEGORIZED_CATEGORY_ID = 1;
     public static final String UNCATEGORIZED_CATEGORY_NAME = "Uncategorized Section";
+
+    //Recommended RadioStream data
+    public static final String KEY_RECOMMENDED_RADIO_TITLE_1 = "BBC media";
+    public static final String KEY_RECOMMENDED_RADIO_URL_1 = "http://bbcmedia.ic.llnwd.net/stream/bbcmedia_radio2_mf_p";
 
     // SQL Statements for creating new tables
     private static final String TABLE_PRIMARY_KEY = KEY_ID
@@ -332,6 +339,10 @@ public class PodDBAdapter {
             TABLE_NAME_RADIO_STREAMS,
             TABLE_NAME_RECOMMENDED_RADIO_STREAMS
     };
+
+    private static final Map<String, String> RECOMMENDED_RADIO_STREAM_MAP = new HashMap<String, String>() {{
+        put(KEY_RECOMMENDED_RADIO_TITLE_1, KEY_RECOMMENDED_RADIO_URL_1);
+    }};
 
     /**
      * Contains FEEDITEM_SEL_FI_SMALL as comma-separated list. Useful for raw queries.
@@ -720,6 +731,39 @@ public class PodDBAdapter {
         return result;
     }
 
+    private static void setAllRecommendedRadioStreams() {
+        List<RadioStream> recommendedRadioStreams = new ArrayList<>();
+        for (Map.Entry<String, String> pair : RECOMMENDED_RADIO_STREAM_MAP.entrySet()) {
+            RadioStream radio = new RadioStream(-1, pair.getKey(), pair.getValue());
+            recommendedRadioStreams.add(radio);
+        }
+        try {
+            db.beginTransactionNonExclusive();
+            for(RadioStream radio: recommendedRadioStreams){
+                setRecommendedRadioStream(radio);
+            }
+            db.setTransactionSuccessful();
+        } catch (SQLException e) {
+            Log.e(TAG, Log.getStackTraceString(e));
+        } finally {
+            db.endTransaction();
+        }
+    }
+
+    public long setSingleRecommendedRadioStreamsTest(RadioStream radioStream) {
+        long result = 0;
+        try {
+            db.beginTransactionNonExclusive();
+            result = setRecommendedRadioStream(radioStream);
+            db.setTransactionSuccessful();
+        } catch (SQLException e) {
+            Log.e(TAG, Log.getStackTraceString(e));
+        } finally {
+            db.endTransaction();
+        }
+        return result;
+    }
+
     public long updateSingleRadioStream(RadioStream radioStream) {
         long result = 0;
         try {
@@ -997,6 +1041,19 @@ public class PodDBAdapter {
         values.put(KEY_RADIO_TITLE, radioStream.getTitle());
         values.put(KEY_RADIO_URL, radioStream.getUrl());
         radioStream.setId(db.insert(TABLE_NAME_RADIO_STREAMS, null, values));
+        return radioStream.getId();
+    }
+
+    /**
+     * Insert RadioStream object into the TABLE_NAME_RECOMMENDED_RADIO_STREAMS table of the database
+     * @param radioStream
+     * @return returns id of newly inserted RadioStream
+     */
+    private static long setRecommendedRadioStream(RadioStream radioStream) {
+        ContentValues values = new ContentValues();
+        values.put(KEY_RADIO_TITLE, radioStream.getTitle());
+        values.put(KEY_RADIO_URL, radioStream.getUrl());
+        radioStream.setId(db.insert(TABLE_NAME_RECOMMENDED_RADIO_STREAMS, null, values));
         return radioStream.getId();
     }
 
@@ -2000,6 +2057,7 @@ public class PodDBAdapter {
             db.execSQL(CREATE_TABLE_ASSOCIATION_FOR_CATEGORIES);
             db.execSQL(CREATE_TABLE_RADIO_STREAMS);
             db.execSQL(CREATE_TABLE_RECOMMENDED_RADIO_STREAMS);
+            setAllRecommendedRadioStreams();
 
             db.execSQL(CREATE_INDEX_FEEDITEMS_FEED);
             db.execSQL(CREATE_INDEX_FEEDITEMS_PUBDATE);
