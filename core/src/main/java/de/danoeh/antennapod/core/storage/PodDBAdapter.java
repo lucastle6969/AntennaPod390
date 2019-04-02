@@ -1707,6 +1707,11 @@ public class PodDBAdapter {
         return db.rawQuery(query, null);
     }
 
+    public final Cursor getRadioStreams(String tableName) {
+        final String query = "SELECT * FROM " + tableName;
+        return  db.rawQuery(query, null);
+    }
+
     /**
      * Uses DatabaseUtils to escape a search query and removes ' at the
      * beginning and the end of the string returned by the escape method.

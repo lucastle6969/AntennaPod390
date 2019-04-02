@@ -1,5 +1,9 @@
 package de.danoeh.antennapod.core.feed;
 
+import android.database.Cursor;
+
+import de.danoeh.antennapod.core.storage.PodDBAdapter;
+
 public class RadioStream {
 
     private long id;
@@ -10,6 +14,18 @@ public class RadioStream {
         this.id = id;
         this.title = title;
         this.url = url;
+    }
+
+    public static RadioStream fromCursor(Cursor cursor) {
+        int indexId = cursor.getColumnIndex(PodDBAdapter.KEY_ID);
+        int indexTitle = cursor.getColumnIndex(PodDBAdapter.KEY_RADIO_TITLE);
+        int indexUrl = cursor.getColumnIndex(PodDBAdapter.KEY_RADIO_URL);
+
+        return new RadioStream(
+                cursor.getLong(indexId),
+                cursor.getString(indexTitle),
+                cursor.getString(indexUrl)
+        );
     }
 
     public long getId() {
