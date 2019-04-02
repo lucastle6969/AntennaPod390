@@ -848,6 +848,20 @@ public class DBWriter {
     }
 
     /**
+     * Delete a RadioStream from a category in db
+     *
+     * @param radioStream RadioStream object to delete
+     */
+    public static Future<?> deleteRadioStream(final RadioStream radioStream){
+        return dbExec.submit(()-> {
+            PodDBAdapter adapter = PodDBAdapter.getInstance();
+            adapter.open();
+            adapter.deleteUserRadioStream(radioStream);
+            adapter.close();
+        });
+    }
+
+    /**
      * Remove feed from subscriptions
      *
      * @param feed  Feed to be removed.
