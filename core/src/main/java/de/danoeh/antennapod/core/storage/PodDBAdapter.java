@@ -120,6 +120,8 @@ public class PodDBAdapter {
     public static final String KEY_BOOKMARK_PODCAST = "podcast_title";
     public static final String KEY_CATEGORY_NAME = "category_name";
     public static final String KEY_CATEGORY_FK = "category_fk";
+    public static final String KEY_RADIO_TITLE = "radio_title";
+    public static final String KEY_RADIO_URL = "radio_url";
 
     // Table names
     static final String TABLE_NAME_FEEDS = "Feeds";
@@ -133,6 +135,8 @@ public class PodDBAdapter {
     static final String TABLE_NAME_BOOKMARKS = "Bookmarks";
     static final String TABLE_NAME_CATEGORIES = "Categories";
     static final String TABLE_NAME_ASSOCIATION_FOR_CATEGORIES = "AssociationForCategories";
+    static final String TABLE_NAME_RADIO_STREAMS = "RadioStreams";
+    static final String TABLE_NAME_RECOMMENDED_RADIO_STREAMS = "RecommendedRadioStreams";
 
     // Default values
     public static final int UNCATEGORIZED_CATEGORY_ID = 1;
@@ -155,6 +159,14 @@ public class PodDBAdapter {
             + TABLE_NAME_ASSOCIATION_FOR_CATEGORIES + " (" + KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
             + KEY_FEED + " INTEGER," + KEY_CATEGORY_ID + " INTEGER," + " CONSTRAINT " + KEY_CATEGORY_FK
             + " FOREIGN KEY (" + KEY_CATEGORY_ID + ") REFERENCES " + TABLE_NAME_CATEGORIES + "(" + KEY_ID + "))";
+
+    private static final String CREATE_TABLE_RADIO_STREAMS = "CREATE TABLE "
+            + TABLE_NAME_RADIO_STREAMS + " (" + KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+            + KEY_RADIO_TITLE + " VARCHAR," + KEY_RADIO_URL + " VARCHAR)";
+
+    private static final String CREATE_TABLE_RECOMMENDED_RADIO_STREAMS = "CREATE TABLE "
+            + TABLE_NAME_RECOMMENDED_RADIO_STREAMS + " (" + KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+            + KEY_RADIO_TITLE + " VARCHAR," + KEY_RADIO_URL + " VARCHAR)";
 
     private static final String CREATE_TABLE_FEEDS = "CREATE TABLE "
             + TABLE_NAME_FEEDS + " (" + TABLE_PRIMARY_KEY + KEY_TITLE
@@ -315,7 +327,9 @@ public class PodDBAdapter {
             TABLE_NAME_FAVORITES,
             TABLE_NAME_BOOKMARKS,
             TABLE_NAME_CATEGORIES,
-            TABLE_NAME_ASSOCIATION_FOR_CATEGORIES
+            TABLE_NAME_ASSOCIATION_FOR_CATEGORIES,
+            TABLE_NAME_RADIO_STREAMS,
+            TABLE_NAME_RECOMMENDED_RADIO_STREAMS
     };
 
     /**
@@ -1898,6 +1912,8 @@ public class PodDBAdapter {
             db.execSQL(INSERT_UNCATEGORIZED_CATEGORY);
 
             db.execSQL(CREATE_TABLE_ASSOCIATION_FOR_CATEGORIES);
+            db.execSQL(CREATE_TABLE_RADIO_STREAMS);
+            db.execSQL(CREATE_TABLE_RECOMMENDED_RADIO_STREAMS);
 
             db.execSQL(CREATE_INDEX_FEEDITEMS_FEED);
             db.execSQL(CREATE_INDEX_FEEDITEMS_PUBDATE);
