@@ -198,9 +198,9 @@ dependencies {
     implementation 'com.github.mfietz:fyydlin:v0.3'
     implementation 'com.github.ByteHamster:SearchPreference:v1.0.8'
 
-    implementation 'com.google.firebase:firebase-core:16.0.1'
-    implementation 'com.facebook.android:facebook-android-sdk:[4,5)'
-    implementation 'com.facebook.android:facebook-share:[4,5)'
+    implementation 'com.google.firebase:firebase-core:16.0.8'
+    implementation 'com.facebook.android:facebook-android-sdk:4.41.0'
+    implementation 'com.facebook.android:facebook-share:4.41.0'
     implementation 'com.google.firebase:firebase-core:16.0.8'
     implementation 'com.google.firebase:firebase-perf:16.2.4'
 
