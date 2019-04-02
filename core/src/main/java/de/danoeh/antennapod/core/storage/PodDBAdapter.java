@@ -720,6 +720,20 @@ public class PodDBAdapter {
         return result;
     }
 
+    public long updateSingleRadioStream(RadioStream radioStream) {
+        long result = 0;
+        try {
+            db.beginTransactionNonExclusive();
+            result = updateRadioStream(radioStream);
+            db.setTransactionSuccessful();
+        } catch (SQLException e) {
+            Log.e(TAG, Log.getStackTraceString(e));
+        } finally {
+            db.endTransaction();
+        }
+        return result;
+    }
+
     public long removeAFeed(Feed feed) {
         long result = 0;
         try {
@@ -969,6 +983,20 @@ public class PodDBAdapter {
         values.put(KEY_RADIO_TITLE, radioStream.getTitle());
         values.put(KEY_RADIO_URL, radioStream.getUrl());
         radioStream.setId(db.insert(TABLE_NAME_RADIO_STREAMS, null, values));
+        return radioStream.getId();
+    }
+
+    /**
+     * Update a RadioStream object in the TABLE_NAME_RADIO_STREAMS table of the database
+     * @param radioStream The modified RadioStream object
+     * @return returns id of the modified RadioStream object
+     */
+    private long updateRadioStream(RadioStream radioStream) {
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(KEY_RADIO_TITLE, radioStream.getTitle());
+        contentValues.put(KEY_RADIO_URL, radioStream.getUrl());
+        db.update(TABLE_NAME_RADIO_STREAMS, contentValues, KEY_ID + "=?",
+                new String[]{String.valueOf(radioStream.getId())});
         return radioStream.getId();
     }
 

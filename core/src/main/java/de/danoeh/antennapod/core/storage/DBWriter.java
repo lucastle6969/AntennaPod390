@@ -834,6 +834,20 @@ public class DBWriter {
     }
 
     /**
+     * Updates RadioStream object in the database by overwriting all changed and unchanged attribute
+     * values using the passed RadioStream object.
+     * @param radioStream The RadioStream object used to overwrite the previous one.
+     */
+    public static Future<?> updateRadioStream(final RadioStream radioStream) {
+        return dbExec.submit(() -> {
+            PodDBAdapter adapter = PodDBAdapter.getInstance();
+            adapter.open();
+            adapter.updateSingleRadioStream(radioStream);
+            adapter.close();
+        });
+    }
+
+    /**
      * Remove feed from subscriptions
      *
      * @param feed  Feed to be removed.
