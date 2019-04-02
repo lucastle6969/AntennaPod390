@@ -37,6 +37,7 @@ import de.danoeh.antennapod.core.feed.FeedEvent;
 import de.danoeh.antennapod.core.feed.FeedItem;
 import de.danoeh.antennapod.core.feed.FeedMedia;
 import de.danoeh.antennapod.core.feed.FeedPreferences;
+import de.danoeh.antennapod.core.feed.RadioStream;
 import de.danoeh.antennapod.core.gpoddernet.model.GpodnetEpisodeAction;
 import de.danoeh.antennapod.core.preferences.GpodnetPreferences;
 import de.danoeh.antennapod.core.preferences.PlaybackPreferences;
@@ -814,6 +815,20 @@ public class DBWriter {
             PodDBAdapter adapter = PodDBAdapter.getInstance();
             adapter.open();
             adapter.deleteACategory(category);
+            adapter.close();
+        });
+    }
+
+    /**
+     * Saves RadioStream object in the database. This method will save all attributes of RadioStream object.
+     *
+     * @param radioStream
+     */
+    public static Future<?> setRadioStream(final RadioStream radioStream){
+        return dbExec.submit(()-> {
+            PodDBAdapter adapter = PodDBAdapter.getInstance();
+            adapter.open();
+            adapter.setSingleRadioStream(radioStream);
             adapter.close();
         });
     }

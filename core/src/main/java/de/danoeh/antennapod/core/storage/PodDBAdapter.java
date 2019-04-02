@@ -32,6 +32,7 @@ import de.danoeh.antennapod.core.feed.Feed;
 import de.danoeh.antennapod.core.feed.FeedItem;
 import de.danoeh.antennapod.core.feed.FeedMedia;
 import de.danoeh.antennapod.core.feed.FeedPreferences;
+import de.danoeh.antennapod.core.feed.RadioStream;
 import de.danoeh.antennapod.core.preferences.UserPreferences;
 import de.danoeh.antennapod.core.service.download.DownloadStatus;
 import de.danoeh.antennapod.core.util.LongIntMap;
@@ -705,6 +706,20 @@ public class PodDBAdapter {
         return result;
     }
 
+    public long setSingleRadioStream(RadioStream radioStream) {
+        long result = 0;
+        try {
+            db.beginTransactionNonExclusive();
+            result = setRadioStream(radioStream);
+            db.setTransactionSuccessful();
+        } catch (SQLException e) {
+            Log.e(TAG, Log.getStackTraceString(e));
+        } finally {
+            db.endTransaction();
+        }
+        return result;
+    }
+
     public long removeAFeed(Feed feed) {
         long result = 0;
         try {
@@ -942,6 +957,19 @@ public class PodDBAdapter {
         db.delete(TABLE_NAME_CATEGORIES, KEY_ID + "=?",
                 new String[]{String.valueOf(category.getId())});
         return category.getId();
+    }
+
+    /**
+     * Insert RadioStream object into the TABLE_NAME_RADIO_STREAMS table of the database
+     * @param radioStream
+     * @return returns id of newly inserted RadioStream
+     */
+    private long setRadioStream(RadioStream radioStream) {
+        ContentValues values = new ContentValues();
+        values.put(KEY_RADIO_TITLE, radioStream.getTitle());
+        values.put(KEY_RADIO_URL, radioStream.getUrl());
+        radioStream.setId(db.insert(TABLE_NAME_RADIO_STREAMS, null, values));
+        return radioStream.getId();
     }
 
     /**
