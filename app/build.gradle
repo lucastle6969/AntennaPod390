@@ -37,7 +37,6 @@ def getMyVersionCode() {
 
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
-    buildToolsVersion rootProject.ext.buildToolsVersion
 
     defaultConfig {
         minSdkVersion rootProject.ext.minSdkVersion
@@ -198,7 +197,8 @@ dependencies {
     implementation 'com.github.mfietz:fyydlin:v0.3'
     implementation 'com.github.ByteHamster:SearchPreference:v1.0.8'
 
-    implementation 'com.google.firebase:firebase-core:16.0.1'
+    implementation 'com.google.firebase:firebase-core:16.0.8'
+    implementation 'com.google.firebase:firebase-perf:16.2.4'
 
     testImplementation  'junit:junit:4.12'
     testImplementation 'org.robolectric:robolectric:4.2'
@@ -262,4 +262,5 @@ allprojects {
 }
 
 apply plugin: 'com.google.gms.google-services'
+apply plugin: 'com.google.firebase.firebase-perf'
 com.google.gms.googleservices.GoogleServicesPlugin.config.disableVersionCheck = true
