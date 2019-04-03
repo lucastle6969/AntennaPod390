@@ -18,9 +18,12 @@ import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import de.danoeh.antennapod.core.R;
@@ -32,6 +35,7 @@ import de.danoeh.antennapod.core.feed.Feed;
 import de.danoeh.antennapod.core.feed.FeedItem;
 import de.danoeh.antennapod.core.feed.FeedMedia;
 import de.danoeh.antennapod.core.feed.FeedPreferences;
+import de.danoeh.antennapod.core.feed.RadioStream;
 import de.danoeh.antennapod.core.preferences.UserPreferences;
 import de.danoeh.antennapod.core.service.download.DownloadStatus;
 import de.danoeh.antennapod.core.util.LongIntMap;
@@ -120,6 +124,8 @@ public class PodDBAdapter {
     public static final String KEY_BOOKMARK_PODCAST = "podcast_title";
     public static final String KEY_CATEGORY_NAME = "category_name";
     public static final String KEY_CATEGORY_FK = "category_fk";
+    public static final String KEY_RADIO_TITLE = "radio_title";
+    public static final String KEY_RADIO_URL = "radio_url";
 
     // Table names
     static final String TABLE_NAME_FEEDS = "Feeds";
@@ -133,10 +139,16 @@ public class PodDBAdapter {
     static final String TABLE_NAME_BOOKMARKS = "Bookmarks";
     static final String TABLE_NAME_CATEGORIES = "Categories";
     static final String TABLE_NAME_ASSOCIATION_FOR_CATEGORIES = "AssociationForCategories";
+    static final String TABLE_NAME_RADIO_STREAMS = "RadioStreams";
+    static final String TABLE_NAME_RECOMMENDED_RADIO_STREAMS = "RecommendedRadioStreams";
 
     // Default values
     public static final int UNCATEGORIZED_CATEGORY_ID = 1;
     public static final String UNCATEGORIZED_CATEGORY_NAME = "Uncategorized Section";
+
+    //Recommended RadioStream data
+    public static final String KEY_RECOMMENDED_RADIO_TITLE_1 = "BBC media";
+    public static final String KEY_RECOMMENDED_RADIO_URL_1 = "http://bbcmedia.ic.llnwd.net/stream/bbcmedia_radio2_mf_p";
 
     // SQL Statements for creating new tables
     private static final String TABLE_PRIMARY_KEY = KEY_ID
@@ -155,6 +167,14 @@ public class PodDBAdapter {
             + TABLE_NAME_ASSOCIATION_FOR_CATEGORIES + " (" + KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
             + KEY_FEED + " INTEGER," + KEY_CATEGORY_ID + " INTEGER," + " CONSTRAINT " + KEY_CATEGORY_FK
             + " FOREIGN KEY (" + KEY_CATEGORY_ID + ") REFERENCES " + TABLE_NAME_CATEGORIES + "(" + KEY_ID + "))";
+
+    private static final String CREATE_TABLE_RADIO_STREAMS = "CREATE TABLE "
+            + TABLE_NAME_RADIO_STREAMS + " (" + KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+            + KEY_RADIO_TITLE + " VARCHAR," + KEY_RADIO_URL + " VARCHAR)";
+
+    private static final String CREATE_TABLE_RECOMMENDED_RADIO_STREAMS = "CREATE TABLE "
+            + TABLE_NAME_RECOMMENDED_RADIO_STREAMS + " (" + KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+            + KEY_RADIO_TITLE + " VARCHAR," + KEY_RADIO_URL + " VARCHAR)";
 
     private static final String CREATE_TABLE_FEEDS = "CREATE TABLE "
             + TABLE_NAME_FEEDS + " (" + TABLE_PRIMARY_KEY + KEY_TITLE
@@ -315,8 +335,14 @@ public class PodDBAdapter {
             TABLE_NAME_FAVORITES,
             TABLE_NAME_BOOKMARKS,
             TABLE_NAME_CATEGORIES,
-            TABLE_NAME_ASSOCIATION_FOR_CATEGORIES
+            TABLE_NAME_ASSOCIATION_FOR_CATEGORIES,
+            TABLE_NAME_RADIO_STREAMS,
+            TABLE_NAME_RECOMMENDED_RADIO_STREAMS
     };
+
+    private static final Map<String, String> RECOMMENDED_RADIO_STREAM_MAP = new HashMap<String, String>() {{
+        put(KEY_RECOMMENDED_RADIO_TITLE_1, KEY_RECOMMENDED_RADIO_URL_1);
+    }};
 
     /**
      * Contains FEEDITEM_SEL_FI_SMALL as comma-separated list. Useful for raw queries.
@@ -691,6 +717,81 @@ public class PodDBAdapter {
         return result;
     }
 
+    public long setSingleRadioStream(RadioStream radioStream) {
+        long result = 0;
+        try {
+            db.beginTransactionNonExclusive();
+            result = setRadioStream(radioStream);
+            db.setTransactionSuccessful();
+        } catch (SQLException e) {
+            Log.e(TAG, Log.getStackTraceString(e));
+        } finally {
+            db.endTransaction();
+        }
+        return result;
+    }
+
+    private static void setAllRecommendedRadioStreams() {
+        List<RadioStream> recommendedRadioStreams = new ArrayList<>();
+        for (Map.Entry<String, String> pair : RECOMMENDED_RADIO_STREAM_MAP.entrySet()) {
+            RadioStream radio = new RadioStream(-1, pair.getKey(), pair.getValue());
+            recommendedRadioStreams.add(radio);
+        }
+        try {
+            db.beginTransactionNonExclusive();
+            for(RadioStream radio: recommendedRadioStreams){
+                setRecommendedRadioStream(radio);
+            }
+            db.setTransactionSuccessful();
+        } catch (SQLException e) {
+            Log.e(TAG, Log.getStackTraceString(e));
+        } finally {
+            db.endTransaction();
+        }
+    }
+
+    public long setSingleRecommendedRadioStreamsTest(RadioStream radioStream) {
+        long result = 0;
+        try {
+            db.beginTransactionNonExclusive();
+            result = setRecommendedRadioStream(radioStream);
+            db.setTransactionSuccessful();
+        } catch (SQLException e) {
+            Log.e(TAG, Log.getStackTraceString(e));
+        } finally {
+            db.endTransaction();
+        }
+        return result;
+    }
+
+    public long updateSingleRadioStream(RadioStream radioStream) {
+        long result = 0;
+        try {
+            db.beginTransactionNonExclusive();
+            result = updateRadioStream(radioStream);
+            db.setTransactionSuccessful();
+        } catch (SQLException e) {
+            Log.e(TAG, Log.getStackTraceString(e));
+        } finally {
+            db.endTransaction();
+        }
+        return result;
+    }
+
+    public long deleteUserRadioStream(RadioStream radioStream) {
+        long result = 0;
+        try {
+            db.beginTransactionNonExclusive();
+            result = deleteRadioStream(radioStream);
+            db.setTransactionSuccessful();
+        } catch (SQLException e) {
+            Log.e(TAG, Log.getStackTraceString(e));
+        } finally {
+            db.endTransaction();
+        }
+        return result;
+    }
+
     public long removeAFeed(Feed feed) {
         long result = 0;
         try {
@@ -928,6 +1029,57 @@ public class PodDBAdapter {
         db.delete(TABLE_NAME_CATEGORIES, KEY_ID + "=?",
                 new String[]{String.valueOf(category.getId())});
         return category.getId();
+    }
+
+    /**
+     * Insert RadioStream object into the TABLE_NAME_RADIO_STREAMS table of the database
+     * @param radioStream
+     * @return returns id of newly inserted RadioStream
+     */
+    private long setRadioStream(RadioStream radioStream) {
+        ContentValues values = new ContentValues();
+        values.put(KEY_RADIO_TITLE, radioStream.getTitle());
+        values.put(KEY_RADIO_URL, radioStream.getUrl());
+        radioStream.setId(db.insert(TABLE_NAME_RADIO_STREAMS, null, values));
+        return radioStream.getId();
+    }
+
+    /**
+     * Insert RadioStream object into the TABLE_NAME_RECOMMENDED_RADIO_STREAMS table of the database
+     * @param radioStream
+     * @return returns id of newly inserted RadioStream
+     */
+    private static long setRecommendedRadioStream(RadioStream radioStream) {
+        ContentValues values = new ContentValues();
+        values.put(KEY_RADIO_TITLE, radioStream.getTitle());
+        values.put(KEY_RADIO_URL, radioStream.getUrl());
+        radioStream.setId(db.insert(TABLE_NAME_RECOMMENDED_RADIO_STREAMS, null, values));
+        return radioStream.getId();
+    }
+
+    /**
+     * Update a RadioStream object in the TABLE_NAME_RADIO_STREAMS table of the database
+     * @param radioStream The modified RadioStream object
+     * @return returns id of the modified RadioStream object
+     */
+    private long updateRadioStream(RadioStream radioStream) {
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(KEY_RADIO_TITLE, radioStream.getTitle());
+        contentValues.put(KEY_RADIO_URL, radioStream.getUrl());
+        db.update(TABLE_NAME_RADIO_STREAMS, contentValues, KEY_ID + "=?",
+                new String[]{String.valueOf(radioStream.getId())});
+        return radioStream.getId();
+    }
+
+    /**
+     * Delete RadioStream object in the TABLE_NAME_RADIO_STREAMS table of the database
+     * @param radioStream  The RadioStream object to delete
+     * @return the id of the entry
+     */
+    private long deleteRadioStream(RadioStream radioStream) {
+        db.delete(TABLE_NAME_RADIO_STREAMS, KEY_ID + "=?",
+                new String[]{String.valueOf(radioStream.getId())});
+        return radioStream.getId();
     }
 
     /**
@@ -1665,6 +1817,11 @@ public class PodDBAdapter {
         return db.rawQuery(query, null);
     }
 
+    public final Cursor getRadioStreams(String tableName) {
+        final String query = "SELECT * FROM " + tableName;
+        return  db.rawQuery(query, null);
+    }
+
     /**
      * Uses DatabaseUtils to escape a search query and removes ' at the
      * beginning and the end of the string returned by the escape method.
@@ -1898,6 +2055,9 @@ public class PodDBAdapter {
             db.execSQL(INSERT_UNCATEGORIZED_CATEGORY);
 
             db.execSQL(CREATE_TABLE_ASSOCIATION_FOR_CATEGORIES);
+            db.execSQL(CREATE_TABLE_RADIO_STREAMS);
+            db.execSQL(CREATE_TABLE_RECOMMENDED_RADIO_STREAMS);
+            setAllRecommendedRadioStreams();
 
             db.execSQL(CREATE_INDEX_FEEDITEMS_FEED);
             db.execSQL(CREATE_INDEX_FEEDITEMS_PUBDATE);

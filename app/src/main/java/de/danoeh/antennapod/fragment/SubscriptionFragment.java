@@ -418,9 +418,6 @@ public class SubscriptionFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         switch(id) {
-            case R.id.testRadioBtn:
-                startActivity(new Intent(getActivity(), RadioStreamActivity.class));
-                break;
             case R.id.addCategory:
                 CreateCategoryDialog categoryDialog = new CreateCategoryDialog();
                 SubscriptionFragment sf = (SubscriptionFragment) getFragmentManager().findFragmentById(fragmentId);
