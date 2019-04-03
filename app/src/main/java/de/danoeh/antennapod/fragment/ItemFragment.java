@@ -31,6 +31,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.facebook.share.model.ShareLinkContent;
+import com.facebook.share.widget.ShareButton;
 import com.joanzapata.iconify.Iconify;
 import com.joanzapata.iconify.widget.IconButton;
 
@@ -181,7 +183,7 @@ public class ItemFragment extends Fragment implements OnSwipeGesture {
         }
         txtvDuration = (TextView) layout.findViewById(R.id.txtvDuration);
         txtvPublished = (TextView) layout.findViewById(R.id.txtvPublished);
-        if (Build.VERSION.SDK_INT >= 14) { // ellipsize is causing problems on old versions, see #448
+        if (Build.VERSION.SDK_INT >= 15) { // ellipsize is causing problems on old versions, see #448
             txtvTitle.setEllipsize(TextUtils.TruncateAt.END);
         }
         webvDescription = (WebView) layout.findViewById(R.id.webvDescription);
@@ -458,6 +460,13 @@ public class ItemFragment extends Fragment implements OnSwipeGesture {
         } else {
             butAction2.setVisibility(View.INVISIBLE);
         }
+
+        ShareLinkContent content = new ShareLinkContent.Builder()
+                .setContentUrl(Uri.parse(item.getLink()))
+                .build();
+
+        ShareButton shareButton = (ShareButton) root.findViewById(R.id.fb_share_button);
+        shareButton.setShareContent(content);
     }
 
     private final View.OnLongClickListener webViewLongClickListener = new View.OnLongClickListener() {
