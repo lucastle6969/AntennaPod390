@@ -3,6 +3,7 @@ package de.danoeh.antennapod.fragment;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -34,6 +35,7 @@ import java.util.List;
 
 import de.danoeh.antennapod.R;
 import de.danoeh.antennapod.activity.MainActivity;
+import de.danoeh.antennapod.activity.RadioStreamActivity;
 import de.danoeh.antennapod.adapter.SubscriptionsAdapter;
 import de.danoeh.antennapod.adapter.SubscriptionsAdapterAdd;
 import de.danoeh.antennapod.core.asynctask.FeedRemover;
@@ -416,6 +418,9 @@ public class SubscriptionFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         switch(id) {
+            case R.id.testRadioBtn:
+                startActivity(new Intent(getActivity(), RadioStreamActivity.class));
+                break;
             case R.id.addCategory:
                 CreateCategoryDialog categoryDialog = new CreateCategoryDialog();
                 SubscriptionFragment sf = (SubscriptionFragment) getFragmentManager().findFragmentById(fragmentId);
