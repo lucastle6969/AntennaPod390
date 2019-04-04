@@ -16,6 +16,7 @@ import java.util.List;
 import de.danoeh.antennapod.R;
 import de.danoeh.antennapod.adapter.RadioStreamAdapter;
 import de.danoeh.antennapod.core.feed.RadioStream;
+import de.danoeh.antennapod.core.storage.DBReader;
 import de.danoeh.antennapod.core.util.playback.PlaybackController;
 
 public class RadioStreamFragment extends Fragment {
@@ -34,22 +35,6 @@ public class RadioStreamFragment extends Fragment {
 
         setHasOptionsMenu(true);
 
-        //Retrieve radio stream from db
-//        radioStreamList = retrieveRadioStreams();
-
-        RadioStream stream1 = new RadioStream(1, "Title", "Url");
-        RadioStream stream2 = new RadioStream(2, "Title", "Url");
-        RadioStream stream3 = new RadioStream(3, "Title", "Url");
-        RadioStream stream4 = new RadioStream(4, "Title", "Url");
-        RadioStream stream5 = new RadioStream(5, "Title", "Url");
-
-        radioStreamList.add(stream1);
-        radioStreamList.add(stream2);
-        radioStreamList.add(stream3);
-        radioStreamList.add(stream4);
-        radioStreamList.add(stream5);
-
-
     }
 
 
@@ -61,11 +46,26 @@ public class RadioStreamFragment extends Fragment {
         emptyView = root.findViewById(R.id.empty_radio_stream_view);
 
         Boolean isRecommended = this.getArguments().getBoolean("isRecommended");
+        if(isRecommended){
+            radioStreamList = DBReader.getAllRecommendedRadioStreams();
+
+            //For now have fake radioStreams for testing purposes
+            RadioStream stream1 = new RadioStream(1, "Title", "Url");
+            RadioStream stream2 = new RadioStream(2, "Title", "Url");
+
+            radioStreamList.add(stream1);
+            radioStreamList.add(stream2);
+
+        }
+        else{
+            radioStreamList = DBReader.getAllUserRadioStreams();
+            RadioStream stream1 = new RadioStream(1, "Title", "Url");
+
+            radioStreamList.add(stream1);
+        }
 
         radioStreamAdapter = new RadioStreamAdapter(radioStreamList, controller, isRecommended);
         radioStreamAdapter.setContext(this.getActivity());
-
-//        radioStreamList = retrieveRadioStreams();
 
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
         recyclerView.setLayoutManager(mLayoutManager);
