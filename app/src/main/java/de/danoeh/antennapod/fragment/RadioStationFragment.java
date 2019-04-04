@@ -18,7 +18,7 @@ import de.danoeh.antennapod.adapter.RadioStreamTabAdapter;
  */
 
 public class RadioStationFragment extends Fragment {
-    public static final String TAG = "AddRadioTabFragment";
+    public static final String TAG = "RadioStationFragment";
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {

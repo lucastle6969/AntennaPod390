@@ -20,8 +20,6 @@ import de.danoeh.antennapod.core.util.playback.PlaybackController;
 
 public class RadioStreamFragment extends Fragment {
 
-    private static final String TAG = "RadioStreamFragment";
-
     private View root;
     private PlaybackController controller;
 
