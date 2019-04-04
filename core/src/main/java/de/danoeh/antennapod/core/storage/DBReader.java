@@ -12,6 +12,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import de.danoeh.antennapod.core.feed.Achievement;
 import de.danoeh.antennapod.core.feed.Bookmark;
 import de.danoeh.antennapod.core.feed.Category;
 import de.danoeh.antennapod.core.feed.Chapter;
@@ -816,6 +817,30 @@ public final class DBReader {
         } finally {
             adapter.close();
         }
+    }
+
+    /**
+     * Returns all Achievements in the db
+     * @return All Achievements
+     */
+    public static List<Achievement> getAchievements() {
+        List<Achievement> result = new ArrayList<>();
+        PodDBAdapter adapter = PodDBAdapter.getInstance();
+        adapter.open();
+        Cursor cursor;
+        try {
+            cursor = adapter.getAchievementCursor();
+            if (cursor.moveToFirst()) {
+                do {
+                    result.add(Achievement.fromCursor(cursor));
+                } while (cursor.moveToNext());
+            }
+            cursor.close();
+
+        } finally {
+            adapter.close();
+        }
+        return result;
     }
 
     /**
