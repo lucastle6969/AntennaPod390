@@ -5,7 +5,6 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,18 +14,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.danoeh.antennapod.R;
-import de.danoeh.antennapod.activity.MediaplayerInfoActivity.MediaplayerInfoContentFragment;
 import de.danoeh.antennapod.adapter.RadioStreamAdapter;
 import de.danoeh.antennapod.core.feed.RadioStream;
-import de.danoeh.antennapod.core.storage.DBReader;
-import de.danoeh.antennapod.core.util.playback.Playable;
 import de.danoeh.antennapod.core.util.playback.PlaybackController;
 
-public class RadioStreamFragment extends Fragment implements MediaplayerInfoContentFragment {
+public class RadioStreamFragment extends Fragment {
 
     private static final String TAG = "RadioStreamFragment";
-
-    private Playable media;
 
     private View root;
     private PlaybackController controller;
@@ -34,33 +28,30 @@ public class RadioStreamFragment extends Fragment implements MediaplayerInfoCont
     TextView emptyView;
     RecyclerView recyclerView;
     RadioStreamAdapter radioStreamAdapter;
-    List<RadioStream> radioStreamList;
-
-    public static RadioStreamFragment newInstance(Playable item) {
-        RadioStreamFragment radioStream = new RadioStreamFragment();
-        radioStream.media = item;
-        return radioStream;
-    }
+    List<RadioStream> radioStreamList = new ArrayList<>();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (media == null) {
-            Log.e(TAG, TAG + " was called without media");
-        }
+
         setHasOptionsMenu(true);
 
-        //Retrieve bookmark from db
-        radioStreamList = retrieveRadioStreams();
-    }
+        //Retrieve radio stream from db
+//        radioStreamList = retrieveRadioStreams();
+
+        RadioStream stream1 = new RadioStream(1, "Title", "Url");
+        RadioStream stream2 = new RadioStream(2, "Title", "Url");
+        RadioStream stream3 = new RadioStream(3, "Title", "Url");
+        RadioStream stream4 = new RadioStream(4, "Title", "Url");
+        RadioStream stream5 = new RadioStream(5, "Title", "Url");
+
+        radioStreamList.add(stream1);
+        radioStreamList.add(stream2);
+        radioStreamList.add(stream3);
+        radioStreamList.add(stream4);
+        radioStreamList.add(stream5);
 
 
-    public List<RadioStream> retrieveRadioStreams(){
-        List<RadioStream> retrievedRadioStreams = new ArrayList<>();
-
-        retrievedRadioStreams = DBReader.getAllRecommendedRadioStreams();
-
-        return retrievedRadioStreams;
     }
 
 
@@ -71,17 +62,19 @@ public class RadioStreamFragment extends Fragment implements MediaplayerInfoCont
         recyclerView = root.findViewById(R.id.radio_stream_list);
         emptyView = root.findViewById(R.id.empty_radio_stream_view);
 
-        radioStreamAdapter = new RadioStreamAdapter(radioStreamList, controller);
+        Boolean isRecommended = this.getArguments().getBoolean("isRecommended");
+
+        radioStreamAdapter = new RadioStreamAdapter(radioStreamList, controller, isRecommended);
         radioStreamAdapter.setContext(this.getActivity());
 
-        radioStreamList = retrieveRadioStreams();
+//        radioStreamList = retrieveRadioStreams();
 
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(radioStreamAdapter);
 
-        // If bookmark list is empty, display a message in the view.
+        // If Radio Stream list is empty, display a message in the view.
         if (radioStreamList.isEmpty()) {
             recyclerView.setVisibility(View.GONE);
             emptyView.setVisibility(View.VISIBLE);
@@ -94,30 +87,11 @@ public class RadioStreamFragment extends Fragment implements MediaplayerInfoCont
         return root;
     }
 
-    //For logging purposes (do not remove)
-    private void loadMediaInfo() {
-        if (media != null) {
-            Log.d(TAG, "loadMediaInfo called normally");
-        } else {
-            Log.w(TAG, "loadMediaInfo was called while media was null");
-        }
-    }
 
     public void setController(PlaybackController controller) {
         this.controller = controller;
     }
 
-    @Override
-    public void onStart() {
-        Log.d(TAG, "On Start");
-        super.onStart();
-        if (media != null) {
-            Log.d(TAG, "Loading media info");
-            loadMediaInfo();
-        } else {
-            Log.w(TAG, "Unable to load media info: media was null");
-        }
-    }
 
     @Override
     public void onDestroy() {
@@ -126,26 +100,5 @@ public class RadioStreamFragment extends Fragment implements MediaplayerInfoCont
         root = null;
     }
 
-    @Override
-    public void onMediaChanged(Playable media) {
-        if(this.media == media) {
-            return;
-        }
-        this.media = media;
-        if (isAdded()) {
-            loadMediaInfo();
-        }
-    }
 
-//    @Override
-//    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-//        if(!isAdded()) {
-//            return;
-//        }
-//
-//        super.onCreateOptionsMenu(menu, inflater);
-//
-//        MenuItem delete_button = menu.findItem(R.id.deleteBookmarks);
-//
-//    }
 }

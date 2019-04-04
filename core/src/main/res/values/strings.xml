@@ -131,10 +131,12 @@
     <string name="save_edit_bookmark_button">Save Changes</string>
 
     <!-- Radio Stream Labels -->
-    <string name="radio_stream_label">Radio Streams</string>
-    <string name="no_radio_stream_available">Currently no radio streams has been added to the list.</string>
+    <string name="radio_stream_label">Radio</string>
+    <string name="no_radio_stream_available">There are currently no radio on this list</string>
     <string name="radio_stream_title">Radio stream title</string>
     <string name="radio_stream_url">Radio stream url</string>
+    <string name="recommended_radio_streams">Recommendations</string>
+    <string name="my_radio_streams">My radio list</string>
 
 
     <!-- Categories labels -->

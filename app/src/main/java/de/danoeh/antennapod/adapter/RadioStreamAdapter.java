@@ -22,6 +22,8 @@ public class RadioStreamAdapter extends RecyclerView.Adapter<RadioStreamAdapter.
 
     private PlaybackController controller;
 
+    private boolean isRecommended;
+
     public class RadioStreamViewHolder extends RecyclerView.ViewHolder {
         private TextView radioStreamTitle, radioStreamUrl;
         private ImageView addToRadioListImg, radioStreamPlayImg;
@@ -51,9 +53,10 @@ public class RadioStreamAdapter extends RecyclerView.Adapter<RadioStreamAdapter.
     }
 
 
-    public RadioStreamAdapter(List<RadioStream> radioStreamList, PlaybackController controller) {
+    public RadioStreamAdapter(List<RadioStream> radioStreamList, PlaybackController controller, Boolean isRecommended) {
         this.radioStreamList = radioStreamList;
         this.controller = controller;
+        this.isRecommended = isRecommended;
     }
 
     @Override
@@ -73,12 +76,18 @@ public class RadioStreamAdapter extends RecyclerView.Adapter<RadioStreamAdapter.
 
     @Override
     public void onBindViewHolder(RadioStreamViewHolder holder, int position) {
-
         RadioStream radioStream = radioStreamList.get(position);
         holder.radioStreamTitle.setText(radioStream.getTitle());
         holder.radioStreamUrl.setText(radioStream.getUrl());
         holder.addToRadioListImg.setImageResource(R.drawable.ic_add_grey600_24dp);
         holder.radioStreamPlayImg.setImageResource(R.drawable.ic_play_arrow_grey600_24dp);
+
+        if(isRecommended){
+            holder.addToRadioListImg.setVisibility(View.VISIBLE);
+        }
+        else{
+            holder.addToRadioListImg.setVisibility(View.GONE);
+        }
     }
 
     public void setRadioStreamList(List<RadioStream> radioStreamList) {
