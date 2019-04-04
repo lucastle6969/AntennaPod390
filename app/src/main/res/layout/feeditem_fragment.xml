@@ -82,17 +82,6 @@
                 tools:text="Jan 23"
                 tools:background="@android:color/holo_green_dark" />
 
-            <com.facebook.share.widget.ShareButton
-                android:id="@+id/fb_share_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
-                android:layout_marginTop="1dp"
-                android:layout_marginEnd="1dp"
-                android:layout_marginRight="1dp" />
-
         </RelativeLayout>
 
         <ProgressBar
