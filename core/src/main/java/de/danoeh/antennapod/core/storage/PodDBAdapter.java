@@ -2057,7 +2057,7 @@ public class PodDBAdapter {
             db.execSQL(CREATE_TABLE_ASSOCIATION_FOR_CATEGORIES);
             db.execSQL(CREATE_TABLE_RADIO_STREAMS);
             db.execSQL(CREATE_TABLE_RECOMMENDED_RADIO_STREAMS);
-            setAllRecommendedRadioStreams();
+//            setAllRecommendedRadioStreams();
 
             db.execSQL(CREATE_INDEX_FEEDITEMS_FEED);
             db.execSQL(CREATE_INDEX_FEEDITEMS_PUBDATE);

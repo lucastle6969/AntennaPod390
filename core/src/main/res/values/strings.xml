@@ -130,6 +130,15 @@
     <string name="cancel_edit_bookmark_button">Cancel</string>
     <string name="save_edit_bookmark_button">Save Changes</string>
 
+    <!-- Radio Stream Labels -->
+    <string name="radio_stream_label">Radio stations</string>
+    <string name="no_radio_stream_available">There are currently no radio on this list</string>
+    <string name="radio_stream_title">Radio stream title</string>
+    <string name="radio_stream_url">Radio stream URL</string>
+    <string name="recommended_radio_streams">Recommendations</string>
+    <string name="my_radio_streams">My radio list</string>
+
+
     <!-- Categories labels -->
     <string name="edit_category_dialog_title">Edit Category</string>
     <string name="rename_category_hint">Change category name:</string>
