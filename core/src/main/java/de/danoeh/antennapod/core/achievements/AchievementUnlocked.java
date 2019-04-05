@@ -19,6 +19,7 @@ import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
 import android.os.Build.VERSION;
 import android.os.PowerManager;
+import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -41,6 +42,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import de.danoeh.antennapod.core.achievements.AchievementIconView.AchievementIconViewStates;
 
@@ -581,12 +583,12 @@ public class AchievementUnlocked {
             return;
         }
         //Check permission first
-        //if (VERSION.SDK_INT >= 23 && !Settings.canDrawOverlays(context)) {
-        //    if (DEBUG)
-        //        Toast.makeText(context, "'canDrawOverlays' permission is not granted", Toast.LENGTH_LONG).show();
-        //    Log.e(TAG, "'canDrawOverlays' permission is not granted");
-        //    return;
-        //}
+        if (VERSION.SDK_INT >= 23 && !Settings.canDrawOverlays(context)) {
+            if (DEBUG)
+                Toast.makeText(context, "'canDrawOverlays' permission is not granted", Toast.LENGTH_LONG).show();
+            Log.e(TAG, "'canDrawOverlays' permission is not granted");
+            return;
+        }
         //Don't bother if powersaving is on
         if (VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             final PowerManager powerManager = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
