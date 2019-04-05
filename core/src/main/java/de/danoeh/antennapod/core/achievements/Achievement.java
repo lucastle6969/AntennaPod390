@@ -1,9 +1,10 @@
 package de.danoeh.antennapod.core.achievements;
 
 import android.database.Cursor;
-
+import android.util.Log;
 import java.util.Date;
 
+import de.danoeh.antennapod.core.storage.DBWriter;
 import de.danoeh.antennapod.core.storage.PodDBAdapter;
 
 public class Achievement {
@@ -67,6 +68,28 @@ public class Achievement {
                 cursor.getString(indexAchievementDescription),
                 cursor.getInt(indexAchievementHidden)
         );
+    }
+
+    public boolean complete() {
+        if(this.date == null) {
+            Date date = new Date();
+            this.date = date;
+            Log.d("A", "Date updated");
+            DBWriter.updateAchievement(this);
+            return true;
+        }
+        return false;
+    }
+
+    public boolean increment(int counter) {
+        if(this.date == null) {
+            this.counter += counter;
+            Log.d("A", "Counter: " + this.counter + ", Goal: " + goal);
+            if(this.counter >= goal) {
+                return this.complete();
+            }
+        }
+        return false;
     }
 
     public void setId(long id){
