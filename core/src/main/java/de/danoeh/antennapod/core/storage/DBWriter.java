@@ -748,6 +748,25 @@ public class DBWriter {
     }
 
     /**
+     * Sets (adds) a new Achievement into the database.
+     *
+     * @param achievement  Achievement object.
+     */
+    public static Future<?> setAchievement(final Achievement achievement){
+        return dbExec.submit(()-> {
+            PodDBAdapter adapter = PodDBAdapter.getInstance();
+            adapter.open();
+            long id = adapter.setAchievementTransaction(achievement);
+            while (id < 1){
+                //wait for the adapter
+                Log.d("ACHIEVEMENT", "waiting");
+            }
+            Log.d("ACHIEVEMENT", "returned");
+            adapter.close();
+        });
+    }
+
+    /**
      * Updates Achievement object in the database. This method will save the date and counter attributes of the passed
      * Achievement object, overwriting both changed or unchanged values.
      *

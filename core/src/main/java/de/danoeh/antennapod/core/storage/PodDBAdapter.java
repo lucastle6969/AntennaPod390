@@ -127,6 +127,7 @@ public class PodDBAdapter {
     public static final String KEY_ACHIEVEMENT_GOAL = "achievement_goal";
     public static final String KEY_ACHIEVEMENT_RANK = "achievement_rank";
     public static final String KEY_ACHIEVEMENT_DESCRIPTION = "achievement_description";
+    public static final String KEY_ACHIEVEMENT_HIDDEN = "achievement_hidden";
 
 
     // Table names
@@ -153,9 +154,10 @@ public class PodDBAdapter {
 
     private static final String CREATE_TABLE_ACHIEVEMENTS = "CREATE TABLE "
             + TABLE_NAME_ACHIEVEMENTS + " (" + KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-            + KEY_ACHIEVEMENT_NAME + " VARCHAR," + KEY_ACHIEVEMENT_DATE + " INTEGER,"
+            + KEY_ACHIEVEMENT_NAME + " TEXT," + KEY_ACHIEVEMENT_DATE + " INTEGER,"
             + KEY_ACHIEVEMENT_COUNTER + " INTEGER," + KEY_ACHIEVEMENT_GOAL + " INTEGER,"
-            + KEY_ACHIEVEMENT_RANK + "INTEGER, " + KEY_ACHIEVEMENT_DESCRIPTION + " VARCHAR)";
+            + KEY_ACHIEVEMENT_RANK + "INTEGER, " + KEY_ACHIEVEMENT_DESCRIPTION + " TEXT,"
+            + KEY_ACHIEVEMENT_HIDDEN + " INTEGER)";
 
     private static final String CREATE_TABLE_BOOKMARKS = "CREATE TABLE "
             + TABLE_NAME_BOOKMARKS + " (" + KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
@@ -637,6 +639,20 @@ public class PodDBAdapter {
         return result;
     }
 
+    public long setAchievementTransaction(Achievement achievement) {
+        long result = 0;
+        try {
+            db.beginTransactionNonExclusive();
+            result = setAchievement(achievement);
+            db.setTransactionSuccessful();
+        } catch (SQLException e) {
+            Log.e(TAG, Log.getStackTraceString(e));
+        } finally {
+            db.endTransaction();
+        }
+        return result;
+    }
+
     public long updateAchievementTransaction(Achievement achievement) {
         long result = 0;
         try {
@@ -906,6 +922,19 @@ public class PodDBAdapter {
         values.put(KEY_ACHIEVEMENT_COUNTER, achievement.getCounter());
         db.update(TABLE_NAME_ACHIEVEMENTS, values, KEY_ID + "=?",
                 new String[]{String.valueOf(achievement.getId())});
+        return achievement.getId();
+    }
+
+    private long setAchievement(Achievement achievement){
+        ContentValues achievementValues = new ContentValues();
+        achievementValues.put(KEY_ACHIEVEMENT_NAME, achievement.getName());
+        achievementValues.put(KEY_ACHIEVEMENT_DATE, achievement.getDateAsMilliSeconds());
+        achievementValues.put(KEY_ACHIEVEMENT_COUNTER, achievement.getCounter());
+        achievementValues.put(KEY_ACHIEVEMENT_GOAL, achievement.getGoal());
+        achievementValues.put(KEY_ACHIEVEMENT_RANK, achievement.getRank());
+        achievementValues.put(KEY_ACHIEVEMENT_DESCRIPTION, achievement.getDescription());
+        achievementValues.put(KEY_ACHIEVEMENT_HIDDEN, achievement.getHidden());
+        achievement.setId(db.insert(TABLE_NAME_ACHIEVEMENTS, null, achievementValues));
         return achievement.getId();
     }
 
