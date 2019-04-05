@@ -9,12 +9,24 @@ public class AchievementManager {
     private ConcurrentHashMap<String, Achievement> achievements;
 
     private AchievementManager(){
-
         achievements = DBReader.getAchievements();
-        if(achievements.isEmpty()){
-            // we need to load the achievements into the db for the first time
-            AchievementBuilder.buildAchievements();
+    }
+
+    public static AchievementManager getInstance(){
+        if(achievementManager == null){
+            achievementManager = new AchievementManager();
         }
+        return achievementManager;
+    }
+
+    public String getStatus(){
+        if(achievements.isEmpty()){
+            AchievementBuilder.buildAchievements();
+            achievements = DBReader.getAchievements();
+            return "Achievements Empty";
+        }
+
+        return "Achievements Not Empty " + achievements.get("The First Achievement").getDescription();
     }
 
 }
