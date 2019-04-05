@@ -1,4 +1,4 @@
-package de.danoeh.antennapod.achievements;
+package de.danoeh.antennapod.core.achievements;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -42,8 +42,7 @@ import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
 import android.widget.TextView;
 
-import de.danoeh.antennapod.achievements.AchievementData;
-import de.danoeh.antennapod.achievements.AchievementIconView.AchievementIconViewStates;
+import de.danoeh.antennapod.core.achievements.AchievementIconView.AchievementIconViewStates;
 
 import static android.text.TextUtils.isEmpty;
 import static android.view.Gravity.CENTER_HORIZONTAL;

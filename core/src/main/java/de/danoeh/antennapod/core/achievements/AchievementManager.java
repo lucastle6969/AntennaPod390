@@ -1,7 +1,9 @@
-package de.danoeh.antennapod.core.feed;
+package de.danoeh.antennapod.core.achievements;
 
 import java.util.concurrent.ConcurrentHashMap;
 
+import de.danoeh.antennapod.core.achievements.*;
+import de.danoeh.antennapod.core.achievements.AchievementBuilder;
 import de.danoeh.antennapod.core.storage.DBReader;
 
 public class AchievementManager {

@@ -1,9 +1,9 @@
-package de.danoeh.antennapod.achievements;
+package de.danoeh.antennapod.core.achievements;
 
 import android.graphics.drawable.Drawable;
 import android.view.View;
 
-import de.danoeh.antennapod.achievements.AchievementIconView.*;
+import de.danoeh.antennapod.core.achievements.AchievementIconView.*;
 
 /**
  * Class that holds the data to be displayed by

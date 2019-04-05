@@ -1,4 +1,4 @@
-package de.danoeh.antennapod.core.feed;
+package de.danoeh.antennapod.core.achievements;
 
 import android.database.Cursor;
 

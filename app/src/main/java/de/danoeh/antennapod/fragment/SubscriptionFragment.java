@@ -32,8 +32,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import de.danoeh.antennapod.R;
-import de.danoeh.antennapod.achievements.AchievementData;
-import de.danoeh.antennapod.achievements.AchievementUnlocked;
+import de.danoeh.antennapod.core.achievements.AchievementData;
+import de.danoeh.antennapod.core.achievements.AchievementUnlocked;
 import de.danoeh.antennapod.activity.MainActivity;
 import de.danoeh.antennapod.adapter.SubscriptionsAdapter;
 import de.danoeh.antennapod.adapter.SubscriptionsAdapterAdd;

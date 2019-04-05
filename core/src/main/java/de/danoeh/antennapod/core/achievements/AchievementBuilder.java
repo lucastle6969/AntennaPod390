@@ -1,10 +1,11 @@
-package de.danoeh.antennapod.core.feed;
+package de.danoeh.antennapod.core.achievements;
 
 import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import de.danoeh.antennapod.core.achievements.Achievement;
 import de.danoeh.antennapod.core.storage.DBWriter;
 
 public class AchievementBuilder {
