@@ -1,7 +1,9 @@
 package de.danoeh.antennapod.fragment;
 
 
-import android.content.Intent;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -12,11 +14,16 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+
+import java.io.IOException;
 
 import de.danoeh.antennapod.R;
 import de.danoeh.antennapod.activity.MainActivity;
-import de.danoeh.antennapod.activity.RadioStreamActivity;
 import de.danoeh.antennapod.adapter.RadioStreamTabAdapter;
+import de.danoeh.antennapod.core.feed.RadioStream;
 
 /**
  * Provides actions for displaying the recommended radio list and personal radio list
@@ -24,35 +31,88 @@ import de.danoeh.antennapod.adapter.RadioStreamTabAdapter;
 
 public class RadioStationFragment extends Fragment {
     public static final String TAG = "RadioStationFragment";
+    private LinearLayout radioPlayerLayout;
+
+    private MediaPlayer mediaPlayer;
+    private boolean isRadioPlaying = false;
+    private boolean isRadioStreamSetup;
+
+    private Button play;
+    private TextView txtvTitle;
+    private TextView txtvURL;
+
+    private RadioStream lastSelectedRadioStream;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         ((MainActivity) getActivity()).getSupportActionBar().setTitle(R.string.radio_stream_label);
 
-        View root = inflater.inflate(R.layout.addfeed, container, false);
-
+        View root = inflater.inflate(R.layout.radio_stations_layout, container, false);
         ViewPager viewPager = root.findViewById(R.id.viewpager);
 
         RadioStreamTabAdapter adapter = new RadioStreamTabAdapter(getChildFragmentManager(), getResources());
-
-
         viewPager.setAdapter(adapter);
 
         TabLayout tabLayout = root.findViewById(R.id.sliding_tabs);
         tabLayout.setupWithViewPager(viewPager);
 
+        radioPlayerLayout = root.findViewById(R.id.radio_player);
+
+        txtvTitle = (TextView) root.findViewById(R.id.txtvRadioTitle);
+        txtvURL = (TextView) root.findViewById(R.id.txtvRadioUrl);
+
+        mediaPlayer = new MediaPlayer();
+        mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+
+        play = (Button) root.findViewById(R.id.btnPlay);
+        play.setEnabled(false);
+
+        play.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (isRadioPlaying) {
+                    mediaPlayer.pause();
+                    isRadioPlaying = false;
+                    play.setText(R.string.play_label);
+                } else {
+                    mediaPlayer.start();
+                    isRadioPlaying = true;
+                    play.setText(R.string.pause_label);
+                }
+            }
+        });
+
+        if (lastSelectedRadioStream == null) {
+            radioPlayerLayout.setVisibility(View.GONE);
+        } else {
+            radioPlayerLayout.setVisibility(View.VISIBLE);
+        }
+
         return root;
+    }
+
+    public void updateRadioStream(RadioStream radioStream) {
+        radioPlayerLayout.setVisibility(View.VISIBLE);
+        lastSelectedRadioStream = radioStream;
+
+        mediaPlayer.stop();
+        mediaPlayer = new MediaPlayer();
+        mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+
+        play.setEnabled(false);
+        isRadioPlaying = false;
+        isRadioStreamSetup = false;
+
+        txtvTitle.setText(radioStream.getTitle());
+        txtvURL.setText(radioStream.getUrl());
+        new PlayTask().execute(radioStream.getUrl());
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
-
-        // So, we certainly *don't* have an options menu,
-        // but unless we say we do, old options menus sometimes
-        // persist.  mfietz thinks this causes the ActionBar to be invalidated
         setHasOptionsMenu(true);
     }
 
@@ -69,14 +129,35 @@ public class RadioStationFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         switch(id) {
-            case R.id.testBtn:
-                startActivity(new Intent(getActivity(), RadioStreamActivity.class));
-                break;
             case R.id.addRadioStreamBtn:
                 break;
             default:
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private class PlayTask extends AsyncTask<String, Void, Boolean> {
+        @Override
+        protected Boolean doInBackground(String... strings) {
+            try {
+                mediaPlayer.setDataSource(strings[0]);
+
+                mediaPlayer.prepare();
+                isRadioStreamSetup = true;
+            } catch (IllegalStateException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return isRadioStreamSetup;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean aBoolean) {
+            super.onPostExecute(aBoolean);
+            play.setEnabled(true);
+            play.setText("Play");
+        }
     }
 }

@@ -31,6 +31,7 @@ import android.widget.ListView;
 import com.bumptech.glide.Glide;
 
 import de.danoeh.antennapod.core.event.ServiceEvent;
+import de.danoeh.antennapod.core.feed.RadioStream;
 import de.danoeh.antennapod.core.util.IntentUtils;
 import de.danoeh.antennapod.core.util.gui.NotificationUtils;
 import org.apache.commons.lang3.ArrayUtils;
@@ -67,6 +68,7 @@ import de.danoeh.antennapod.fragment.PlaybackHistoryFragment;
 import de.danoeh.antennapod.fragment.PodcastOfTheDayFragment;
 import de.danoeh.antennapod.fragment.QueueFragment;
 import de.danoeh.antennapod.fragment.RadioStationFragment;
+import de.danoeh.antennapod.fragment.RadioStreamFragment;
 import de.danoeh.antennapod.fragment.SubscriptionFragment;
 import de.danoeh.antennapod.menuhandler.NavDrawerActivity;
 import de.greenrobot.event.EventBus;
@@ -78,7 +80,7 @@ import rx.schedulers.Schedulers;
 /**
  * The activity that is shown when the user launches the app.
  */
-public class MainActivity extends CastEnabledActivity implements NavDrawerActivity {
+public class MainActivity extends CastEnabledActivity implements NavDrawerActivity, RadioStreamFragment.RadioStreamListener {
 
     private static final String TAG = "MainActivity";
 
@@ -122,6 +124,8 @@ public class MainActivity extends CastEnabledActivity implements NavDrawerActivi
     private ActionBarDrawerToggle drawerToggle;
 
     private CharSequence currentTitle;
+
+    private Fragment currentFragment;
 
     private ProgressDialog pd;
 
@@ -331,6 +335,18 @@ public class MainActivity extends CastEnabledActivity implements NavDrawerActivi
         if (args != null) {
             fragment.setArguments(args);
         }
+
+        final FragmentManager fm = getSupportFragmentManager();
+        FragmentTransaction transaction = fm.beginTransaction();
+        if (externalPlayerFragment != null && tag.equalsIgnoreCase(RadioStationFragment.TAG)) {
+            transaction.remove(externalPlayerFragment);
+        } else {
+            externalPlayerFragment = new ExternalPlayerFragment();
+            transaction.replace(R.id.playerFragment, externalPlayerFragment, ExternalPlayerFragment.TAG);
+        }
+        transaction.commit();
+
+        currentFragment = fragment;
         loadFragment(fragment);
     }
 
@@ -436,7 +452,6 @@ public class MainActivity extends CastEnabledActivity implements NavDrawerActivi
             }
         }
     };
-
 
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
@@ -828,5 +843,14 @@ public class MainActivity extends CastEnabledActivity implements NavDrawerActivi
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         setIntent(intent);
+    }
+
+    @Override
+    public void onRadioStreamSelected(RadioStream radioStream) {
+        if (currentFragment == null) {
+            return;
+        }
+        RadioStationFragment radioStationFragment = (RadioStationFragment) currentFragment;
+        radioStationFragment.updateRadioStream(radioStream);
     }
 }
