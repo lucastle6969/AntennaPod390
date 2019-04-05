@@ -23,7 +23,6 @@ import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -33,6 +32,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import de.danoeh.antennapod.R;
+import de.danoeh.antennapod.achievements.AchievementData;
+import de.danoeh.antennapod.achievements.AchievementUnlocked;
 import de.danoeh.antennapod.activity.MainActivity;
 import de.danoeh.antennapod.adapter.SubscriptionsAdapter;
 import de.danoeh.antennapod.adapter.SubscriptionsAdapterAdd;
@@ -124,9 +125,28 @@ public class SubscriptionFragment extends Fragment {
         subscriptionSearch.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
+                int drawableID = getContext().getResources().getIdentifier("round_button", "drawable", getActivity().getPackageName());
+                ImageView iv = new ImageView(getContext());
+                iv.setImageResource(android.R.drawable.btn_star);
                 table.removeAllViews();
                 tableGridRow[0] = addGridRowSimple(query);
                 table.addView(tableGridRow[0]);
+                AchievementUnlocked achievementUnlocked = new AchievementUnlocked(getContext().getApplicationContext());
+                achievementUnlocked.setRounded(false).setLarge(true).setTopAligned(true).setDismissible(true);
+                AchievementData data0 = new AchievementData();
+                data0.setTitle("Elementary");
+                data0.setSubtitle("Search for a podcast.");
+                data0.setIcon(iv.getDrawable());
+                data0.setTextColor(Color.BLACK);
+                data0.setIconBackgroundColor(getResources().getColor(android.R.color.holo_blue_light));
+                data0.setBackgroundColor(getResources().getColor(android.R.color.holo_blue_dark));
+                data0.setPopUpOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                    }
+                });
+                achievementUnlocked.show(data0);
                 return false;
             }
 
