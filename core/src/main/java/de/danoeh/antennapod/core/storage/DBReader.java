@@ -11,6 +11,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import de.danoeh.antennapod.core.feed.Achievement;
 import de.danoeh.antennapod.core.feed.Bookmark;
@@ -823,8 +824,8 @@ public final class DBReader {
      * Returns all Achievements in the db
      * @return All Achievements
      */
-    public static List<Achievement> getAchievements() {
-        List<Achievement> result = new ArrayList<>();
+    public static ConcurrentHashMap<String, Achievement> getAchievements() {
+        ConcurrentHashMap result = new ConcurrentHashMap();
         PodDBAdapter adapter = PodDBAdapter.getInstance();
         adapter.open();
         Cursor cursor;
@@ -832,7 +833,8 @@ public final class DBReader {
             cursor = adapter.getAchievementCursor();
             if (cursor.moveToFirst()) {
                 do {
-                    result.add(Achievement.fromCursor(cursor));
+                    Achievement achievementToAdd = Achievement.fromCursor(cursor);
+                    result.put(achievementToAdd.getName(), achievementToAdd);
                 } while (cursor.moveToNext());
             }
             cursor.close();
