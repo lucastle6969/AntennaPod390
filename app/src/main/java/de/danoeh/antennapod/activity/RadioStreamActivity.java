@@ -13,7 +13,7 @@ import java.io.IOException;
 import de.danoeh.antennapod.R;
 
 public class RadioStreamActivity extends Activity {
-    private final static String stream = "http://bbcmedia.ic.llnwd.net/stream/bbcmedia_radio2_mf_p";
+    private final static String stream = "http://5.135.183.124:8047/stream";
 //    private final static String stream = "http://17833.live.streamtheworld.com/XLTNFM_SC";
 
     Button play;
