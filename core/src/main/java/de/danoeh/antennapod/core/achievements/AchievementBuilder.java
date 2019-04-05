@@ -15,22 +15,42 @@ public class AchievementBuilder {
 
         //Achievements are hard coded into the app here
 
-        Achievement achievement1 = new Achievement(
-                "The First Achievement", // Achievement name
+        Achievement achievement = new Achievement(
+                "Elementary", // Achievement name
                 null, // date should be null until the achievement is unlocked
                 0, // counter should be 0 at initialization
                 1, // goal: represents the number the counter should reach before unlocking achievement
                 1, // rank of the achievement (1: low, 2: medium, 3: high)
-                "bla bla bla", // short description of the achievement
+                "Search for a podcast on the subscription page", // short description of the achievement
                 0 // if the achievement should remain hidden until unlocked (1: hidden , 0: not hidden)
         );
-        achievements.add(achievement1);
+        achievements.add(achievement);
+        achievement = new Achievement(
+                "The First 7", // Achievement name
+                null, // date should be null until the achievement is unlocked
+                0, // counter should be 0 at initialization
+                7, // goal: represents the number the counter should reach before unlocking achievement
+                2, // rank of the achievement (1: low, 2: medium, 3: high)
+                "Visit a new podcast of the day page 7 times", // short description of the achievement
+                0 // if the achievement should remain hidden until unlocked (1: hidden , 0: not hidden)
+        );
+        achievements.add(achievement);
+        achievement = new Achievement(
+                "POTD", // Achievement name
+                null, // date should be null until the achievement is unlocked
+                0, // counter should be 0 at initialization
+                1, // goal: represents the number the counter should reach before unlocking achievement
+                1, // rank of the achievement (1: low, 2: medium, 3: high)
+                "Visit the podcast of the day page", // short description of the achievement
+                0 // if the achievement should remain hidden until unlocked (1: hidden , 0: not hidden)
+        );
+        achievements.add(achievement);
 
-        // add a new achievement here
+        // add a new achievements here
 
-        for(Achievement achievement: achievements){
+        for(Achievement achv: achievements){
             Log.d("ACHIEVEMENTS", "started loop");
-            DBWriter.setAchievement(achievement);
+            DBWriter.setAchievement(achv);
         }
 
     }
