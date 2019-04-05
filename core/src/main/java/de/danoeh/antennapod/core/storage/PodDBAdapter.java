@@ -25,6 +25,8 @@ import java.util.Set;
 
 import de.danoeh.antennapod.core.R;
 import de.danoeh.antennapod.core.event.ProgressEvent;
+import de.danoeh.antennapod.core.feed.Achievement;
+import de.danoeh.antennapod.core.feed.AchievementBuilder;
 import de.danoeh.antennapod.core.feed.Bookmark;
 import de.danoeh.antennapod.core.feed.Category;
 import de.danoeh.antennapod.core.feed.Chapter;
@@ -125,6 +127,8 @@ public class PodDBAdapter {
     public static final String KEY_ACHIEVEMENT_COUNTER = "achievement_counter";
     public static final String KEY_ACHIEVEMENT_GOAL = "achievement_goal";
     public static final String KEY_ACHIEVEMENT_RANK = "achievement_rank";
+    public static final String KEY_ACHIEVEMENT_DESCRIPTION = "achievement_description";
+    public static final String KEY_ACHIEVEMENT_HIDDEN = "achievement_hidden";
 
 
     // Table names
@@ -151,9 +155,10 @@ public class PodDBAdapter {
 
     private static final String CREATE_TABLE_ACHIEVEMENTS = "CREATE TABLE "
             + TABLE_NAME_ACHIEVEMENTS + " (" + KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-            + KEY_ACHIEVEMENT_NAME + " VARCHAR," + KEY_ACHIEVEMENT_DATE + " DATE,"
+            + KEY_ACHIEVEMENT_NAME + " TEXT," + KEY_ACHIEVEMENT_DATE + " INTEGER,"
             + KEY_ACHIEVEMENT_COUNTER + " INTEGER," + KEY_ACHIEVEMENT_GOAL + " INTEGER,"
-            + KEY_ACHIEVEMENT_RANK + "INTEGER)";
+            + KEY_ACHIEVEMENT_RANK + " INTEGER," + KEY_ACHIEVEMENT_DESCRIPTION + " TEXT,"
+            + KEY_ACHIEVEMENT_HIDDEN + " INTEGER)";
 
     private static final String CREATE_TABLE_BOOKMARKS = "CREATE TABLE "
             + TABLE_NAME_BOOKMARKS + " (" + KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
@@ -635,6 +640,34 @@ public class PodDBAdapter {
         return result;
     }
 
+    public long setAchievementTransaction(Achievement achievement) {
+        long result = 0;
+        try {
+            db.beginTransactionNonExclusive();
+            result = setAchievement(achievement);
+            db.setTransactionSuccessful();
+        } catch (SQLException e) {
+            Log.e(TAG, Log.getStackTraceString(e));
+        } finally {
+            db.endTransaction();
+        }
+        return result;
+    }
+
+    public long updateAchievementTransaction(Achievement achievement) {
+        long result = 0;
+        try {
+            db.beginTransactionNonExclusive();
+            result = updateAchievement(achievement);
+            db.setTransactionSuccessful();
+        } catch (SQLException e) {
+            Log.e(TAG, Log.getStackTraceString(e));
+        } finally {
+            db.endTransaction();
+        }
+        return result;
+    }
+
     public long setSingleBookmark(Bookmark bookmark) {
         long result = 0;
         try {
@@ -877,6 +910,33 @@ public class PodDBAdapter {
             setChapters(item);
         }
         return item.getId();
+    }
+
+    /**
+     * Update Achievement object in the TABLE_NAME_ACHIEVEMENTS table of the database.
+     * @param achievement  Achievement object
+     * @return the id of the entry
+     */
+    private long updateAchievement(Achievement achievement) {
+        ContentValues values = new ContentValues();
+        values.put(KEY_ACHIEVEMENT_DATE, achievement.getDateAsMilliSeconds());
+        values.put(KEY_ACHIEVEMENT_COUNTER, achievement.getCounter());
+        db.update(TABLE_NAME_ACHIEVEMENTS, values, KEY_ID + "=?",
+                new String[]{String.valueOf(achievement.getId())});
+        return achievement.getId();
+    }
+
+    private long setAchievement(Achievement achievement){
+        ContentValues achievementValues = new ContentValues();
+        achievementValues.put(KEY_ACHIEVEMENT_NAME, achievement.getName());
+        achievementValues.put(KEY_ACHIEVEMENT_DATE, achievement.getDateAsMilliSeconds());
+        achievementValues.put(KEY_ACHIEVEMENT_COUNTER, achievement.getCounter());
+        achievementValues.put(KEY_ACHIEVEMENT_GOAL, achievement.getGoal());
+        achievementValues.put(KEY_ACHIEVEMENT_RANK, achievement.getRank());
+        achievementValues.put(KEY_ACHIEVEMENT_DESCRIPTION, achievement.getDescription());
+        achievementValues.put(KEY_ACHIEVEMENT_HIDDEN, achievement.getHidden());
+        achievement.setId(db.insert(TABLE_NAME_ACHIEVEMENTS, null, achievementValues));
+        return achievement.getId();
     }
 
     /**
@@ -1641,6 +1701,16 @@ public class PodDBAdapter {
     }
 
     /**
+     * Returns a cursor pointing to the Achievements in the db
+     *
+     * @return              Cursor of first Achievement item
+     */
+    public final Cursor getAchievementCursor() {
+        final String query = "SELECT * FROM " + TABLE_NAME_ACHIEVEMENTS;
+        return db.rawQuery(query, null);
+    }
+
+    /**
      * Returns a cursor pointing to the first bookmark item in the db given the title and episode id specified
      * @param podcastTitle  Title of podcast
      * @param uid           Podcast episode id
@@ -1909,11 +1979,8 @@ public class PodDBAdapter {
             db.execSQL(CREATE_TABLE_FAVORITES);
             db.execSQL(CREATE_TABLE_BOOKMARKS);
             db.execSQL(CREATE_TABLE_CATEGORIES);
-            db.execSQL(INSERT_UNCATEGORIZED_CATEGORY);
-
             db.execSQL(CREATE_TABLE_ASSOCIATION_FOR_CATEGORIES);
             db.execSQL(CREATE_TABLE_ACHIEVEMENTS);
-
             db.execSQL(CREATE_INDEX_FEEDITEMS_FEED);
             db.execSQL(CREATE_INDEX_FEEDITEMS_PUBDATE);
             db.execSQL(CREATE_INDEX_FEEDITEMS_READ);
@@ -1921,6 +1988,9 @@ public class PodDBAdapter {
             db.execSQL(CREATE_INDEX_QUEUE_FEEDITEM);
             db.execSQL(CREATE_INDEX_SIMPLECHAPTERS_FEEDITEM);
 
+            // populate tables that need initial data sets
+            db.execSQL(INSERT_UNCATEGORIZED_CATEGORY);
+            AchievementBuilder.buildAchievements();
         }
 
         @Override

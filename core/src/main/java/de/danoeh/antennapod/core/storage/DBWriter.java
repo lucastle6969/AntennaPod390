@@ -29,6 +29,7 @@ import de.danoeh.antennapod.core.event.FavoritesEvent;
 import de.danoeh.antennapod.core.event.FeedItemEvent;
 import de.danoeh.antennapod.core.event.MessageEvent;
 import de.danoeh.antennapod.core.event.QueueEvent;
+import de.danoeh.antennapod.core.feed.Achievement;
 import de.danoeh.antennapod.core.feed.Bookmark;
 import de.danoeh.antennapod.core.feed.Category;
 import de.danoeh.antennapod.core.feed.EventDistributor;
@@ -743,6 +744,35 @@ public class DBWriter {
             adapter.setSingleFeedItem(item);
             adapter.close();
             EventBus.getDefault().post(FeedItemEvent.updated(item));
+        });
+    }
+
+    /**
+     * Sets (adds) a new Achievement into the database.
+     *
+     * @param achievement  Achievement object.
+     */
+    public static Future<?> setAchievement(final Achievement achievement){
+        return dbExec.submit(()-> {
+            PodDBAdapter adapter = PodDBAdapter.getInstance();
+            adapter.open();
+            adapter.setAchievementTransaction(achievement);
+            adapter.close();
+        });
+    }
+
+    /**
+     * Updates Achievement object in the database. This method will save the date and counter attributes of the passed
+     * Achievement object, overwriting both changed or unchanged values.
+     *
+     * @param achievement  Achievement object.
+     */
+    public static Future<?> updateAchievement(final Achievement achievement){
+        return dbExec.submit(()-> {
+            PodDBAdapter adapter = PodDBAdapter.getInstance();
+            adapter.open();
+            adapter.updateAchievementTransaction(achievement);
+            adapter.close();
         });
     }
 
