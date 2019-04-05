@@ -26,6 +26,7 @@ import java.util.Set;
 import de.danoeh.antennapod.core.R;
 import de.danoeh.antennapod.core.event.ProgressEvent;
 import de.danoeh.antennapod.core.feed.Achievement;
+import de.danoeh.antennapod.core.feed.AchievementBuilder;
 import de.danoeh.antennapod.core.feed.Bookmark;
 import de.danoeh.antennapod.core.feed.Category;
 import de.danoeh.antennapod.core.feed.Chapter;
@@ -156,7 +157,7 @@ public class PodDBAdapter {
             + TABLE_NAME_ACHIEVEMENTS + " (" + KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
             + KEY_ACHIEVEMENT_NAME + " TEXT," + KEY_ACHIEVEMENT_DATE + " INTEGER,"
             + KEY_ACHIEVEMENT_COUNTER + " INTEGER," + KEY_ACHIEVEMENT_GOAL + " INTEGER,"
-            + KEY_ACHIEVEMENT_RANK + "INTEGER, " + KEY_ACHIEVEMENT_DESCRIPTION + " TEXT,"
+            + KEY_ACHIEVEMENT_RANK + " INTEGER," + KEY_ACHIEVEMENT_DESCRIPTION + " TEXT,"
             + KEY_ACHIEVEMENT_HIDDEN + " INTEGER)";
 
     private static final String CREATE_TABLE_BOOKMARKS = "CREATE TABLE "
@@ -1978,11 +1979,8 @@ public class PodDBAdapter {
             db.execSQL(CREATE_TABLE_FAVORITES);
             db.execSQL(CREATE_TABLE_BOOKMARKS);
             db.execSQL(CREATE_TABLE_CATEGORIES);
-            db.execSQL(INSERT_UNCATEGORIZED_CATEGORY);
-
             db.execSQL(CREATE_TABLE_ASSOCIATION_FOR_CATEGORIES);
             db.execSQL(CREATE_TABLE_ACHIEVEMENTS);
-
             db.execSQL(CREATE_INDEX_FEEDITEMS_FEED);
             db.execSQL(CREATE_INDEX_FEEDITEMS_PUBDATE);
             db.execSQL(CREATE_INDEX_FEEDITEMS_READ);
@@ -1990,6 +1988,9 @@ public class PodDBAdapter {
             db.execSQL(CREATE_INDEX_QUEUE_FEEDITEM);
             db.execSQL(CREATE_INDEX_SIMPLECHAPTERS_FEEDITEM);
 
+            // populate tables that need initial data sets
+            db.execSQL(INSERT_UNCATEGORIZED_CATEGORY);
+            AchievementBuilder.buildAchievements();
         }
 
         @Override

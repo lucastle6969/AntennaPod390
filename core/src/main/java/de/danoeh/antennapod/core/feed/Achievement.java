@@ -41,18 +41,26 @@ public class Achievement {
 
     public static Achievement fromCursor(Cursor cursor) {
         int indexId = cursor.getColumnIndex(PodDBAdapter.KEY_ID);
-        int indexAchievementName = cursor.getColumnIndex(PodDBAdapter.KEY_BOOKMARK_TITLE);
-        int indexAchievementDate = cursor.getColumnIndex(PodDBAdapter.KEY_BOOKMARK_TIMESTAMP);
-        int indexAchievementCounter = cursor.getColumnIndex(PodDBAdapter.KEY_BOOKMARK_PODCAST);
-        int indexAchievementGoal = cursor.getColumnIndex(PodDBAdapter.KEY_BOOKMARK_UID);
-        int indexAchievementRank = cursor.getColumnIndex(PodDBAdapter.KEY_ACHIEVEMENT_GOAL);
+        int indexAchievementName = cursor.getColumnIndex(PodDBAdapter.KEY_ACHIEVEMENT_NAME);
+        int indexAchievementDate = cursor.getColumnIndex(PodDBAdapter.KEY_ACHIEVEMENT_DATE);
+        int indexAchievementCounter = cursor.getColumnIndex(PodDBAdapter.KEY_ACHIEVEMENT_COUNTER);
+        int indexAchievementGoal = cursor.getColumnIndex(PodDBAdapter.KEY_ACHIEVEMENT_GOAL);
+        int indexAchievementRank = cursor.getColumnIndex(PodDBAdapter.KEY_ACHIEVEMENT_RANK);
         int indexAchievementDescription = cursor.getColumnIndex(PodDBAdapter.KEY_ACHIEVEMENT_DESCRIPTION);
         int indexAchievementHidden = cursor.getColumnIndex(PodDBAdapter.KEY_ACHIEVEMENT_HIDDEN);
+
+        long dateAsMillis = cursor.getLong(indexAchievementDate);
+        Date date;
+        if(dateAsMillis == 0){
+            date = null;
+        }else{
+            date = new Date(dateAsMillis);
+        }
 
         return new Achievement(
                 cursor.getLong(indexId),
                 cursor.getString(indexAchievementName),
-                new Date(cursor.getLong(indexAchievementDate)),
+                date,
                 cursor.getInt(indexAchievementCounter),
                 cursor.getInt(indexAchievementGoal),
                 cursor.getInt(indexAchievementRank),
@@ -82,7 +90,10 @@ public class Achievement {
     }
 
     public long getDateAsMilliSeconds(){
-        return date.getTime();
+        if(date != null) {
+            return date.getTime();
+        }
+        return 0;
     }
 
     public int getGoal(){

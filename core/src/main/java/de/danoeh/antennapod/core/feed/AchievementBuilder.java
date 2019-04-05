@@ -1,5 +1,7 @@
 package de.danoeh.antennapod.core.feed;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,6 +28,7 @@ public class AchievementBuilder {
         // add a new achievement here
 
         for(Achievement achievement: achievements){
+            Log.d("ACHIEVEMENTS", "started loop");
             DBWriter.setAchievement(achievement);
         }
 

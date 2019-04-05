@@ -756,12 +756,7 @@ public class DBWriter {
         return dbExec.submit(()-> {
             PodDBAdapter adapter = PodDBAdapter.getInstance();
             adapter.open();
-            long id = adapter.setAchievementTransaction(achievement);
-            while (id < 1){
-                //wait for the adapter
-                Log.d("ACHIEVEMENT", "waiting");
-            }
-            Log.d("ACHIEVEMENT", "returned");
+            adapter.setAchievementTransaction(achievement);
             adapter.close();
         });
     }
