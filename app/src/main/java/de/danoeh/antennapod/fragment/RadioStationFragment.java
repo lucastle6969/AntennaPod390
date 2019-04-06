@@ -6,6 +6,8 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -15,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.io.IOException;
@@ -23,6 +26,8 @@ import de.danoeh.antennapod.R;
 import de.danoeh.antennapod.activity.MainActivity;
 import de.danoeh.antennapod.adapter.RadioStreamTabAdapter;
 import de.danoeh.antennapod.core.feed.RadioStream;
+import de.danoeh.antennapod.core.service.playback.PlayerStatus;
+import de.danoeh.antennapod.core.util.playback.PlaybackController;
 import de.danoeh.antennapod.dialog.CreateRadioStreamDialog;
 
 /**
@@ -38,6 +43,9 @@ public class RadioStationFragment extends Fragment {
     private MediaPlayer mediaPlayer;
     private boolean isRadioPlaying = false;
     private boolean isRadioStreamSetup;
+
+    private RelativeLayout loadingCircle;
+    private LinearLayout playBtnLayout;
 
     private Button play;
     private TextView txtvTitle;
@@ -59,10 +67,27 @@ public class RadioStationFragment extends Fragment {
         TabLayout tabLayout = root.findViewById(R.id.sliding_tabs);
         tabLayout.setupWithViewPager(viewPager);
 
+        ExternalPlayerFragment externalPlayerFragment = ((MainActivity) getActivity()).getExternalPlayerFragment();
+        if (externalPlayerFragment != null) {
+            PlaybackController controller = externalPlayerFragment.getController();
+            if (controller != null && controller.getStatus() == PlayerStatus.PLAYING) {
+                controller.init();
+                controller.playPause();
+            }
+
+            FragmentManager fm = getFragmentManager();
+            FragmentTransaction transaction = fm.beginTransaction();
+            transaction.remove(externalPlayerFragment);
+            transaction.commit();
+        }
+
         radioPlayerLayout = root.findViewById(R.id.radio_player);
 
         txtvTitle = (TextView) root.findViewById(R.id.txtvRadioTitle);
         txtvURL = (TextView) root.findViewById(R.id.txtvRadioUrl);
+
+        loadingCircle = root.findViewById(R.id.loadingPanel);
+        playBtnLayout = root.findViewById(R.id.playBtnLayout);
 
         mediaPlayer = new MediaPlayer();
         mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
@@ -100,6 +125,9 @@ public class RadioStationFragment extends Fragment {
         play.setEnabled(false);
         isRadioPlaying = false;
         isRadioStreamSetup = false;
+
+        playBtnLayout.setVisibility(View.GONE);
+        loadingCircle.setVisibility(View.VISIBLE);
 
         txtvTitle.setText(radioStream.getTitle());
         txtvURL.setText(radioStream.getUrl());
@@ -154,7 +182,6 @@ public class RadioStationFragment extends Fragment {
         protected Boolean doInBackground(String... strings) {
             try {
                 mediaPlayer.setDataSource(strings[0]);
-
                 mediaPlayer.prepare();
                 isRadioStreamSetup = true;
             } catch (IllegalStateException e) {
@@ -169,7 +196,9 @@ public class RadioStationFragment extends Fragment {
         protected void onPostExecute(Boolean aBoolean) {
             super.onPostExecute(aBoolean);
             play.setEnabled(true);
-            play.setText("Play");
+            play.setText(R.string.play_label);
+            playBtnLayout.setVisibility(View.VISIBLE);
+            loadingCircle.setVisibility(View.GONE);
         }
     }
 }
