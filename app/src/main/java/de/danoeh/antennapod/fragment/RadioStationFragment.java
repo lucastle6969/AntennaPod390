@@ -53,6 +53,8 @@ public class RadioStationFragment extends Fragment {
 
     private RadioStream lastSelectedRadioStream;
 
+    private AsyncTask radioStreamTask;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
@@ -115,6 +117,10 @@ public class RadioStationFragment extends Fragment {
     }
 
     public void updateRadioStream(RadioStream radioStream) {
+        if (radioStreamTask != null) {
+            radioStreamTask.cancel(true);
+        }
+
         radioPlayerLayout.setVisibility(View.VISIBLE);
         lastSelectedRadioStream = radioStream;
 
@@ -131,7 +137,7 @@ public class RadioStationFragment extends Fragment {
 
         txtvTitle.setText(radioStream.getTitle());
         txtvURL.setText(radioStream.getUrl());
-        new PlayTask().execute(radioStream.getUrl());
+        radioStreamTask = new PlayTask().execute(radioStream.getUrl());
     }
 
     @Override
