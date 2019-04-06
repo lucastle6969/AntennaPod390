@@ -65,6 +65,11 @@
             android:textIsSelectable="true"
             android:textColor="?android:attr/textColorPrimary" />
 
+        <com.twitter.sdk.android.core.identity.TwitterLoginButton
+            android:id="@+id/login_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
     </LinearLayout>
 
 </android.support.percent.PercentRelativeLayout>

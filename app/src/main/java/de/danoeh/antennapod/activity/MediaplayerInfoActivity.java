@@ -153,6 +153,18 @@ public abstract class MediaplayerInfoActivity extends MediaplayerActivity implem
     }
 
     @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        // Pass the activity result to the fragment, which will then pass the result to the login
+        // button.
+        Fragment fragment = pagerAdapter.getCoverFragment();
+        if (fragment != null) {
+            fragment.onActivityResult(requestCode, resultCode, data);
+        }
+    }
+
+    @Override
     protected void chooseTheme() {
         setTheme(UserPreferences.getNoTitleTheme());
     }
@@ -628,6 +640,11 @@ public abstract class MediaplayerInfoActivity extends MediaplayerActivity implem
             return chaptersFragment;
         }
 
+        @Nullable
+        public CoverFragment getCoverFragment() {
+            return coverFragment;
+        }
+
         @Override
         public Fragment getItem(int position) {
             Log.d(TAG, "getItem(" + position + ")");
@@ -663,5 +680,6 @@ public abstract class MediaplayerInfoActivity extends MediaplayerActivity implem
         public int getCount() {
             return NUM_CONTENT_FRAGMENTS;
         }
+
     }
 }

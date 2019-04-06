@@ -10,6 +10,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.twitter.sdk.android.core.Callback;
+import com.twitter.sdk.android.core.Result;
+import com.twitter.sdk.android.core.TwitterException;
+import com.twitter.sdk.android.core.TwitterSession;
+import com.twitter.sdk.android.core.identity.TwitterLoginButton;
 
 import de.danoeh.antennapod.R;
 import de.danoeh.antennapod.activity.MediaplayerInfoActivity.MediaplayerInfoContentFragment;
@@ -30,6 +35,7 @@ public class CoverFragment extends Fragment implements MediaplayerInfoContentFra
     private TextView txtvPodcastTitle;
     private TextView txtvEpisodeTitle;
     private ImageView imgvCover;
+    private TwitterLoginButton twitterLoginButton;
 
     public static CoverFragment newInstance(Playable item) {
         CoverFragment f = new CoverFragment();
@@ -65,6 +71,20 @@ public class CoverFragment extends Fragment implements MediaplayerInfoContentFra
                     .dontAnimate()
                     .fitCenter()
                     .into(imgvCover);
+
+            twitterLoginButton = root.findViewById(R.id.login_button);
+            twitterLoginButton.setCallback(new Callback<TwitterSession>() {
+                @Override
+                public void success(Result<TwitterSession> result) {
+                    // Do something with result, which provides a TwitterSession for making API calls
+                }
+
+                @Override
+                public void failure(TwitterException exception) {
+                    // Do something on failure
+                }
+            });
+
         } else {
             Log.w(TAG, "loadMediaInfo was called while media was null");
         }
