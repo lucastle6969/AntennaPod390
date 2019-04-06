@@ -54,9 +54,6 @@ public class RadioStreamFragment extends Fragment {
         }
         else{
             radioStreamList = DBReader.getAllUserRadioStreams();
-            RadioStream stream1 = new RadioStream(1, "Title", "Url");
-
-            radioStreamList.add(stream1);
         }
 
         radioStreamAdapter = new RadioStreamAdapter(radioStreamList, controller, isRecommended, radioStreamListener);

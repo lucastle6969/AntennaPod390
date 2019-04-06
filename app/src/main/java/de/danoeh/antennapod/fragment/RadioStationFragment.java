@@ -1,6 +1,5 @@
 package de.danoeh.antennapod.fragment;
 
-
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.AsyncTask;
@@ -24,6 +23,7 @@ import de.danoeh.antennapod.R;
 import de.danoeh.antennapod.activity.MainActivity;
 import de.danoeh.antennapod.adapter.RadioStreamTabAdapter;
 import de.danoeh.antennapod.core.feed.RadioStream;
+import de.danoeh.antennapod.dialog.CreateRadioStreamDialog;
 
 /**
  * Provides actions for displaying the recommended radio list and personal radio list
@@ -31,6 +31,8 @@ import de.danoeh.antennapod.core.feed.RadioStream;
 
 public class RadioStationFragment extends Fragment {
     public static final String TAG = "RadioStationFragment";
+    private int fragmentId;
+
     private LinearLayout radioPlayerLayout;
 
     private MediaPlayer mediaPlayer;
@@ -109,6 +111,7 @@ public class RadioStationFragment extends Fragment {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
         setHasOptionsMenu(true);
+        fragmentId = this.getId();
     }
 
     @Override
@@ -116,6 +119,10 @@ public class RadioStationFragment extends Fragment {
         super.onDetach();
         mediaPlayer.stop();
         mediaPlayer = null;
+    }
+
+    public void refresh(){
+        getFragmentManager().beginTransaction().detach(this).attach(this).commit();
     }
 
     @Override
@@ -132,6 +139,9 @@ public class RadioStationFragment extends Fragment {
         int id = item.getItemId();
         switch(id) {
             case R.id.addRadioStreamBtn:
+                CreateRadioStreamDialog radioStreamDialog = new CreateRadioStreamDialog();
+                RadioStationFragment rsf = (RadioStationFragment) getFragmentManager().findFragmentById(fragmentId);
+                radioStreamDialog.showDialog(getActivity(), rsf);
                 break;
             default:
                 break;
