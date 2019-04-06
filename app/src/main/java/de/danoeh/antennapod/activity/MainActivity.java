@@ -530,6 +530,7 @@ public class MainActivity extends CastEnabledActivity implements NavDrawerActivi
                     requestCastButton(MenuItem.SHOW_AS_ACTION_IF_ROOM);
                     return retVal;
                 case PodcastOfTheDayFragment.TAG:
+                case AchievementsFragment.TAG:
                 case DownloadsFragment.TAG:
                 case PlaybackHistoryFragment.TAG:
                 case AddFeedFragment.TAG:

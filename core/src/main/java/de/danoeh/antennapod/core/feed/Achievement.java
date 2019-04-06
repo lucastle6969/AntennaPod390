@@ -1,9 +1,11 @@
 package de.danoeh.antennapod.core.feed;
 
 import android.database.Cursor;
+import android.graphics.drawable.Drawable;
 
 import java.util.Date;
 
+import de.danoeh.antennapod.core.R;
 import de.danoeh.antennapod.core.storage.PodDBAdapter;
 
 public class Achievement {
@@ -110,6 +112,13 @@ public class Achievement {
 
     public int getHidden(){
         return hidden;
+    }
+
+    public int getIconResource(){
+        if(date==null){
+            return R.drawable.bookmark_icon;
+        }
+        return R.drawable.ic_search_grey600_24dp;
     }
 }
 

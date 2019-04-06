@@ -119,6 +119,9 @@
         <item quantity="other">%d days after finishing</item>
     </plurals>
 
+    <!-- Achievements labels -->
+    <string name="achievement_page_title">My Achievements</string>
+
     <!-- Bookmark labels -->
     <string name="bookmark_label">Bookmark</string>
     <string name="bookmark_title">Bookmarks</string>
