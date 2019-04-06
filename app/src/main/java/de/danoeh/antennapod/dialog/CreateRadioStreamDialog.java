@@ -24,12 +24,12 @@ import de.danoeh.antennapod.fragment.RadioStationFragment;
 
 public class CreateRadioStreamDialog {
 
-    public void showDialog(Activity context, RadioStationFragment fragment) {
+    public void showDialog(Activity activity, RadioStationFragment fragment) {
         // Create alert dialog
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         builder.setTitle(R.string.add_radio_stream_label);
 
-        LinearLayout layout = new LinearLayout(context);
+        LinearLayout layout = new LinearLayout(activity);
         layout.setOrientation(LinearLayout.VERTICAL);
         layout.setPadding(50, 50, 50 ,50);
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
@@ -39,25 +39,25 @@ public class CreateRadioStreamDialog {
         params.setMargins(50, 10, 50, 10);
         layout.setLayoutParams(params);
 
-        final TextView radioTitleTextView = new TextView(context);
+        final TextView radioTitleTextView = new TextView(activity);
         radioTitleTextView.setText(R.string.enter_radio_title_label);
         layout.addView(radioTitleTextView);
 
         List<RadioStream> radioStreamList = DBReader.getAllUserRadioStreams();
-        String defaultRadioStreamTitle = context.getString(R.string.radio_stream_label) + " " + Integer.toString(radioStreamList.size() + 1);
+        String defaultRadioStreamTitle = activity.getString(R.string.radio_stream_label) + " " + Integer.toString(radioStreamList.size() + 1);
 
-        final EditText inputTitle = new EditText(context);
+        final EditText inputTitle = new EditText(activity);
         inputTitle.setGravity(Gravity.LEFT);
         inputTitle.setInputType(InputType.TYPE_CLASS_TEXT);
         inputTitle.setText(defaultRadioStreamTitle);
         inputTitle.setSelection(inputTitle.getText().length());
         layout.addView(inputTitle);
 
-        final TextView radioUrlTextView = new TextView(context);
+        final TextView radioUrlTextView = new TextView(activity);
         radioUrlTextView.setText(R.string.enter_radio_url_label);
         layout.addView(radioUrlTextView);
 
-        final EditText inputURL = new EditText(context);
+        final EditText inputURL = new EditText(activity);
         inputURL.setGravity(Gravity.LEFT);
         inputURL.setInputType(InputType.TYPE_CLASS_TEXT);
         inputURL.setHint(R.string.radio_url_hint);
@@ -66,13 +66,20 @@ public class CreateRadioStreamDialog {
 
         builder.setView(layout);
 
-        builder.setPositiveButton(R.string.confirm_label, null);
+        builder.setPositiveButton(R.string.confirm_label, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
         builder.setNegativeButton(R.string.cancel_label, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.cancel();
             }
         });
+
         final AlertDialog alertDialog = builder.create();
 
         alertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
@@ -86,24 +93,24 @@ public class CreateRadioStreamDialog {
                         String inputRadioUrl = inputURL.getText().toString();
 
                         if (inputRadioTitle.isEmpty()) {
-                            Toast.makeText(context, context.getString(R.string.missing_radio_title_error), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(activity, activity.getString(R.string.missing_radio_title_error), Toast.LENGTH_SHORT).show();
                             return;
                         }
 
                         if (inputRadioUrl.isEmpty()) {
-                            Toast.makeText(context, context.getString(R.string.missing_radio_url_error), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(activity, activity.getString(R.string.missing_radio_url_error), Toast.LENGTH_SHORT).show();
                             return;
                         }
 
                         if (!URLUtil.isValidUrl(inputRadioUrl)) {
-                            Toast.makeText(context, context.getString(R.string.url_search_error_invalid), Toast.LENGTH_LONG).show();
+                            Toast.makeText(activity, activity.getString(R.string.url_search_error_invalid), Toast.LENGTH_LONG).show();
                             return;
                         }
 
                         Future<?> task = DBWriter.setRadioStream(new RadioStream(-1, inputRadioTitle, inputRadioUrl));
                         dialog.dismiss();
                         while(!task.isDone()) { /* Wait for radio stream to be inserted */}
-                        Toast.makeText(context, context.getString(R.string.added_radio_stream), Toast.LENGTH_LONG).show();
+                        Toast.makeText(activity, activity.getString(R.string.added_radio_stream), Toast.LENGTH_LONG).show();
                         fragment.refresh();
                     }
                 });

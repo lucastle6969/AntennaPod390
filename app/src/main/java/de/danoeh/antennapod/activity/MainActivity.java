@@ -339,6 +339,9 @@ public class MainActivity extends CastEnabledActivity implements NavDrawerActivi
 
         final FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction transaction = fm.beginTransaction();
+
+        // If loading the RadioStationFragment, then remove the external player from view
+        // and pause the playback controller if it is playing
         if (externalPlayerFragment != null && tag.equalsIgnoreCase(RadioStationFragment.TAG)) {
             PlaybackController controller = externalPlayerFragment.getController();
             if (controller != null && controller.getStatus() == PlayerStatus.PLAYING) {
@@ -347,6 +350,8 @@ public class MainActivity extends CastEnabledActivity implements NavDrawerActivi
             }
             transaction.remove(externalPlayerFragment);
         } else {
+            // This is used to add the external player back into the view if it had been
+            // removed when the user loaded the radio station fragment
             externalPlayerFragment = new ExternalPlayerFragment();
             transaction.replace(R.id.playerFragment, externalPlayerFragment, ExternalPlayerFragment.TAG);
         }
@@ -853,9 +858,6 @@ public class MainActivity extends CastEnabledActivity implements NavDrawerActivi
 
     @Override
     public void onRadioStreamSelected(RadioStream radioStream) {
-        if (currentFragment == null) {
-            return;
-        }
         RadioStationFragment radioStationFragment = (RadioStationFragment) currentFragment;
         radioStationFragment.updateRadioStream(radioStream);
     }

@@ -47,13 +47,13 @@ public class RadioStationFragment extends Fragment {
     private RelativeLayout loadingCircle;
     private LinearLayout playBtnLayout;
 
-    private Button play;
+    private Button playBtn;
     private TextView txtvTitle;
     private TextView txtvURL;
 
     private RadioStream lastSelectedRadioStream;
 
-    private AsyncTask radioStreamTask;
+    private AsyncTask<String, Void, Boolean> radioStreamTask;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -94,20 +94,20 @@ public class RadioStationFragment extends Fragment {
         mediaPlayer = new MediaPlayer();
         mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
 
-        play = (Button) root.findViewById(R.id.btnPlay);
-        play.setEnabled(false);
+        playBtn = (Button) root.findViewById(R.id.btnPlay);
+        playBtn.setEnabled(false);
 
-        play.setOnClickListener(new View.OnClickListener() {
+        playBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (isRadioPlaying) {
                     mediaPlayer.pause();
                     isRadioPlaying = false;
-                    play.setText(R.string.play_label);
+                    playBtn.setText(R.string.play_label);
                 } else {
                     mediaPlayer.start();
                     isRadioPlaying = true;
-                    play.setText(R.string.pause_label);
+                    playBtn.setText(R.string.pause_label);
                 }
             }
         });
@@ -128,7 +128,7 @@ public class RadioStationFragment extends Fragment {
         mediaPlayer = new MediaPlayer();
         mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
 
-        play.setEnabled(false);
+        playBtn.setEnabled(false);
         isRadioPlaying = false;
         isRadioStreamSetup = false;
 
@@ -201,8 +201,8 @@ public class RadioStationFragment extends Fragment {
         @Override
         protected void onPostExecute(Boolean aBoolean) {
             super.onPostExecute(aBoolean);
-            play.setEnabled(true);
-            play.setText(R.string.play_label);
+            playBtn.setEnabled(true);
+            playBtn.setText(R.string.play_label);
             playBtnLayout.setVisibility(View.VISIBLE);
             loadingCircle.setVisibility(View.GONE);
         }
