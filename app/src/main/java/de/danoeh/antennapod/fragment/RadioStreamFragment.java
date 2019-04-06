@@ -1,5 +1,6 @@
 package de.danoeh.antennapod.fragment;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -23,20 +24,22 @@ public class RadioStreamFragment extends Fragment {
 
     private View root;
     private PlaybackController controller;
+    private RadioStreamListener radioStreamListener;
 
     TextView emptyView;
     RecyclerView recyclerView;
     RadioStreamAdapter radioStreamAdapter;
     List<RadioStream> radioStreamList = new ArrayList<>();
 
+    public interface RadioStreamListener {
+        void onRadioStreamSelected(RadioStream radioStream);
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setHasOptionsMenu(true);
-
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -48,23 +51,12 @@ public class RadioStreamFragment extends Fragment {
         Boolean isRecommended = this.getArguments().getBoolean("isRecommended");
         if(isRecommended){
             radioStreamList = DBReader.getAllRecommendedRadioStreams();
-
-            //For now have fake radioStreams for testing purposes
-            RadioStream stream1 = new RadioStream(1, "Title", "Url");
-            RadioStream stream2 = new RadioStream(2, "Title", "Url");
-
-            radioStreamList.add(stream1);
-            radioStreamList.add(stream2);
-
         }
         else{
             radioStreamList = DBReader.getAllUserRadioStreams();
-            RadioStream stream1 = new RadioStream(1, "Title", "Url");
-
-            radioStreamList.add(stream1);
         }
 
-        radioStreamAdapter = new RadioStreamAdapter(radioStreamList, controller, isRecommended);
+        radioStreamAdapter = new RadioStreamAdapter(radioStreamList, controller, isRecommended, radioStreamListener);
         radioStreamAdapter.setContext(this.getActivity());
 
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
@@ -85,11 +77,9 @@ public class RadioStreamFragment extends Fragment {
         return root;
     }
 
-
     public void setController(PlaybackController controller) {
         this.controller = controller;
     }
-
 
     @Override
     public void onDestroy() {
@@ -98,5 +88,20 @@ public class RadioStreamFragment extends Fragment {
         root = null;
     }
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof RadioStreamListener) {
+            radioStreamListener = (RadioStreamListener) context;
+        } else {
+            throw new RuntimeException(context.toString() + " must implement RadioStreamListener");
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        radioStreamListener = null;
+    }
 
 }

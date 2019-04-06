@@ -18,7 +18,6 @@ import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -142,13 +141,35 @@ public class PodDBAdapter {
     static final String TABLE_NAME_RADIO_STREAMS = "RadioStreams";
     static final String TABLE_NAME_RECOMMENDED_RADIO_STREAMS = "RecommendedRadioStreams";
 
-    // Default values
+    // Uncategorized category data
     public static final int UNCATEGORIZED_CATEGORY_ID = 1;
     public static final String UNCATEGORIZED_CATEGORY_NAME = "Uncategorized Section";
 
-    //Recommended RadioStream data
-    public static final String KEY_RECOMMENDED_RADIO_TITLE_1 = "BBC media";
-    public static final String KEY_RECOMMENDED_RADIO_URL_1 = "http://bbcmedia.ic.llnwd.net/stream/bbcmedia_radio2_mf_p";
+    // Recommended RadioStreams
+    public static final Map<String, String> RECOMMENED_RADIO_STATIONS = new HashMap<String, String>() {
+        {
+            put("BBC media", "http://bbcmedia.ic.llnwd.net/stream/bbcmedia_radio2_mf_p");
+            put("Radio Sandiego Mantilla", "http://5.135.183.124:8047/stream");
+            put("Radio Via Montenapoleone", "http://eu9.fastcast4u.com:5068/;");
+            put("Radio Rinteln", "http://rs1.weserweb.net:14220/");
+            put("CKBD 98.1 FM Lethbridge, AB", "http://listenlive.vistaradio.ca/CKBD");
+            put("Jammin Vibez Radio", "http://ample-zeno-23.radiojar.com/whffggvsyxquv?rj-ttl=5&rj-token=AAABaeoOvGShnIjN5bHSqFBjvBTQ-DX26IrrJAEAPOciNPSauff04w");
+            put("Calm Radio - Antonín Dvořák", "http://streams.calmradio.com:10528/;");
+            put("Prog Frog", "http://192.227.116.104:8197/stream");
+            put("RDN Italia", "http://agnes.torontocast.com:8135/stream2");
+            put("RDN Rock", "http://agnes.torontocast.com:8135/stream");
+            put("RDN Evergreen", "http://agnes.torontocast.com:8167/stream2");
+            put("RDN House", "http://agnes.torontocast.com:8167/stream3");
+            put("RDN Dance", "http://agnes.torontocast.com:8167/stream");
+            put("Atlantide internet radio station", "http://cristina.torontocast.com:8033/stream");
+            put("ABC 50s", "http://144.217.253.136:8582/stream");
+            put("ABC 60s", "http://cristina.torontocast.com:8173/stream");
+            put("Boom 95.3", "http://newcap.leanstream.co/CJXKFM-MP3?args=3rdparty_02");
+            put("Canadian Pinoy Radio – Montreal", "http://s5.voscast.com:8050/;stream.mp3");
+            put("CBC Radio - British Columbia 91.5 FM", "http://2.18.214.236/7/966/451661/v1/rc.akacast.akamaistream.net/cbc_r1_prg");
+            put("CBC Radio - Québec/Montreal 88.5 FM", "http://2.18.214.245/7/35/451661/v1/rc.akacast.akamaistream.net/cbc_r1_mtl");
+        }
+    };
 
     // SQL Statements for creating new tables
     private static final String TABLE_PRIMARY_KEY = KEY_ID
@@ -264,7 +285,7 @@ public class PodDBAdapter {
             + KEY_FEEDITEM + " INTEGER," + KEY_FEED + " INTEGER)";
 
 
-    // Additional sql statements
+    // Default SQL Statements for inserting data
     private static final String INSERT_UNCATEGORIZED_CATEGORY = "INSERT INTO " + TABLE_NAME_CATEGORIES
             + " (" + KEY_ID + ", " + KEY_CATEGORY_NAME + ") VALUES (" + UNCATEGORIZED_CATEGORY_ID
             + ", '" + UNCATEGORIZED_CATEGORY_NAME + "')";
@@ -339,10 +360,6 @@ public class PodDBAdapter {
             TABLE_NAME_RADIO_STREAMS,
             TABLE_NAME_RECOMMENDED_RADIO_STREAMS
     };
-
-    private static final Map<String, String> RECOMMENDED_RADIO_STREAM_MAP = new HashMap<String, String>() {{
-        put(KEY_RECOMMENDED_RADIO_TITLE_1, KEY_RECOMMENDED_RADIO_URL_1);
-    }};
 
     /**
      * Contains FEEDITEM_SEL_FI_SMALL as comma-separated list. Useful for raw queries.
@@ -729,25 +746,6 @@ public class PodDBAdapter {
             db.endTransaction();
         }
         return result;
-    }
-
-    private static void setAllRecommendedRadioStreams() {
-        List<RadioStream> recommendedRadioStreams = new ArrayList<>();
-        for (Map.Entry<String, String> pair : RECOMMENDED_RADIO_STREAM_MAP.entrySet()) {
-            RadioStream radio = new RadioStream(-1, pair.getKey(), pair.getValue());
-            recommendedRadioStreams.add(radio);
-        }
-        try {
-            db.beginTransactionNonExclusive();
-            for(RadioStream radio: recommendedRadioStreams){
-                setRecommendedRadioStream(radio);
-            }
-            db.setTransactionSuccessful();
-        } catch (SQLException e) {
-            Log.e(TAG, Log.getStackTraceString(e));
-        } finally {
-            db.endTransaction();
-        }
     }
 
     public long setSingleRecommendedRadioStreamsTest(RadioStream radioStream) {
@@ -2052,12 +2050,9 @@ public class PodDBAdapter {
             db.execSQL(CREATE_TABLE_FAVORITES);
             db.execSQL(CREATE_TABLE_BOOKMARKS);
             db.execSQL(CREATE_TABLE_CATEGORIES);
-            db.execSQL(INSERT_UNCATEGORIZED_CATEGORY);
-
             db.execSQL(CREATE_TABLE_ASSOCIATION_FOR_CATEGORIES);
             db.execSQL(CREATE_TABLE_RADIO_STREAMS);
             db.execSQL(CREATE_TABLE_RECOMMENDED_RADIO_STREAMS);
-//            setAllRecommendedRadioStreams();
 
             db.execSQL(CREATE_INDEX_FEEDITEMS_FEED);
             db.execSQL(CREATE_INDEX_FEEDITEMS_PUBDATE);
@@ -2066,6 +2061,24 @@ public class PodDBAdapter {
             db.execSQL(CREATE_INDEX_QUEUE_FEEDITEM);
             db.execSQL(CREATE_INDEX_SIMPLECHAPTERS_FEEDITEM);
 
+            insertDefaultData(db);
+        }
+
+        private void insertDefaultData(final SQLiteDatabase db) {
+            // Insert uncategorized category
+            db.execSQL(INSERT_UNCATEGORIZED_CATEGORY);
+
+            // Insert all recommended radio stations
+            for (Map.Entry<String, String> entry: RECOMMENED_RADIO_STATIONS.entrySet()) {
+                String insertQuery = getInsertRecommendedRadioStreamQuery(entry.getKey(), entry.getValue());
+                db.execSQL(insertQuery);
+            }
+        }
+
+        private String getInsertRecommendedRadioStreamQuery(String title, String url) {
+            return "INSERT INTO " + TABLE_NAME_RECOMMENDED_RADIO_STREAMS
+                    + " (" + KEY_ID + ", " + KEY_RADIO_TITLE + ", " + KEY_RADIO_URL + ") VALUES (NULL, '"
+                    + title + "', '" + url + "')";
         }
 
         @Override

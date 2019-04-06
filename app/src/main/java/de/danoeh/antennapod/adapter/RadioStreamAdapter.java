@@ -13,12 +13,14 @@ import java.util.List;
 import de.danoeh.antennapod.R;
 import de.danoeh.antennapod.core.feed.RadioStream;
 import de.danoeh.antennapod.core.util.playback.PlaybackController;
+import de.danoeh.antennapod.fragment.RadioStreamFragment;
 
 public class RadioStreamAdapter extends RecyclerView.Adapter<RadioStreamAdapter.RadioStreamViewHolder> {
     private List<RadioStream> radioStreamList;
     private RadioStreamViewHolder view;
 
     private Activity context;
+    private RadioStreamFragment.RadioStreamListener radioStreamListener;
 
     private PlaybackController controller;
 
@@ -44,6 +46,15 @@ public class RadioStreamAdapter extends RecyclerView.Adapter<RadioStreamAdapter.
                     }
             );
 
+            radioStreamPlayImg.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    String radioTitle = radioStreamTitle.getText().toString();
+                    String radioUrl = radioStreamUrl.getText().toString();
+                    RadioStream selectedRadioStream = new RadioStream(-1, radioTitle, radioUrl);
+                    radioStreamListener.onRadioStreamSelected(selectedRadioStream);
+                }
+            });
         }
     }
 
@@ -53,10 +64,11 @@ public class RadioStreamAdapter extends RecyclerView.Adapter<RadioStreamAdapter.
     }
 
 
-    public RadioStreamAdapter(List<RadioStream> radioStreamList, PlaybackController controller, Boolean isRecommended) {
+    public RadioStreamAdapter(List<RadioStream> radioStreamList, PlaybackController controller, Boolean isRecommended, RadioStreamFragment.RadioStreamListener radioStreamListener) {
         this.radioStreamList = radioStreamList;
         this.controller = controller;
         this.isRecommended = isRecommended;
+        this.radioStreamListener = radioStreamListener;
     }
 
     @Override
