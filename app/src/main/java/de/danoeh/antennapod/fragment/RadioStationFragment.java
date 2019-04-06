@@ -83,12 +83,7 @@ public class RadioStationFragment extends Fragment {
             }
         });
 
-        if (lastSelectedRadioStream == null) {
-            radioPlayerLayout.setVisibility(View.GONE);
-        } else {
-            radioPlayerLayout.setVisibility(View.VISIBLE);
-        }
-
+        radioPlayerLayout.setVisibility(View.GONE);
         return root;
     }
 
@@ -114,6 +109,13 @@ public class RadioStationFragment extends Fragment {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
         setHasOptionsMenu(true);
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mediaPlayer.stop();
+        mediaPlayer = null;
     }
 
     @Override
