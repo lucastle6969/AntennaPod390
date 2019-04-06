@@ -137,6 +137,17 @@
     <string name="radio_stream_url">Radio stream URL</string>
     <string name="recommended_radio_streams">Recommendations</string>
     <string name="my_radio_streams">My radio list</string>
+    <string name="radio_stream_add_dialog_title">Add a radio station</string>
+    <string name="radio_stream_edit_dialog_title">Edit radio station</string>
+    <string name="radio_stream_delete_dialog_title">Remove radio station</string>
+    <string name="radio_stream_dialog_hint_title">Enter radio title:</string>
+    <string name="radio_stream_dialog_hint_url">Enter radio URL:</string>
+    <string name="radio_stream_create_success">Created radio stream: </string>
+    <string name="radio_stream_edit_success">Modified radio stream: </string>
+    <string name="radio_stream_delete_success">Removed radio stream: </string>
+    <string name="radio_stream_delete_prompt">Are you sure you want to remove this station?</string>
+    <string name="radio_stream_title_error">Please enter a radio stream title.</string>
+    <string name="radio_stream_url_error">Please enter a valid radio stream URL.</string>
 
 
     <!-- Categories labels -->
