@@ -16,6 +16,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.perf.FirebasePerformance;
+import com.google.firebase.perf.metrics.Trace;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -220,6 +222,8 @@ public class PodcastOfTheDayFragment extends Fragment {
 
         @Override
         protected String doInBackground(String... params) {
+            Trace potd_api_call = FirebasePerformance.getInstance().newTrace("potd_api_call");
+            potd_api_call.start();
             String result;
             try {
                 String url = LISTENNOTES_URL + "just_listen";
@@ -257,7 +261,7 @@ public class PodcastOfTheDayFragment extends Fragment {
                 e.printStackTrace();
                 return "FAIL";
             }
-
+            potd_api_call.stop();
             return result;
         }
 
