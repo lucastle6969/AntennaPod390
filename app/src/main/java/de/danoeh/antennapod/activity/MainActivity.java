@@ -865,4 +865,8 @@ public class MainActivity extends CastEnabledActivity implements NavDrawerActivi
     public ExternalPlayerFragment getExternalPlayerFragment() {
         return externalPlayerFragment;
     }
+
+    public Fragment getCurrentFragment(){
+        return currentFragment;
+    }
 }

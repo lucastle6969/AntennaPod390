@@ -145,6 +145,8 @@
     <string name="missing_radio_title_error">Please enter a radio title</string>
     <string name="missing_radio_url_error">Please enter a radio URL</string>
     <string name="added_radio_stream">Added new radio stream</string>
+    <string name="adding_recommended_radio_stream">Add this radio stream to your list?</string>
+    <string name="successfully_added_recommended_radio_stream">Successfully added recommended radio stream to list</string>
 
     <!-- Categories labels -->
     <string name="edit_category_dialog_title">Edit Category</string>
