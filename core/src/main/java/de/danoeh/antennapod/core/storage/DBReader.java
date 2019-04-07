@@ -934,6 +934,21 @@ public final class DBReader {
     }
 
     /**
+     * This method is used to check whether a radio stream already exists with a certain url
+     * @param url Name to check if it already exists
+     * @return Returns true if parameter name is a duplicate category name. False otherwise
+     */
+    public static boolean isDuplicateRadioStreamUrl(String url) {
+        List<RadioStream> radioStreamsInDb = getAllUserRadioStreams();
+        for (RadioStream radioStream : radioStreamsInDb) {
+            if (radioStream.getUrl().equalsIgnoreCase(url)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * This method is used to check whether a category already exists with a certain name
      * @param name Name to check if it already exists
      * @return Returns true if parameter name is a duplicate category name. False otherwise

@@ -12,7 +12,9 @@ import java.util.List;
 
 import de.danoeh.antennapod.R;
 import de.danoeh.antennapod.core.feed.RadioStream;
+import de.danoeh.antennapod.core.storage.DBReader;
 import de.danoeh.antennapod.core.util.playback.PlaybackController;
+import de.danoeh.antennapod.dialog.AddingRecommendationsToRadioList;
 import de.danoeh.antennapod.fragment.RadioStreamFragment;
 
 public class RadioStreamAdapter extends RecyclerView.Adapter<RadioStreamAdapter.RadioStreamViewHolder> {
@@ -41,7 +43,9 @@ public class RadioStreamAdapter extends RecyclerView.Adapter<RadioStreamAdapter.
                     new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-//                            editBookmark(getAdapterPosition());
+                            RadioStream radioStream = radioStreamList.get(getAdapterPosition());
+                            AddingRecommendationsToRadioList addingDialog = new AddingRecommendationsToRadioList();
+                            addingDialog.showDialog(radioStream, context);
                         }
                     }
             );
@@ -91,10 +95,12 @@ public class RadioStreamAdapter extends RecyclerView.Adapter<RadioStreamAdapter.
         RadioStream radioStream = radioStreamList.get(position);
         holder.radioStreamTitle.setText(radioStream.getTitle());
         holder.radioStreamUrl.setText(radioStream.getUrl());
-        holder.addToRadioListImg.setImageResource(R.drawable.ic_add_grey600_24dp);
-        holder.radioStreamPlayImg.setImageResource(R.drawable.ic_play_arrow_grey600_24dp);
+        holder.addToRadioListImg.setImageResource(R.drawable.ic_add_playlist_light);
+        holder.radioStreamPlayImg.setImageResource(R.drawable.ic_settings_input_antenna_grey600_24dp);
 
-        if(isRecommended){
+        boolean duplicate = DBReader.isDuplicateRadioStreamUrl(radioStream.getUrl());
+
+        if(isRecommended && !duplicate){
             holder.addToRadioListImg.setVisibility(View.VISIBLE);
         }
         else{
