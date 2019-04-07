@@ -14,7 +14,7 @@ import de.danoeh.antennapod.R;
 import de.danoeh.antennapod.core.feed.RadioStream;
 import de.danoeh.antennapod.core.storage.DBReader;
 import de.danoeh.antennapod.core.util.playback.PlaybackController;
-import de.danoeh.antennapod.dialog.AddingRecommendationsToRadioList;
+import de.danoeh.antennapod.dialog.AddingRecommendationsToMyListDialog;
 import de.danoeh.antennapod.fragment.RadioStreamFragment;
 
 public class RadioStreamAdapter extends RecyclerView.Adapter<RadioStreamAdapter.RadioStreamViewHolder> {
@@ -44,7 +44,7 @@ public class RadioStreamAdapter extends RecyclerView.Adapter<RadioStreamAdapter.
                         @Override
                         public void onClick(View v) {
                             RadioStream radioStream = radioStreamList.get(getAdapterPosition());
-                            AddingRecommendationsToRadioList addingDialog = new AddingRecommendationsToRadioList();
+                            AddingRecommendationsToMyListDialog addingDialog = new AddingRecommendationsToMyListDialog();
                             addingDialog.showDialog(radioStream, context);
                         }
                     }

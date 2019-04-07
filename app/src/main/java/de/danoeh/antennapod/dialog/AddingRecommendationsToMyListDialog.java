@@ -13,7 +13,7 @@ import de.danoeh.antennapod.core.feed.RadioStream;
 import de.danoeh.antennapod.core.storage.DBWriter;
 import de.danoeh.antennapod.fragment.RadioStationFragment;
 
-public class AddingRecommendationsToRadioList {
+public class AddingRecommendationsToMyListDialog {
 
     public void showDialog(RadioStream radioStream, Activity context) {
 
