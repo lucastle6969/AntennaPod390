@@ -29,7 +29,10 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.twitter.sdk.android.core.DefaultLogger;
 import com.twitter.sdk.android.core.Twitter;
+import com.twitter.sdk.android.core.TwitterAuthConfig;
+import com.twitter.sdk.android.core.TwitterConfig;
 import com.viewpagerindicator.CirclePageIndicator;
 
 import java.util.List;
@@ -124,8 +127,18 @@ public abstract class MediaplayerInfoActivity extends MediaplayerActivity implem
         super.onCreate(savedInstanceState);
         supportPostponeEnterTransition();
 
-        //Initialize 
-        Twitter.initialize(this);
+        //Initialize and configure Twitter
+        twitterConfigAndInit();
+    }
+
+    private void twitterConfigAndInit() {
+        TwitterAuthConfig authConfig = new TwitterAuthConfig(getResources().getString(R.string.twitter_consumer_key), getResources().getString(R.string.twitter_consumer_secret));
+        TwitterConfig config = new TwitterConfig.Builder(this)
+                .logger(new DefaultLogger(Log.DEBUG))
+                .twitterAuthConfig(authConfig)
+                .debug(true)
+                .build();
+        Twitter.initialize(config);
     }
 
     @Override
