@@ -112,11 +112,6 @@
         </activity>
 
         <activity
-            android:name=".activity.RadioStreamActivity"
-            android:label="RadioStreamActivity">
-        </activity>
-
-        <activity
                 android:name=".activity.FeedSettingsActivity"
                 android:windowSoftInputMode="stateHidden"
                 android:label="@string/feed_settings_label">

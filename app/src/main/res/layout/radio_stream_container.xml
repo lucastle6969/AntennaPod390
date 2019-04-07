@@ -75,7 +75,7 @@
             android:layout_width="32dp"
             android:contentDescription="@string/cover_label"
             android:background="@null"
-            android:src="@drawable/ic_add_grey600_24dp"/>
+            android:src="@drawable/ic_add_playlist_light"/>
 
         <include layout="@layout/vertical_list_divider"/>
 
@@ -85,7 +85,7 @@
             android:layout_width="32dp"
             android:contentDescription="@string/cover_label"
             android:background="@null"
-            android:src="@drawable/ic_play_arrow_grey600_24dp" />
+            android:src="@drawable/ic_settings_input_antenna_grey600_24dp" />
 
     </LinearLayout>
 
