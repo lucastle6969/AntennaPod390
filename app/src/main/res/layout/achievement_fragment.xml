@@ -4,21 +4,30 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_alignParentStart="true"
-    android:layout_alignParentLeft="true"
+    android:layout_alignParentBottom="true"
     android:layout_alignParentTop="true">
 
-    <TextView
-        android:id="@+id/achievement_page_title"
-        android:layout_width="wrap_content"
-        android:layout_height="30dp"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:layout_gravity="center_horizontal"
-        style="@style/AntennaPod.TextView.Heading"
-        android:text="@string/achievement_page_title"
-        tools:text="Achievements" />
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true">
+
+        <ImageView
+            android:id="@+id/achievement_total_rank_image"
+            android:layout_width="50dp"
+            android:layout_height="50dp" />
+
+        <TextView
+
+            android:id="@+id/achievement_page_title_rank"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:layout_alignParentTop="true"
+            android:layout_gravity="center_horizontal"
+            style="@style/AntennaPod.TextView.Heading"
+            tools:text="Achievements" />
+    </LinearLayout>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/achievementList"

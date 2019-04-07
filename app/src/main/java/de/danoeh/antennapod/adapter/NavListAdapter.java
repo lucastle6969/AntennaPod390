@@ -133,7 +133,7 @@ public class NavListAdapter extends BaseAdapter
                 icon = R.attr.type_video;
                 break;
             case AchievementsFragment.TAG:
-                icon = R.attr.type_video;
+                icon = R.attr.type_achievement_star;
                 break;
             case DownloadsFragment.TAG:
                 icon = R.attr.av_download;

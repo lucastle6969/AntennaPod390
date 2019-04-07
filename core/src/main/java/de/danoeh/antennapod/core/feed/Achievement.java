@@ -1,6 +1,7 @@
 package de.danoeh.antennapod.core.feed;
 
 import android.database.Cursor;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 
 import java.util.Date;
@@ -91,6 +92,12 @@ public class Achievement {
         return date;
     }
 
+    public String getDateText(){
+        if(date!=null){
+            return date.toString();
+        }else return "Achievement  incomplete";
+    }
+
     public long getDateAsMilliSeconds(){
         if(date != null) {
             return date.getTime();
@@ -114,11 +121,53 @@ public class Achievement {
         return hidden;
     }
 
+    public boolean getIsHidden(){
+        return hidden > 0;
+    }
+
+    public String getDisplayDescription() {
+        if(date==null && getIsHidden()){
+            return "? ? ?";
+        }
+        else return getDescription();
+    }
+
+    public String getDisplayName() {
+        if(date==null && getIsHidden()){
+            return "? ? ?";
+        }
+        else return getName();
+    }
+
     public int getIconResource(){
         if(date==null){
-            return R.drawable.bookmark_icon;
+            switch(rank){
+                case 1:
+                    return R.drawable.ic_achievement_star_1_locked;
+                case 2:
+                    return R.drawable.ic_achievement_star_2_locked;
+                case 3:
+                    return R.drawable.ic_achievement_star_3_locked;
+                default:
+                    return R.drawable.ic_achievement_star_1_locked;
+            }
         }
-        return R.drawable.ic_search_grey600_24dp;
+        switch(rank){
+            case 1:
+                return R.drawable.ic_achievement_star_1;
+            case 2:
+                return R.drawable.ic_achievement_star_2;
+            case 3:
+                return R.drawable.ic_achievement_star_3;
+            default:
+                return R.drawable.ic_achievement_star_1;
+        }
+    }
+
+    public int getBackgroundColor(){
+        if(date!=null){
+            return Color.GREEN;
+        }else return Color.LTGRAY;
     }
 }
 

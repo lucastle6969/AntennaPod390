@@ -121,6 +121,7 @@
 
     <!-- Achievements labels -->
     <string name="achievement_page_title">My Achievements</string>
+    <string name="achievements">Achievements</string>
 
     <!-- Bookmark labels -->
     <string name="bookmark_label">Bookmark</string>
