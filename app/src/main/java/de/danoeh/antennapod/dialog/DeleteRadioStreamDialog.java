@@ -14,23 +14,28 @@ import java.util.concurrent.Future;
 import de.danoeh.antennapod.R;
 import de.danoeh.antennapod.core.feed.RadioStream;
 import de.danoeh.antennapod.core.storage.DBWriter;
+import de.danoeh.antennapod.fragment.RadioStationFragment;
 import de.danoeh.antennapod.fragment.RadioStreamFragment;
 
 public class DeleteRadioStreamDialog {
 
-    public void showDialog(Context context, RadioStream radioStream, RadioStreamFragment radioStreamFragment) {
+    public void showDialog(Context context, RadioStream radioStream, RadioStationFragment radioStreamFragment) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle(R.string.radio_stream_delete_dialog_title);
 
         LinearLayout layout = new LinearLayout(context);
         layout.setOrientation(LinearLayout.VERTICAL);
-        layout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.FILL_PARENT));
+        layout.setPadding(50, 50, 50 ,50);
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+        );
+        params.setMargins(50, 10, 50, 10);
+        layout.setLayoutParams(params);
 
-        final TextView warningMessage = new TextView(context);
-        warningMessage.setText(R.string.radio_stream_delete_prompt);
-        warningMessage.setPadding(50, 10, 50, 50);
-        warningMessage.setGravity(Gravity.CENTER_HORIZONTAL);
-        layout.addView(warningMessage);
+        final TextView radioDeleteWarning = new TextView(context);
+        radioDeleteWarning.setText(R.string.radio_stream_delete_warning);
+        layout.addView(radioDeleteWarning);
 
         builder.setView(layout);
 
@@ -39,7 +44,7 @@ public class DeleteRadioStreamDialog {
             dialog.dismiss();
             while(!task.isDone()) { /* Wait for radio stream to be inserted */}
             Toast.makeText(context, context.getString(R.string.radio_stream_delete_success) + radioStream.getTitle(), Toast.LENGTH_LONG).show();
-//                radioStreamFragment.refresh();
+                radioStreamFragment.refresh();
 
         });
 
