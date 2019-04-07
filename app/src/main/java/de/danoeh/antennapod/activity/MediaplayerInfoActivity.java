@@ -29,6 +29,7 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.twitter.sdk.android.core.Twitter;
 import com.viewpagerindicator.CirclePageIndicator;
 
 import java.util.List;
@@ -122,6 +123,9 @@ public abstract class MediaplayerInfoActivity extends MediaplayerActivity implem
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         supportPostponeEnterTransition();
+
+        //Initialize 
+        Twitter.initialize(this);
     }
 
     @Override
