@@ -42,8 +42,9 @@ public class AchievementsAdapter extends RecyclerView.Adapter<AchievementsAdapte
 
     public void setContext(Activity context) {context = context;}
 
-    public AchievementsAdapter(List<Achievement> achievementList){
+    public AchievementsAdapter(List<Achievement> achievementList, Activity context){
         this.achievementList = achievementList;
+        this.context = context;
     }
 
     @Override
@@ -63,8 +64,8 @@ public class AchievementsAdapter extends RecyclerView.Adapter<AchievementsAdapte
         holder.achievementName.setBackgroundColor(backgroundColor);
         holder.achievementDescription.setText(achievement.getDisplayDescription());
         holder.achievementDescription.setBackgroundColor(backgroundColor);
-        holder.achievementIcon.setImageResource(achievement.getIconResource());
         holder.achievementIcon.setBackgroundColor(backgroundColor);
+        holder.achievementIcon.setImageResource(achievement.getIconResource());
         holder.achievementDate.setText(achievement.getDateText());
         holder.achievementDate.setBackgroundColor(backgroundColor);
     }

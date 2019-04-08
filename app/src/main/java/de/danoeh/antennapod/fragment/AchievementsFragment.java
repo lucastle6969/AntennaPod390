@@ -56,7 +56,7 @@ public class AchievementsFragment extends Fragment {
         root = inflater.inflate(R.layout.achievement_fragment, container, false);
         recyclerView = root.findViewById(R.id.achievementList);
 
-        achievementsAdapter = new AchievementsAdapter(achievementList);
+        achievementsAdapter = new AchievementsAdapter(achievementList, getActivity());
         achievementsAdapter.setContext(this.getActivity());
         page_title_rank = root.findViewById(R.id.achievement_page_title_rank);
         total_rank_image = root.findViewById(R.id.achievement_rank_image);

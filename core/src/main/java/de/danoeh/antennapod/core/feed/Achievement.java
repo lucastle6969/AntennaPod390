@@ -1,5 +1,6 @@
 package de.danoeh.antennapod.core.feed;
 
+import android.app.Activity;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
@@ -141,16 +142,7 @@ public class Achievement {
 
     public int getIconResource(){
         if(date==null){
-            switch(rank){
-                case 1:
-                    return R.drawable.ic_achievement_star_1_locked;
-                case 2:
-                    return R.drawable.ic_achievement_star_2_locked;
-                case 3:
-                    return R.drawable.ic_achievement_star_3_locked;
-                default:
-                    return R.drawable.ic_achievement_star_1_locked;
-            }
+            return R.drawable.ic_achievement_locked;
         }
         switch(rank){
             case 1:
