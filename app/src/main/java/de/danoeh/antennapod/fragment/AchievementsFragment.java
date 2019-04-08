@@ -18,7 +18,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import de.danoeh.antennapod.R;
 import de.danoeh.antennapod.activity.MainActivity;
 import de.danoeh.antennapod.adapter.AchievementsAdapter;
-import de.danoeh.antennapod.core.feed.Achievement;
+import de.danoeh.antennapod.core.achievements.Achievement;
 import de.danoeh.antennapod.core.storage.DBReader;
 
 public class AchievementsFragment extends Fragment {

@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 import de.danoeh.antennapod.R;
-import de.danoeh.antennapod.core.feed.Achievement;
+import de.danoeh.antennapod.core.achievements.Achievement;
 
 public class AchievementsAdapter extends RecyclerView.Adapter<AchievementsAdapter.AchievementViewHolder> {
 
