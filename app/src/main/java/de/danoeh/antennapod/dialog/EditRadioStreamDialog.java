@@ -17,12 +17,13 @@ import de.danoeh.antennapod.R;
 import de.danoeh.antennapod.core.feed.RadioStream;
 import de.danoeh.antennapod.core.storage.DBWriter;
 import de.danoeh.antennapod.fragment.RadioStationFragment;
+import de.danoeh.antennapod.fragment.RadioStreamFragment;
 
 public class EditRadioStreamDialog {
 
-    public void showDialog(Context context, RadioStream radioStream, RadioStationFragment radioStreamFragment) {
+    public void showDialog(Context context, RadioStream radioStream, RadioStreamFragment radioStreamFragment) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setTitle(R.string.edit_radio_stream_label);
+        builder.setTitle(R.string.edit_radio_station_label);
 
         LinearLayout layout = new LinearLayout(context);
         layout.setOrientation(LinearLayout.VERTICAL);
@@ -88,7 +89,7 @@ public class EditRadioStreamDialog {
                 Future<?> task = DBWriter.updateRadioStream(new RadioStream(radioStream.getId(), inputRadioTitle, inputRadioUrl));
                 dialog.dismiss();
                 while(!task.isDone()) { /* Wait for radio stream to be inserted */}
-                Toast.makeText(context, context.getString(R.string.edited_radio_stream), Toast.LENGTH_LONG).show();
+                Toast.makeText(context, context.getString(R.string.radio_stream_edit_success) + inputRadioTitle, Toast.LENGTH_LONG).show();
                 radioStreamFragment.refresh();
             });
         });

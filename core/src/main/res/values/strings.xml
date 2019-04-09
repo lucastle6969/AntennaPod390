@@ -147,6 +147,11 @@
     <string name="added_radio_stream">Added new radio stream</string>
     <string name="adding_recommended_radio_stream">Add this radio stream to your list?</string>
     <string name="successfully_added_recommended_radio_stream">Successfully added recommended radio stream to list</string>
+    <string name="edit_radio_station_label">Edit radio station</string>
+    <string name="delete_radio_station_label">Remove radio station</string>
+    <string name="radio_stream_delete_warning">Are you sure you would like to remove the radio station </string>
+    <string name="radio_stream_edit_success">Modified radio station: </string>
+    <string name="radio_stream_delete_success">Deleted radio station: </string>
 
     <!-- Categories labels -->
     <string name="edit_category_dialog_title">Edit Category</string>

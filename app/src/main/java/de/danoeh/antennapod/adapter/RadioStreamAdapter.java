@@ -2,7 +2,10 @@ package de.danoeh.antennapod.adapter;
 
 import android.app.Activity;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -28,7 +31,9 @@ public class RadioStreamAdapter extends RecyclerView.Adapter<RadioStreamAdapter.
 
     private boolean isRecommended;
 
-    public class RadioStreamViewHolder extends RecyclerView.ViewHolder {
+    private int position;
+
+    public class RadioStreamViewHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener {
         private TextView radioStreamTitle, radioStreamUrl;
         private ImageView addToRadioListImg, radioStreamPlayImg;
 
@@ -39,29 +44,43 @@ public class RadioStreamAdapter extends RecyclerView.Adapter<RadioStreamAdapter.
             addToRadioListImg = view.findViewById(R.id.imgAddToList);
             radioStreamPlayImg = view.findViewById(R.id.imgRadioStreamPlay);
 
-            addToRadioListImg.setOnClickListener(
-                    new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            RadioStream radioStream = radioStreamList.get(getAdapterPosition());
-                            AddingRecommendationsToMyListDialog addingDialog = new AddingRecommendationsToMyListDialog();
-                            addingDialog.showDialog(radioStream, context);
-                        }
-                    }
-            );
+            addToRadioListImg.setOnClickListener(v -> {
+                        RadioStream radioStream = radioStreamList.get(getAdapterPosition());
+                        AddingRecommendationsToMyListDialog addingDialog = new AddingRecommendationsToMyListDialog();
+                        addingDialog.showDialog(radioStream, context);
+                    });
 
-            radioStreamPlayImg.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    String radioTitle = radioStreamTitle.getText().toString();
-                    String radioUrl = radioStreamUrl.getText().toString();
-                    RadioStream selectedRadioStream = new RadioStream(-1, radioTitle, radioUrl);
-                    radioStreamListener.onRadioStreamSelected(selectedRadioStream);
-                }
+            radioStreamPlayImg.setOnClickListener(v -> {
+                String radioTitle = radioStreamTitle.getText().toString();
+                String radioUrl = radioStreamUrl.getText().toString();
+                RadioStream selectedRadioStream = new RadioStream(-1, radioTitle, radioUrl);
+                radioStreamListener.onRadioStreamSelected(selectedRadioStream);
             });
+
+            view.setOnCreateContextMenuListener(this);
+
+            view.setOnLongClickListener(v -> {
+                setPosition(getAdapterPosition());
+                return false;
+            });
+        }
+
+        @Override
+        public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+            MenuInflater inflater = context.getMenuInflater();
+            inflater.inflate(R.menu.radio_stream_context, menu);
+
+//            menu.setHeaderTitle(feed.getTitle());
         }
     }
 
+    public int getPosition() {
+        return position;
+    }
+
+    public void setPosition(int position) {
+        this.position = position;
+    }
 
     public void setContext(Activity context) {
         this.context = context;
@@ -111,5 +130,4 @@ public class RadioStreamAdapter extends RecyclerView.Adapter<RadioStreamAdapter.
     public void setRadioStreamList(List<RadioStream> radioStreamList) {
         this.radioStreamList = radioStreamList;
     }
-
 }

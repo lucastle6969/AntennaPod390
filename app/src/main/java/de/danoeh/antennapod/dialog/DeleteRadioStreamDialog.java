@@ -19,9 +19,9 @@ import de.danoeh.antennapod.fragment.RadioStreamFragment;
 
 public class DeleteRadioStreamDialog {
 
-    public void showDialog(Context context, RadioStream radioStream, RadioStationFragment radioStreamFragment) {
+    public void showDialog(Context context, RadioStream radioStream, RadioStreamFragment radioStreamFragment) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setTitle(R.string.radio_stream_delete_dialog_title);
+        builder.setTitle(R.string.delete_radio_station_label);
 
         LinearLayout layout = new LinearLayout(context);
         layout.setOrientation(LinearLayout.VERTICAL);
@@ -34,7 +34,7 @@ public class DeleteRadioStreamDialog {
         layout.setLayoutParams(params);
 
         final TextView radioDeleteWarning = new TextView(context);
-        radioDeleteWarning.setText(R.string.radio_stream_delete_warning);
+        radioDeleteWarning.setText(R.string.radio_stream_delete_warning + radioStream.getTitle() + "?");
         layout.addView(radioDeleteWarning);
 
         builder.setView(layout);
@@ -45,7 +45,6 @@ public class DeleteRadioStreamDialog {
             while(!task.isDone()) { /* Wait for radio stream to be inserted */}
             Toast.makeText(context, context.getString(R.string.radio_stream_delete_success) + radioStream.getTitle(), Toast.LENGTH_LONG).show();
                 radioStreamFragment.refresh();
-
         });
 
         builder.setNegativeButton(R.string.cancel_label, (dialog, which) -> dialog.cancel());
