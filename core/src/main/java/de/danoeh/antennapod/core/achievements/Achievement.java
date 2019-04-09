@@ -1,9 +1,15 @@
-package de.danoeh.antennapod.core.feed;
+package de.danoeh.antennapod.core.achievements;
 
+import android.app.Activity;
 import android.database.Cursor;
+import android.util.Log;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 
 import java.util.Date;
 
+import de.danoeh.antennapod.core.storage.DBWriter;
+import de.danoeh.antennapod.core.R;
 import de.danoeh.antennapod.core.storage.PodDBAdapter;
 
 public class Achievement {
@@ -69,6 +75,26 @@ public class Achievement {
         );
     }
 
+    public boolean complete() {
+        if(this.date == null) {
+            Date date = new Date();
+            this.date = date;
+            DBWriter.updateAchievement(this);
+            return true;
+        }
+        return false;
+    }
+
+    public boolean increment(int counter) {
+        if(this.date == null) {
+            this.counter += counter;
+            if(this.counter >= goal) {
+                return this.complete();
+            }
+        }
+        return false;
+    }
+
     public void setId(long id){
         this.id = id;
     }
@@ -87,6 +113,12 @@ public class Achievement {
 
     public Date getDate(){
         return date;
+    }
+
+    public String getDateText(){
+        if(date!=null){
+            return date.toString();
+        }else return "Achievement  incomplete";
     }
 
     public long getDateAsMilliSeconds(){
@@ -110,6 +142,46 @@ public class Achievement {
 
     public int getHidden(){
         return hidden;
+    }
+
+    public boolean getIsHidden(){
+        return hidden > 0;
+    }
+
+    public String getDisplayDescription() {
+        if(date==null && getIsHidden()){
+            return "? ? ?";
+        }
+        else return getDescription();
+    }
+
+    public String getDisplayName() {
+        if(date==null && getIsHidden()){
+            return "? ? ?";
+        }
+        else return getName();
+    }
+
+    public int getIconResource(){
+        if(date==null){
+            return R.drawable.ic_achievement_locked;
+        }
+        switch(rank){
+            case 1:
+                return R.drawable.ic_achievement_star_1;
+            case 2:
+                return R.drawable.ic_achievement_star_2;
+            case 3:
+                return R.drawable.ic_achievement_star_3;
+            default:
+                return R.drawable.ic_achievement_star_1;
+        }
+    }
+
+    public int getBackgroundColor(){
+        if(date!=null){
+            return Color.GREEN;
+        }else return Color.LTGRAY;
     }
 }
 

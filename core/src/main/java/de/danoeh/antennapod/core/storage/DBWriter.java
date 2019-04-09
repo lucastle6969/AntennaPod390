@@ -29,7 +29,7 @@ import de.danoeh.antennapod.core.event.FavoritesEvent;
 import de.danoeh.antennapod.core.event.FeedItemEvent;
 import de.danoeh.antennapod.core.event.MessageEvent;
 import de.danoeh.antennapod.core.event.QueueEvent;
-import de.danoeh.antennapod.core.feed.Achievement;
+import de.danoeh.antennapod.core.achievements.Achievement;
 import de.danoeh.antennapod.core.feed.Bookmark;
 import de.danoeh.antennapod.core.feed.Category;
 import de.danoeh.antennapod.core.feed.EventDistributor;

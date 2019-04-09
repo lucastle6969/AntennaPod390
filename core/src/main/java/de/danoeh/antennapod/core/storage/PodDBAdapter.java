@@ -25,8 +25,8 @@ import java.util.Set;
 
 import de.danoeh.antennapod.core.R;
 import de.danoeh.antennapod.core.event.ProgressEvent;
-import de.danoeh.antennapod.core.feed.Achievement;
-import de.danoeh.antennapod.core.feed.AchievementBuilder;
+import de.danoeh.antennapod.core.achievements.Achievement;
+import de.danoeh.antennapod.core.achievements.AchievementBuilder;
 import de.danoeh.antennapod.core.feed.Bookmark;
 import de.danoeh.antennapod.core.feed.Category;
 import de.danoeh.antennapod.core.feed.Chapter;

@@ -30,11 +30,16 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import de.danoeh.antennapod.R;
 import de.danoeh.antennapod.activity.OnlineFeedViewActivity;
+import de.danoeh.antennapod.core.achievements.AchievementBuilder;
+import de.danoeh.antennapod.core.achievements.AchievementManager;
+import de.danoeh.antennapod.core.achievements.AchievementUnlocked;
 import de.danoeh.antennapod.core.glide.ApGlideSettings;
 import de.danoeh.antennapod.core.service.download.AntennapodHttpClient;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+
+//import static de.danoeh.antennapod.core.achievements.AchievementBuilder.*;
 
 
 public class PodcastOfTheDayFragment extends Fragment {
@@ -178,6 +183,8 @@ public class PodcastOfTheDayFragment extends Fragment {
             edit.putInt("numOfEpisodes", potd.numOfEpisodes);
             edit.putString("author", potd.author);
             edit.apply();
+            AchievementManager.getInstance(new AchievementUnlocked(getContext())).complete(AchievementBuilder.POTD_ACHIEVEMENT, getContext().getApplicationContext());
+            AchievementManager.getInstance(new AchievementUnlocked(getContext())).increment(AchievementBuilder.POTD_7_ACHIEVEMENT, getContext().getApplicationContext(), 1);
         }
 
     }

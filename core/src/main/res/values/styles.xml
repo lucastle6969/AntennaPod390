@@ -35,6 +35,7 @@
         <item type="attr" name="navigation_up">@drawable/navigation_up</item>
         <item type="attr" name="social_share">@drawable/ic_share_grey600_24dp</item>
         <item type="attr" name="stat_playlist">@drawable/ic_list_grey600_24dp</item>
+        <item type="attr" name="type_achievement_star">@drawable/ic_achievement_star_border</item>
         <item type="attr" name="type_audio">@drawable/ic_hearing_grey600_18dp</item>
         <item type="attr" name="type_video">@drawable/ic_remove_red_eye_grey600_18dp</item>
         <item type="attr" name="non_transparent_background">@color/white</item>
@@ -115,6 +116,7 @@
         <item type="attr" name="navigation_up">@drawable/navigation_up_dark</item>
         <item type="attr" name="social_share">@drawable/ic_share_white_24dp</item>
         <item type="attr" name="stat_playlist">@drawable/ic_list_white_24dp</item>
+        <item type="attr" name="type_achievement_star">@drawable/ic_achievement_star_border</item>
         <item type="attr" name="type_audio">@drawable/ic_hearing_white_18dp</item>
         <item type="attr" name="type_video">@drawable/ic_remove_red_eye_white_18dp</item>
         <item type="attr" name="non_transparent_background">@color/black</item>
@@ -215,6 +217,7 @@
         <item type="attr" name="navigation_up">@drawable/navigation_up</item>
         <item type="attr" name="social_share">@drawable/ic_share_grey600_24dp</item>
         <item type="attr" name="stat_playlist">@drawable/ic_list_grey600_24dp</item>
+        <item type="attr" name="type_achievement_star">@drawable/ic_achievement_star_border</item>
         <item type="attr" name="type_audio">@drawable/ic_hearing_grey600_18dp</item>
         <item type="attr" name="type_video">@drawable/ic_remove_red_eye_grey600_18dp</item>
         <item type="attr" name="non_transparent_background">@color/white</item>

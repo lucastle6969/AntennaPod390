@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import de.danoeh.antennapod.core.feed.Achievement;
+import de.danoeh.antennapod.core.achievements.Achievement;
 import de.danoeh.antennapod.core.feed.Bookmark;
 import de.danoeh.antennapod.core.feed.Category;
 import de.danoeh.antennapod.core.feed.Chapter;

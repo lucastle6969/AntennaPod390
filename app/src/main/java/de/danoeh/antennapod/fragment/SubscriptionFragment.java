@@ -23,7 +23,6 @@ import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -33,6 +32,10 @@ import java.util.Iterator;
 import java.util.List;
 
 import de.danoeh.antennapod.R;
+import de.danoeh.antennapod.core.achievements.AchievementBuilder;
+import de.danoeh.antennapod.core.achievements.AchievementData;
+import de.danoeh.antennapod.core.achievements.AchievementManager;
+import de.danoeh.antennapod.core.achievements.AchievementUnlocked;
 import de.danoeh.antennapod.activity.MainActivity;
 import de.danoeh.antennapod.adapter.SubscriptionsAdapter;
 import de.danoeh.antennapod.adapter.SubscriptionsAdapterAdd;
@@ -127,6 +130,7 @@ public class SubscriptionFragment extends Fragment {
                 table.removeAllViews();
                 tableGridRow[0] = addGridRowSimple(query);
                 table.addView(tableGridRow[0]);
+                AchievementManager.getInstance(new AchievementUnlocked(getContext())).complete(AchievementBuilder.SEARCH_ACHIEVEMENT, getContext().getApplicationContext());
                 return false;
             }
 
