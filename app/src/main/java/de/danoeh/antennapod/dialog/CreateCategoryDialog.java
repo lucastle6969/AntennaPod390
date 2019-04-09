@@ -12,10 +12,15 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Future;
 
 import de.danoeh.antennapod.R;
+import de.danoeh.antennapod.core.achievements.AchievementBuilder;
+import de.danoeh.antennapod.core.achievements.AchievementManager;
+import de.danoeh.antennapod.core.achievements.AchievementUnlocked;
 import de.danoeh.antennapod.core.feed.Category;
 import de.danoeh.antennapod.core.preferences.UserPreferences;
 import de.danoeh.antennapod.core.storage.DBReader;
@@ -71,6 +76,8 @@ public class CreateCategoryDialog {
                             while(!task.isDone()) { /* Wait for category to be inserted */}
                             Toast.makeText(context, context.getString(R.string.category_success) + inputCategoryName, Toast.LENGTH_LONG).show();
                             subscriptionFragment.refresh();
+                            AchievementManager.getInstance(new AchievementUnlocked(context)).increment(new ArrayList<>(Arrays.asList(AchievementBuilder.CAT_ACHIEVEMENT, AchievementBuilder.CAT_7_ACHIEVEMENT, AchievementBuilder.CREATE_ACHIEVEMENT)), context.getApplicationContext());
+
 
                             if (openMoveDialog) {
                                 new MoveToCategoryDialog().showMoveToCategoryDialog(context, lastSelectedFeedId, subscriptionFragment);

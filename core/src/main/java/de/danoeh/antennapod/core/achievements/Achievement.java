@@ -1,10 +1,7 @@
 package de.danoeh.antennapod.core.achievements;
 
-import android.app.Activity;
 import android.database.Cursor;
-import android.util.Log;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 
 import java.util.Date;
 
@@ -85,12 +82,28 @@ public class Achievement {
         return false;
     }
 
-    public boolean increment(int counter) {
-        if(this.date == null) {
-            this.counter += counter;
-            if(this.counter >= goal) {
-                return this.complete();
-            }
+    public boolean increment() {
+        switch(this.rank){
+            case 1:
+            case 2:
+                if(this.date == null) {
+                    this.counter ++;
+                    DBWriter.updateAchievement(this);
+                    if(this.counter >= goal) {
+                        return this.complete();
+                    }
+                }
+                break;
+            case 3:
+                if(AchievementManager.getInstance().checkCombinations()){
+                    if(this.date == null) {
+                        this.counter++;
+                        if(this.counter >= goal){
+                            return this.complete();
+                        }
+                    }
+                }
+                break;
         }
         return false;
     }
@@ -113,6 +126,14 @@ public class Achievement {
 
     public Date getDate(){
         return date;
+    }
+
+    public void setAllComplete() {
+        if(name.equals(AchievementBuilder.ALL_ACHIEVEMENTS_COMPLETE)){
+            this.date = new Date();
+            this.counter++;
+            DBWriter.updateAchievement(this);
+        }
     }
 
     public String getDateText(){

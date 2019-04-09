@@ -31,12 +31,17 @@ import android.widget.Toast;
 
 import com.viewpagerindicator.CirclePageIndicator;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Future;
 
 import de.danoeh.antennapod.R;
 import de.danoeh.antennapod.adapter.ChaptersListAdapter;
 import de.danoeh.antennapod.adapter.NavListAdapter;
+import de.danoeh.antennapod.core.achievements.AchievementBuilder;
+import de.danoeh.antennapod.core.achievements.AchievementManager;
+import de.danoeh.antennapod.core.achievements.AchievementUnlocked;
 import de.danoeh.antennapod.core.asynctask.FeedRemover;
 import de.danoeh.antennapod.core.dialog.ConfirmationDialog;
 import de.danoeh.antennapod.core.event.MessageEvent;
@@ -299,6 +304,8 @@ public abstract class MediaplayerInfoActivity extends MediaplayerActivity implem
         while(!task.isDone()) { /* Wait until the bookmark has been inserted into DB before updating adapter */ }
         BookmarkFragment bookmarkFragment = (BookmarkFragment) pagerAdapter.getItem(POS_BOOKMARKS);
         bookmarkFragment.updateAdapter();
+        AchievementManager.getInstance(new AchievementUnlocked(this)).increment(new ArrayList<>(Arrays.asList(AchievementBuilder.BKMK_ACHIEVEMENT, AchievementBuilder.BKMK_10_ACHIEVEMENT, AchievementBuilder.CREATE_ACHIEVEMENT)), this.getApplicationContext());
+
     }
 
     @Override
