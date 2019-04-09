@@ -30,7 +30,6 @@ public class AchievementManager {
             achievementManager = new AchievementManager(animator);
         }
         achievementManager.animator = animator;
-        Log.d("A", achievementManager.achievements.get("Elementary").getName());
         return achievementManager;
     }
 
@@ -42,7 +41,6 @@ public class AchievementManager {
         Achievement achv = getInstance(new AchievementUnlocked(context)).getAchievement(achievementName);
         if((achv != null) && achv.complete()) {
             AchievementData data = prepareAnimator(achv, context);
-            Log.d("A", "about to animate");
             animator.show(data);
             return true;
         }
@@ -53,7 +51,6 @@ public class AchievementManager {
         Achievement achv = getInstance(new AchievementUnlocked(context)).getAchievement(achievementName);
         if((achv != null) && achv.increment(counter)) {
             AchievementData data = prepareAnimator(achv, context);
-            Log.d("A", "about to animate");
             animator.show(data);
             return true;
         }

@@ -79,7 +79,6 @@ public class Achievement {
         if(this.date == null) {
             Date date = new Date();
             this.date = date;
-            Log.d("A", "Date updated");
             DBWriter.updateAchievement(this);
             return true;
         }
@@ -89,7 +88,6 @@ public class Achievement {
     public boolean increment(int counter) {
         if(this.date == null) {
             this.counter += counter;
-            Log.d("A", "Counter: " + this.counter + ", Goal: " + goal);
             if(this.counter >= goal) {
                 return this.complete();
             }

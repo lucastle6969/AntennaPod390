@@ -32,6 +32,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import de.danoeh.antennapod.R;
+import de.danoeh.antennapod.core.achievements.AchievementBuilder;
 import de.danoeh.antennapod.core.achievements.AchievementData;
 import de.danoeh.antennapod.core.achievements.AchievementManager;
 import de.danoeh.antennapod.core.achievements.AchievementUnlocked;
@@ -129,7 +130,7 @@ public class SubscriptionFragment extends Fragment {
                 table.removeAllViews();
                 tableGridRow[0] = addGridRowSimple(query);
                 table.addView(tableGridRow[0]);
-                AchievementManager.getInstance(new AchievementUnlocked(getContext())).complete("Elementary", getContext().getApplicationContext());
+                AchievementManager.getInstance(new AchievementUnlocked(getContext())).complete(AchievementBuilder.SEARCH_ACHIEVEMENT, getContext().getApplicationContext());
                 return false;
             }
 

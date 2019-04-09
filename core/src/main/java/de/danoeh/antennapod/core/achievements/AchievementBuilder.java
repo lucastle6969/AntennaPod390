@@ -10,13 +10,17 @@ import de.danoeh.antennapod.core.storage.DBWriter;
 
 public class AchievementBuilder {
 
+    public static final String SEARCH_ACHIEVEMENT = "Elementary";
+    public static final String POTD_ACHIEVEMENT = "POTD";
+    public static final String POTD_7_ACHIEVEMENT = "The First 7";
+
     public static void buildAchievements(){
         List<Achievement> achievements = new ArrayList<>();
 
         //Achievements are hard coded into the app here
 
         Achievement achievement = new Achievement(
-                "Elementary", // Achievement name
+                SEARCH_ACHIEVEMENT, // Achievement name
                 null, // date should be null until the achievement is unlocked
                 0, // counter should be 0 at initialization
                 1, // goal: represents the number the counter should reach before unlocking achievement
@@ -26,7 +30,7 @@ public class AchievementBuilder {
         );
         achievements.add(achievement);
         achievement = new Achievement(
-                "The First 7", // Achievement name
+                POTD_7_ACHIEVEMENT, // Achievement name
                 null, // date should be null until the achievement is unlocked
                 0, // counter should be 0 at initialization
                 7, // goal: represents the number the counter should reach before unlocking achievement
@@ -36,7 +40,7 @@ public class AchievementBuilder {
         );
         achievements.add(achievement);
         achievement = new Achievement(
-                "POTD", // Achievement name
+                POTD_ACHIEVEMENT, // Achievement name
                 null, // date should be null until the achievement is unlocked
                 0, // counter should be 0 at initialization
                 1, // goal: represents the number the counter should reach before unlocking achievement
@@ -49,7 +53,6 @@ public class AchievementBuilder {
         // add a new achievements here
 
         for(Achievement achv: achievements){
-            Log.d("ACHIEVEMENTS", "started loop");
             DBWriter.setAchievement(achv);
         }
 
