@@ -70,6 +70,15 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
+        <Button
+            android:id="@+id/tweet_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/tweet_round_button"
+            android:textColor="@android:color/white"
+            android:text="@string/tweet_button_label"
+            android:visibility="invisible" />
+
     </LinearLayout>
 
 </android.support.percent.PercentRelativeLayout>

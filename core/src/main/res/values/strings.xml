@@ -784,5 +784,6 @@
 
     <!-- Social feature notification -->
     <string name="twitter_login_error">Error occurred when trying to login to Twitter</string>
+    <string name="tweet_button_label">Tweet</string>
 
 </resources>

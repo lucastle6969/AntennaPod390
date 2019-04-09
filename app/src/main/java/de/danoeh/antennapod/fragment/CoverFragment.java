@@ -89,12 +89,29 @@ public class CoverFragment extends Fragment implements MediaplayerInfoContentFra
 
             twitterLogin();
             if(sessionToken != null){
-                twitterComposeTweet();
+                View twitterLoginButtonView = getActivity().findViewById(R.id.login_button);
+                twitterLoginButtonView.setVisibility(View.GONE);
+                View twitterTweetButtonView = getActivity().findViewById(R.id.tweet_button);
+                twitterTweetButtonView.setVisibility(View.VISIBLE);
+                twitterTweetButtonView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        twitterComposeTweet();
+                    }
+                });
             }
 
         } else {
             Log.w(TAG, "loadMediaInfo was called while media was null");
         }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        // Pass the activity result to the login button.
+        twitterLoginButton.onActivityResult(requestCode, resultCode, data);
     }
 
     private void twitterLogin() {
