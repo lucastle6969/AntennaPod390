@@ -133,7 +133,7 @@
     <!-- Radio Stream Labels -->
     <string name="radio_station_label">Radio Stations</string>
     <string name="radio_stream_label">Radio Stream</string>
-    <string name="no_radio_stream_available">There are currently no radio on this list</string>
+    <string name="no_radio_stream_available">There are currently no radio stations in this list</string>
     <string name="radio_stream_title">Radio stream title</string>
     <string name="radio_stream_url">Radio stream URL</string>
     <string name="recommended_radio_streams">Recommendations</string>
