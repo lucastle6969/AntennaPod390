@@ -200,6 +200,8 @@ dependencies {
 
     implementation 'com.google.firebase:firebase-core:16.0.8'
     implementation 'com.google.firebase:firebase-perf:16.2.4'
+    implementation 'com.facebook.android:facebook-android-sdk:4.41.0'
+    implementation 'com.facebook.android:facebook-share:4.41.0'
 
     testImplementation  'junit:junit:4.12'
     testImplementation 'org.robolectric:robolectric:4.2'
@@ -265,3 +267,15 @@ allprojects {
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'com.google.firebase.firebase-perf'
 com.google.gms.googleservices.GoogleServicesPlugin.config.disableVersionCheck = true
+
+configurations.all {
+    resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+        def requested = details.requested
+        if (requested.group == 'com.android.support') {
+            if (!requested.name.startsWith("multidex")) {
+                details.useVersion '27.0.2'
+            }
+        }
+
+    }
+}
