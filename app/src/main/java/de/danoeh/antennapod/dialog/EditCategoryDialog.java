@@ -14,7 +14,13 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 import de.danoeh.antennapod.R;
+import de.danoeh.antennapod.core.achievements.AchievementBuilder;
+import de.danoeh.antennapod.core.achievements.AchievementManager;
+import de.danoeh.antennapod.core.achievements.AchievementUnlocked;
 import de.danoeh.antennapod.core.feed.Category;
 import de.danoeh.antennapod.core.storage.DBReader;
 import de.danoeh.antennapod.core.storage.DBWriter;
@@ -118,6 +124,8 @@ public class EditCategoryDialog {
                             dialog.dismiss();
                             Toast.makeText(activity, activity.getString(R.string.category_renamed_toast) + newCategoryName, Toast.LENGTH_LONG).show();
                             fragment.refresh();
+                            AchievementManager.getInstance(new AchievementUnlocked(activity)).increment(new ArrayList<>(Arrays.asList(AchievementBuilder.MOD_CAT_ACHIEVEMENT, AchievementBuilder.MODIFY_ACHIEVEMENT)), activity.getApplicationContext());
+
                         } else {
                             if (isDuplicateCategoryName) {
                                 Toast.makeText(activity, activity.getString(R.string.duplicate_category_error), Toast.LENGTH_SHORT).show();

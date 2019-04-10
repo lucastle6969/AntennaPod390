@@ -17,9 +17,13 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import de.danoeh.antennapod.R;
+import de.danoeh.antennapod.core.achievements.AchievementBuilder;
+import de.danoeh.antennapod.core.achievements.AchievementManager;
+import de.danoeh.antennapod.core.achievements.AchievementUnlocked;
 import de.danoeh.antennapod.core.feed.Bookmark;
 import de.danoeh.antennapod.core.storage.DBWriter;
 import de.danoeh.antennapod.core.util.Converter;
@@ -302,6 +306,7 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.Bookma
                 DBWriter.updateBookmark(editedBookmark);
                 bookmarkList.set(position, editedBookmark);
                 notifyItemChanged(position);
+                AchievementManager.getInstance(new AchievementUnlocked(context)).increment(new ArrayList<>(Arrays.asList(AchievementBuilder.MOD_BKMK_ACHIEVEMENT, AchievementBuilder.MODIFY_ACHIEVEMENT)), context.getApplicationContext());
             }
         });
         builder.setNegativeButton(R.string.cancel_edit_bookmark_button, new DialogInterface.OnClickListener() {
