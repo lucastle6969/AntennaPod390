@@ -70,7 +70,7 @@ public class RadioStreamAdapter extends RecyclerView.Adapter<RadioStreamAdapter.
             MenuInflater inflater = context.getMenuInflater();
             inflater.inflate(R.menu.radio_stream_context, menu);
 
-//            menu.setHeaderTitle(feed.getTitle());
+            menu.setHeaderTitle(radioStreamTitle.getText());
         }
     }
 
