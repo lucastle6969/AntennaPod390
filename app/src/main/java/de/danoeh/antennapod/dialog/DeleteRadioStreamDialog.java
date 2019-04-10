@@ -34,7 +34,7 @@ public class DeleteRadioStreamDialog {
         layout.setLayoutParams(params);
 
         final TextView radioDeleteWarning = new TextView(context);
-        radioDeleteWarning.setText(R.string.radio_stream_delete_warning + radioStream.getTitle() + "?");
+        radioDeleteWarning.setText(context.getString(R.string.radio_stream_delete_warning, radioStream.getTitle()));
         layout.addView(radioDeleteWarning);
 
         builder.setView(layout);

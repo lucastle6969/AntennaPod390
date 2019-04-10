@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources
-    xmlns:tools="http://schemas.android.com/tools"
-    tools:ignore="MissingTranslation">
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2" tools:ignore="MissingTranslation">
 
     <!-- Activitiy and fragment titles -->
     <string name="app_name" translate="false">AntennaPod</string>
@@ -149,7 +147,7 @@
     <string name="successfully_added_recommended_radio_stream">Successfully added recommended radio stream to list</string>
     <string name="edit_radio_station_label">Edit radio station</string>
     <string name="delete_radio_station_label">Remove radio station</string>
-    <string name="radio_stream_delete_warning">Are you sure you would like to remove the radio station </string>
+    <string name="radio_stream_delete_warning">Are you sure you would like to remove the radio station <xliff:g id="radioStationName">%1$s</xliff:g>?</string>
     <string name="radio_stream_edit_success">Modified radio station: </string>
     <string name="radio_stream_delete_success">Deleted radio station: </string>
 
