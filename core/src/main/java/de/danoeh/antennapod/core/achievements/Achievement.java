@@ -185,7 +185,16 @@ public class Achievement {
 
     public int getIconResource(){
         if(date==null){
-            return R.drawable.ic_achievement_locked;
+            switch(rank) {
+                case 1:
+                    return R.drawable.ic_achievement_locked_1;
+                case 2:
+                    return R.drawable.ic_achievement_locked_2;
+                case 3:
+                    return R.drawable.ic_achievement_locked_3;
+                default:
+                    return R.drawable.ic_achievement_locked_1;
+            }
         }
         switch(rank){
             case 1:
