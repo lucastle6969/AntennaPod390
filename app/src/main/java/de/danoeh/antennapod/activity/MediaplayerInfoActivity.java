@@ -304,7 +304,12 @@ public abstract class MediaplayerInfoActivity extends MediaplayerActivity implem
         while(!task.isDone()) { /* Wait until the bookmark has been inserted into DB before updating adapter */ }
         BookmarkFragment bookmarkFragment = (BookmarkFragment) pagerAdapter.getItem(POS_BOOKMARKS);
         bookmarkFragment.updateAdapter();
-        AchievementManager.getInstance(new AchievementUnlocked(this)).increment(new ArrayList<>(Arrays.asList(AchievementBuilder.BKMK_ACHIEVEMENT, AchievementBuilder.BKMK_10_ACHIEVEMENT, AchievementBuilder.CREATE_ACHIEVEMENT)), this.getApplicationContext());
+        AchievementManager.getInstance(new AchievementUnlocked(this))
+                .increment(new ArrayList<>(Arrays.asList(
+                        AchievementBuilder.BKMK_ACHIEVEMENT,
+                        AchievementBuilder.BKMK_10_ACHIEVEMENT,
+                        AchievementBuilder.CREATE_ACHIEVEMENT
+                )), this.getApplicationContext());
 
     }
 

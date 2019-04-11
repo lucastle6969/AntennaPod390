@@ -77,7 +77,11 @@ public abstract class PodcastSearchListFragment extends Fragment {
             public boolean onQueryTextSubmit(String s) {
                 searchView.clearFocus();
                 reloadData(s);
-                AchievementManager.getInstance(new AchievementUnlocked(getContext())).increment(new ArrayList<>(Arrays.asList(AchievementBuilder.SEARCH_GPOD_ACHIEVEMENT, AchievementBuilder.SEARCH_ACHIEVEMENT)), getContext().getApplicationContext());
+                AchievementManager.getInstance(new AchievementUnlocked(getContext()))
+                        .increment(new ArrayList<>(Arrays.asList(
+                                AchievementBuilder.SEARCH_GPOD_ACHIEVEMENT,
+                                AchievementBuilder.SEARCH_ACHIEVEMENT
+                        )), getContext().getApplicationContext());
                 return true;
             }
             @Override

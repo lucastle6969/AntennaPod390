@@ -87,7 +87,7 @@ public class Achievement {
             case 1:
             case 2:
                 if(this.date == null) {
-                    this.counter ++;
+                    this.counter++;
                     DBWriter.updateAchievement(this);
                     if(this.counter >= goal) {
                         return this.complete();

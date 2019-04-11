@@ -124,7 +124,11 @@ public class EditCategoryDialog {
                             dialog.dismiss();
                             Toast.makeText(activity, activity.getString(R.string.category_renamed_toast) + newCategoryName, Toast.LENGTH_LONG).show();
                             fragment.refresh();
-                            AchievementManager.getInstance(new AchievementUnlocked(activity)).increment(new ArrayList<>(Arrays.asList(AchievementBuilder.MOD_CAT_ACHIEVEMENT, AchievementBuilder.MODIFY_ACHIEVEMENT)), activity.getApplicationContext());
+                            AchievementManager.getInstance(new AchievementUnlocked(activity))
+                                    .increment(new ArrayList<>(Arrays.asList(
+                                                    AchievementBuilder.MOD_CAT_ACHIEVEMENT,
+                                                    AchievementBuilder.MODIFY_ACHIEVEMENT
+                                    )), activity.getApplicationContext());
 
                         } else {
                             if (isDuplicateCategoryName) {

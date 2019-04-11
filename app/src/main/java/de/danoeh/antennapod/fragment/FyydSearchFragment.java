@@ -114,7 +114,11 @@ public class FyydSearchFragment extends Fragment {
             public boolean onQueryTextSubmit(String s) {
                 sv.clearFocus();
                 search(s);
-                AchievementManager.getInstance(new AchievementUnlocked(getContext())).increment(new ArrayList<>(Arrays.asList(AchievementBuilder.SEARCH_FYYD_ACHIEVEMENT, AchievementBuilder.SEARCH_ACHIEVEMENT)), getContext().getApplicationContext());
+                AchievementManager.getInstance(new AchievementUnlocked(getContext()))
+                        .increment(new ArrayList<>(Arrays.asList(
+                                AchievementBuilder.SEARCH_FYYD_ACHIEVEMENT,
+                                AchievementBuilder.SEARCH_ACHIEVEMENT
+                        )), getContext().getApplicationContext());
                 return true;
             }
             @Override

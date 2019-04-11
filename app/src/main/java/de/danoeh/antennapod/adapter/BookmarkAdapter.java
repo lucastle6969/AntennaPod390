@@ -306,7 +306,11 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.Bookma
                 DBWriter.updateBookmark(editedBookmark);
                 bookmarkList.set(position, editedBookmark);
                 notifyItemChanged(position);
-                AchievementManager.getInstance(new AchievementUnlocked(context)).increment(new ArrayList<>(Arrays.asList(AchievementBuilder.MOD_BKMK_ACHIEVEMENT, AchievementBuilder.MODIFY_ACHIEVEMENT)), context.getApplicationContext());
+                AchievementManager.getInstance(new AchievementUnlocked(context))
+                        .increment(new ArrayList<>(Arrays.asList(
+                                AchievementBuilder.MOD_BKMK_ACHIEVEMENT,
+                                AchievementBuilder.MODIFY_ACHIEVEMENT
+                        )), context.getApplicationContext());
             }
         });
         builder.setNegativeButton(R.string.cancel_edit_bookmark_button, new DialogInterface.OnClickListener() {

@@ -76,7 +76,12 @@ public class CreateCategoryDialog {
                             while(!task.isDone()) { /* Wait for category to be inserted */}
                             Toast.makeText(context, context.getString(R.string.category_success) + inputCategoryName, Toast.LENGTH_LONG).show();
                             subscriptionFragment.refresh();
-                            AchievementManager.getInstance(new AchievementUnlocked(context)).increment(new ArrayList<>(Arrays.asList(AchievementBuilder.CAT_ACHIEVEMENT, AchievementBuilder.CAT_7_ACHIEVEMENT, AchievementBuilder.CREATE_ACHIEVEMENT)), context.getApplicationContext());
+                            AchievementManager.getInstance(new AchievementUnlocked(context))
+                                    .increment(new ArrayList<>(Arrays.asList(
+                                                    AchievementBuilder.CAT_ACHIEVEMENT,
+                                                    AchievementBuilder.CAT_7_ACHIEVEMENT,
+                                                    AchievementBuilder.CREATE_ACHIEVEMENT
+                                    )), context.getApplicationContext());
 
 
                             if (openMoveDialog) {
