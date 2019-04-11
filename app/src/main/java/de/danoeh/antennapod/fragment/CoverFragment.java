@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.FileProvider;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,7 +13,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.twitter.sdk.android.core.BuildConfig;
 import com.twitter.sdk.android.core.Callback;
 import com.twitter.sdk.android.core.Result;
 import com.twitter.sdk.android.core.TwitterAuthToken;
@@ -23,14 +21,10 @@ import com.twitter.sdk.android.core.TwitterException;
 import com.twitter.sdk.android.core.TwitterSession;
 import com.twitter.sdk.android.core.identity.TwitterLoginButton;
 import com.twitter.sdk.android.tweetcomposer.ComposerActivity;
-import com.twitter.sdk.android.tweetcomposer.TweetComposer;
 import com.facebook.share.model.ShareLinkContent;
 import com.facebook.share.widget.ShareButton;
 
-import java.io.File;
-
 import de.danoeh.antennapod.R;
-import de.danoeh.antennapod.activity.MainActivity;
 import de.danoeh.antennapod.activity.MediaplayerInfoActivity.MediaplayerInfoContentFragment;
 import de.danoeh.antennapod.core.glide.ApGlideSettings;
 import de.danoeh.antennapod.core.util.playback.Playable;
@@ -144,13 +138,17 @@ public class CoverFragment extends Fragment implements MediaplayerInfoContentFra
     }
 
     public void twitterComposeTweet() {
-        String podcastInfo = txtvPodcastTitle + ": " + txtvEpisodeTitle + "(" + media.getIdentifier() + ")";
+        String title = media.getFeedTitle();
+        String episode = media.getEpisodeTitle();
+        String url = media.getStreamUrl();
+        String imageLocation = media.getImageLocation();
+
         final TwitterSession session = TwitterCore.getInstance().getSessionManager()
                 .getActiveSession();
         final Intent intent = new ComposerActivity.Builder(getActivity())
                 .session(session)
-                .text(podcastInfo)
-                .hashtags("#twitter")
+                .text("Go listen to the '" + episode + "' episode from the '" + title + "' podcast! " + url)
+                .hashtags("#AntennaPod390")
                 .createIntent();
         startActivity(intent);
     }

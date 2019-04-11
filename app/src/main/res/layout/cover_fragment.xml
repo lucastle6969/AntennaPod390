@@ -46,46 +46,61 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_below="@id/imgvCover"
+        android:layout_marginTop="-2dp"
         android:gravity="center"
-        android:orientation="vertical"
-        android:layout_below="@id/imgvCover">
+        android:orientation="vertical">
 
         <TextView
             android:id="@+id/txtvEpisodeTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
             android:layout_marginStart="8dp"
+            android:layout_marginLeft="8dp"
             android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
+            android:ellipsize="end"
             android:gravity="center"
             android:maxLines="2"
-            android:ellipsize="end"
             android:text="Episode"
-            android:textIsSelectable="true"
-            android:textColor="?android:attr/textColorPrimary" />
+            android:textColor="?android:attr/textColorPrimary"
+            android:textIsSelectable="true" />
 
-        <com.twitter.sdk.android.core.identity.TwitterLoginButton
-            android:id="@+id/login_button"
+        <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="match_parent"
+            android:layout_marginTop="10dp"
+            android:layout_below="@id/imgvCover"
+            android:orientation="horizontal">
 
-        <Button
-            android:id="@+id/tweet_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/tweet_round_button"
-            android:textColor="@android:color/white"
-            android:text="@string/tweet_button_label"
-            android:visibility="invisible" />
+            <com.twitter.sdk.android.core.identity.TwitterLoginButton
+                android:id="@+id/login_button"
+                android:layout_width="54dp"
+                android:layout_height="29dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginEnd="10dp"/>
 
-        <com.facebook.share.widget.ShareButton
-            android:id="@+id/fb_share_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="1dp"
-            android:layout_marginEnd="1dp"
-            android:layout_marginRight="1dp" />
+            <Button
+                android:id="@+id/tweet_button"
+                android:layout_width="68dp"
+                android:layout_height="29dp"
+                android:background="@drawable/tweet_round_button"
+                android:text="@string/tweet_button_label"
+                android:textColor="@android:color/white"
+                android:textSize="10dp"
+                android:layout_marginRight="5dp"
+                android:layout_marginEnd="10dp"
+                android:visibility="invisible" />
+
+            <com.facebook.share.widget.ShareButton
+                android:id="@+id/fb_share_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="1dp"
+                android:layout_marginEnd="1dp"
+                android:layout_marginRight="1dp" />
+
+        </LinearLayout>
 
     </LinearLayout>
 
