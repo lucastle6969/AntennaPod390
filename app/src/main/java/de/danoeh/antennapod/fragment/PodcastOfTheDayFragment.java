@@ -23,6 +23,8 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
@@ -38,8 +40,6 @@ import de.danoeh.antennapod.core.service.download.AntennapodHttpClient;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-
-//import static de.danoeh.antennapod.core.achievements.AchievementBuilder.*;
 
 
 public class PodcastOfTheDayFragment extends Fragment {
@@ -183,8 +183,11 @@ public class PodcastOfTheDayFragment extends Fragment {
             edit.putInt("numOfEpisodes", potd.numOfEpisodes);
             edit.putString("author", potd.author);
             edit.apply();
-            AchievementManager.getInstance(new AchievementUnlocked(getContext())).complete(AchievementBuilder.POTD_ACHIEVEMENT, getContext().getApplicationContext());
-            AchievementManager.getInstance(new AchievementUnlocked(getContext())).increment(AchievementBuilder.POTD_7_ACHIEVEMENT, getContext().getApplicationContext(), 1);
+            AchievementManager.getInstance(new AchievementUnlocked(getContext()))
+                    .increment(new ArrayList<>(Arrays.asList(
+                            AchievementBuilder.POTD_ACHIEVEMENT,
+                            AchievementBuilder.POTD_7_ACHIEVEMENT
+                    )), getContext().getApplicationContext());
         }
 
     }

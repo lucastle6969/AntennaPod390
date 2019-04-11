@@ -28,6 +28,7 @@ import android.widget.TableRow;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -130,7 +131,11 @@ public class SubscriptionFragment extends Fragment {
                 table.removeAllViews();
                 tableGridRow[0] = addGridRowSimple(query);
                 table.addView(tableGridRow[0]);
-                AchievementManager.getInstance(new AchievementUnlocked(getContext())).complete(AchievementBuilder.SEARCH_ACHIEVEMENT, getContext().getApplicationContext());
+                AchievementManager.getInstance(new AchievementUnlocked(getContext()))
+                        .increment(new ArrayList<>(Arrays.asList(
+                                AchievementBuilder.SEARCH_CAT_ACHIEVEMENT,
+                                AchievementBuilder.SEARCH_ACHIEVEMENT
+                        )), getContext().getApplicationContext());
                 return false;
             }
 

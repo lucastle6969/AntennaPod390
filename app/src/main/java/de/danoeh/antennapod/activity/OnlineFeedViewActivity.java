@@ -35,11 +35,15 @@ import org.jsoup.nodes.Document;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
 import de.danoeh.antennapod.R;
 import de.danoeh.antennapod.adapter.FeedItemlistDescriptionAdapter;
+import de.danoeh.antennapod.core.achievements.AchievementBuilder;
+import de.danoeh.antennapod.core.achievements.AchievementManager;
+import de.danoeh.antennapod.core.achievements.AchievementUnlocked;
 import de.danoeh.antennapod.core.dialog.DownloadRequestErrorDialogCreator;
 import de.danoeh.antennapod.core.event.DownloadEvent;
 import de.danoeh.antennapod.core.feed.EventDistributor;
@@ -428,6 +432,8 @@ public class OnlineFeedViewActivity extends AppCompatActivity {
                     DownloadRequestErrorDialogCreator.newRequestErrorDialog(this, e.getMessage());
                 }
                 setSubscribeButtonState(feed);
+                AchievementManager.getInstance(new AchievementUnlocked(this)).increment(new ArrayList<>(Arrays.asList(AchievementBuilder.SUBSCRIBE_ACHIEVEMENT, AchievementBuilder.SUBSCRIBE_10_ACHIEVEMENT)), this.getApplicationContext());
+
             }
         });
 
