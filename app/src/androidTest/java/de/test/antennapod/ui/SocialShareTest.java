@@ -6,6 +6,8 @@ import android.test.ActivityInstrumentationTestCase2;
 
 import com.facebook.FacebookActivity;
 import com.robotium.solo.Solo;
+import com.twitter.sdk.android.core.identity.OAuthActivity;
+import com.twitter.sdk.android.core.identity.TwitterLoginButton;
 
 import de.danoeh.antennapod.R;
 import de.danoeh.antennapod.activity.MainActivity;
@@ -79,5 +81,12 @@ public class SocialShareTest extends ActivityInstrumentationTestCase2<MainActivi
         solo.clickOnView(solo.getView( R.id.fb_share_button));
         solo.waitForDialogToOpen(10000);
         assertEquals(solo.getCurrentActivity().getClass(), FacebookActivity.class);
+    }
+
+    public void testTwitterShare(){
+        startStream();
+        solo.clickOnView(solo.getView( R.id.login_button));
+        solo.waitForDialogToOpen(10000);
+        assertEquals(solo.getCurrentActivity().getClass(), OAuthActivity.class);
     }
 }
