@@ -136,4 +136,35 @@ public class RadioTest extends ActivityInstrumentationTestCase2<MainActivity> {
         assertTrue(solo.searchText(solo.getString(R.string.pause_label), true));
     }
 
+    public void testEditRadio() throws Exception{
+        String title = "BBC media";
+        String newTitle = "BBC radio";
+
+        goingToRadioPage();
+        addRecommendedRadioToList();
+
+        solo.clickOnText(solo.getString(R.string.my_radio_streams));
+        solo.clickLongOnText(title);
+        solo.clickOnText(solo.getString(R.string.edit_radio_station_label));
+        solo.clearEditText(0);
+        solo.enterText(0, newTitle);
+        solo.clickOnText(solo.getString(R.string.confirm_label));
+
+        assertTrue(solo.searchText(newTitle, true));
+    }
+
+    public void testDeleteRadio() throws Exception{
+        String title = "BBC media";
+
+        goingToRadioPage();
+        addRecommendedRadioToList();
+
+        solo.clickOnText(solo.getString(R.string.my_radio_streams));
+        solo.clickLongOnText(title);
+        solo.clickOnText(solo.getString(R.string.delete_radio_station_label));
+        solo.clickOnText(solo.getString(R.string.confirm_label));
+
+        assertTrue(solo.searchText(solo.getString(R.string.no_radio_stream_available), true));
+    }
+
 }
