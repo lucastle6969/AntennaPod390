@@ -91,14 +91,19 @@ public class RadioTest extends ActivityInstrumentationTestCase2<MainActivity> {
         solo.waitForView(android.R.id.list);
     }
 
-    public void testAddingRecommendedRadioToOwnList() throws Exception{
-        goingToRadioPage();
+    private void addRecommendedRadioToList(){
         solo.clickOnText(solo.getString(R.string.recommended_radio_streams));
 
         ImageButton addRecommendedRadioButton = (ImageButton) solo.getView("imgAddToList");
         solo.clickOnView(addRecommendedRadioButton);
         solo.waitForDialogToOpen();
         solo.clickOnText("Confirm");
+    }
+
+    public void testAddingRecommendedRadioToOwnList() throws Exception{
+        goingToRadioPage();
+
+        addRecommendedRadioToList();
 
         solo.clickOnText(solo.getString(R.string.my_radio_streams));
         assertFalse(solo.searchText(solo.getString(R.string.no_radio_stream_available), true));
@@ -119,14 +124,9 @@ public class RadioTest extends ActivityInstrumentationTestCase2<MainActivity> {
     }
 
     public void testPlayingRadio() throws Exception{
-        String URL = "http://stream.redbullradio.com/main";
-
         goingToRadioPage();
 
-        solo.clickOnView(solo.getView(R.id.addRadioStreamBtn));
-        solo.waitForDialogToOpen();
-        solo.enterText(1, URL);
-        solo.clickOnText("Confirm");
+        solo.clickOnText(solo.getString(R.string.recommended_radio_streams));
 
         ImageButton playRadioButton = (ImageButton) solo.getView("imgRadioStreamPlay");
         solo.clickOnView(playRadioButton);
