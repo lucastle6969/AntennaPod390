@@ -24,6 +24,8 @@ import com.twitter.sdk.android.core.TwitterSession;
 import com.twitter.sdk.android.core.identity.TwitterLoginButton;
 import com.twitter.sdk.android.tweetcomposer.ComposerActivity;
 import com.twitter.sdk.android.tweetcomposer.TweetComposer;
+import com.facebook.share.model.ShareLinkContent;
+import com.facebook.share.widget.ShareButton;
 
 import java.io.File;
 
@@ -73,6 +75,7 @@ public class CoverFragment extends Fragment implements MediaplayerInfoContentFra
         txtvPodcastTitle = (TextView) root.findViewById(R.id.txtvPodcastTitle);
         txtvEpisodeTitle = (TextView) root.findViewById(R.id.txtvEpisodeTitle);
         imgvCover = (ImageView) root.findViewById(R.id.imgvCover);
+
         return root;
     }
 
@@ -100,6 +103,13 @@ public class CoverFragment extends Fragment implements MediaplayerInfoContentFra
                     }
                 });
             }
+
+            ShareLinkContent content = new ShareLinkContent.Builder()
+                    .setContentUrl(Uri.parse(media.getStreamUrl()))
+                    .build();
+
+            ShareButton shareButton = (ShareButton) root.findViewById(R.id.fb_share_button);
+            shareButton.setShareContent(content);
 
         } else {
             Log.w(TAG, "loadMediaInfo was called while media was null");

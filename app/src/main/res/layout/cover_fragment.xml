@@ -79,6 +79,14 @@
             android:text="@string/tweet_button_label"
             android:visibility="invisible" />
 
+        <com.facebook.share.widget.ShareButton
+            android:id="@+id/fb_share_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="1dp"
+            android:layout_marginEnd="1dp"
+            android:layout_marginRight="1dp" />
+
     </LinearLayout>
 
 </android.support.percent.PercentRelativeLayout>
