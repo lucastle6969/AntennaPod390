@@ -31,10 +31,10 @@ public class Achievement {
         this.hidden = hidden;
     }
 
-    public Achievement(String name, Date date, int counter, int goal, int rank, String description, int hidden){
+    public Achievement(String name, int goal, int rank, String description, int hidden){
         this.name = name;
-        this.date = date;
-        this.counter = counter;
+        this.date = null;
+        this.counter = 0;
         this.goal = goal;
         this.rank = rank;
         this.description = description;

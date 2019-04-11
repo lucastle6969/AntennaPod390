@@ -111,6 +111,7 @@ public class AchievementManager {
         return data;
     }
 
+    // Icons that come up in the unlocking animations
     private Drawable iconFactory(int rank, Context context) {
         ImageView iv = new ImageView(context);
         switch (rank) {
@@ -147,6 +148,7 @@ public class AchievementManager {
                 && achievements.get(AchievementBuilder.SEARCH_ITUNES_ACHIEVEMENT).getDate()!= null
                 && achievements.get(AchievementBuilder.SEARCH_GPOD_ACHIEVEMENT).getDate()!= null
                 && achievements.get(AchievementBuilder.SEARCH_FYYD_ACHIEVEMENT).getDate()!= null
+                && achievements.get(AchievementBuilder.SEARCH_BY_URL_ACHIEVEMENT).getDate()!=null
                 && achievements.get(AchievementBuilder.SEARCH_ACHIEVEMENT).getDate()==null);
     }
 
