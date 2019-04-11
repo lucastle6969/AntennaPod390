@@ -37,7 +37,7 @@ public class RadioStreamAdapter extends RecyclerView.Adapter<RadioStreamAdapter.
         private TextView radioStreamTitle, radioStreamUrl;
         private ImageView addToRadioListImg, radioStreamPlayImg;
 
-        public RadioStreamViewHolder(View view) {
+        public RadioStreamViewHolder(View view, boolean hasContextMenu) {
             super(view);
             radioStreamTitle = view.findViewById(R.id.txtvRadioStreamTitle);
             radioStreamUrl = view.findViewById(R.id.txtUrl);
@@ -57,12 +57,14 @@ public class RadioStreamAdapter extends RecyclerView.Adapter<RadioStreamAdapter.
                 radioStreamListener.onRadioStreamSelected(selectedRadioStream);
             });
 
-            view.setOnCreateContextMenuListener(this);
+            if(hasContextMenu){
+                view.setOnCreateContextMenuListener(this);
 
-            view.setOnLongClickListener(v -> {
-                setPosition(getAdapterPosition());
-                return false;
-            });
+                view.setOnLongClickListener(v -> {
+                    setPosition(getAdapterPosition());
+                    return false;
+                });
+            }
         }
 
         @Override
@@ -99,7 +101,7 @@ public class RadioStreamAdapter extends RecyclerView.Adapter<RadioStreamAdapter.
         View itemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.radio_stream_container, parent, false);
 
-        view = new RadioStreamViewHolder(itemView);
+        view = new RadioStreamViewHolder(itemView, !isRecommended);
 
         return view;
     }

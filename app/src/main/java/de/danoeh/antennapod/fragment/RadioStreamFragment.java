@@ -97,15 +97,13 @@ public class RadioStreamFragment extends Fragment {
         switch (item.getItemId()) {
             case R.id.edit_radio_stream:
                 new EditRadioStreamDialog().showDialog(
-                    this.getContext(),
-                    this.radioStreamList.get(position),
-                    this);
+                    this.getActivity(),
+                    this.radioStreamList.get(position));
                 return true;
             case R.id.delete_radio_stream:
                 new DeleteRadioStreamDialog().showDialog(
-                    this.getContext(),
-                    this.radioStreamList.get(position),
-                    this);
+                    this.getActivity(),
+                    this.radioStreamList.get(position));
                 return true;
             default:
                 return super.onContextItemSelected(item);
