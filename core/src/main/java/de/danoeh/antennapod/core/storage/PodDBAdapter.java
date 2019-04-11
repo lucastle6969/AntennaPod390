@@ -146,7 +146,7 @@ public class PodDBAdapter {
     public static final String UNCATEGORIZED_CATEGORY_NAME = "Uncategorized Section";
 
     // Recommended RadioStreams
-    public static final Map<String, String> RECOMMENED_RADIO_STATIONS = new HashMap<String, String>() {
+    public static final Map<String, String> RECOMMENDED_RADIO_STATIONS = new HashMap<String, String>() {
         {
             put("BBC media", "http://bbcmedia.ic.llnwd.net/stream/bbcmedia_radio2_mf_p");
             put("Radio Sandiego Mantilla", "http://5.135.183.124:8047/stream");
@@ -2069,7 +2069,7 @@ public class PodDBAdapter {
             db.execSQL(INSERT_UNCATEGORIZED_CATEGORY);
 
             // Insert all recommended radio stations
-            for (Map.Entry<String, String> entry: RECOMMENED_RADIO_STATIONS.entrySet()) {
+            for (Map.Entry<String, String> entry: RECOMMENDED_RADIO_STATIONS.entrySet()) {
                 String insertQuery = getInsertRecommendedRadioStreamQuery(entry.getKey(), entry.getValue());
                 db.execSQL(insertQuery);
             }

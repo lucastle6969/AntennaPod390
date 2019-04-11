@@ -6,9 +6,15 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.GridView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -16,9 +22,15 @@ import java.util.List;
 
 import de.danoeh.antennapod.R;
 import de.danoeh.antennapod.adapter.RadioStreamAdapter;
+import de.danoeh.antennapod.adapter.SubscriptionsAdapter;
+import de.danoeh.antennapod.adapter.SubscriptionsAdapterAdd;
+import de.danoeh.antennapod.core.feed.Feed;
 import de.danoeh.antennapod.core.feed.RadioStream;
 import de.danoeh.antennapod.core.storage.DBReader;
+import de.danoeh.antennapod.core.storage.PodDBAdapter;
 import de.danoeh.antennapod.core.util.playback.PlaybackController;
+import de.danoeh.antennapod.dialog.DeleteRadioStreamDialog;
+import de.danoeh.antennapod.dialog.EditRadioStreamDialog;
 
 public class RadioStreamFragment extends Fragment {
 
@@ -77,6 +89,27 @@ public class RadioStreamFragment extends Fragment {
         return root;
     }
 
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        int position = radioStreamAdapter.getPosition();
+
+        switch (item.getItemId()) {
+            case R.id.edit_radio_stream:
+                new EditRadioStreamDialog().showDialog(
+                    this.getActivity(),
+                    this.radioStreamList.get(position));
+                return true;
+            case R.id.delete_radio_stream:
+                new DeleteRadioStreamDialog().showDialog(
+                    this.getActivity(),
+                    this.radioStreamList.get(position));
+                return true;
+            default:
+                return super.onContextItemSelected(item);
+        }
+    }
+
     public void setController(PlaybackController controller) {
         this.controller = controller;
     }
@@ -102,6 +135,10 @@ public class RadioStreamFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         radioStreamListener = null;
+    }
+
+    public void refresh(){
+        getFragmentManager().beginTransaction().detach(this).attach(this).commit();
     }
 
 }
