@@ -122,6 +122,9 @@
     <!-- Achievements labels -->
     <string name="achievement_page_title">My Achievements</string>
     <string name="achievements">Achievements</string>
+    <string name="achievement_reset_label">Are you sure you want to reset your achievements? All of your progress will be lost.</string>
+    <string name="achievements_enabled">Achievements Enabled</string>
+    <string name="achievements_disabled">Achievements Disabled</string>
 
     <!-- Bookmark labels -->
     <string name="bookmark_label">Bookmark</string>

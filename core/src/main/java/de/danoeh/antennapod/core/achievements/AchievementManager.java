@@ -18,6 +18,7 @@ import de.danoeh.antennapod.core.storage.DBWriter;
 import de.danoeh.antennapod.core.preferences.UserPreferences;
 
 public class AchievementManager {
+    private static final String TUNE_RESOURCE = "zelda_treasure_chest.mp3";
     private static AchievementManager achievementManager;
     private ConcurrentHashMap<String, Achievement> achievements;
     private AchievementUnlocked animator;
@@ -97,7 +98,7 @@ public class AchievementManager {
 
         try {
             MediaPlayer m = new MediaPlayer();
-            AssetFileDescriptor descriptor = context.getAssets().openFd("zelda_treasure_chest.mp3");
+            AssetFileDescriptor descriptor = context.getAssets().openFd(TUNE_RESOURCE);
             m.setDataSource(descriptor.getFileDescriptor(), descriptor.getStartOffset(), descriptor.getLength());
             descriptor.close();
 

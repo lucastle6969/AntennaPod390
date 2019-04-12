@@ -1,7 +1,5 @@
 package de.danoeh.antennapod.fragment;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -26,6 +24,7 @@ import de.danoeh.antennapod.adapter.AchievementsAdapter;
 import de.danoeh.antennapod.core.achievements.Achievement;
 import de.danoeh.antennapod.core.achievements.AchievementManager;
 import de.danoeh.antennapod.core.preferences.UserPreferences;
+import de.danoeh.antennapod.dialog.AchievementResetDialog;
 
 public class AchievementsFragment extends Fragment {
 
@@ -80,7 +79,7 @@ public class AchievementsFragment extends Fragment {
         return root;
     }
 
-    public List<Achievement> toList(ConcurrentHashMap<String, Achievement> achievementMap){
+    public static List<Achievement> toList(ConcurrentHashMap<String, Achievement> achievementMap){
         List<Achievement> list = new ArrayList<>();
         for(Achievement achv: achievementMap.values()){
             list.add(achv);
@@ -93,7 +92,7 @@ public class AchievementsFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
 
         if(getActivity() instanceof MainActivity){
-            ((MainActivity) getActivity()).getSupportActionBar().setTitle("Achievements");
+            ((MainActivity) getActivity()).getSupportActionBar().setTitle(R.string.achievements);
         }
     }
 
@@ -113,15 +112,16 @@ public class AchievementsFragment extends Fragment {
             case R.id.enableAchievements:
                 UserPreferences.setAchievementsToggle(!UserPreferences.getAchievementsToggle());
                 if(UserPreferences.getAchievementsToggle()) {
-                    Toast.makeText(getActivity(), "Achievements Enabled",
+                    Toast.makeText(getActivity(), R.string.achievements_enabled,
                             Toast.LENGTH_LONG).show();
                 } else {
-                    Toast.makeText(getActivity(), "Achievements Disabled",
+                    Toast.makeText(getActivity(), R.string.achievements_disabled,
                             Toast.LENGTH_LONG).show();
                 }
                 break;
             case R.id.resetAchievements:
-                confirmResetDialog();
+                AchievementResetDialog dialog = new AchievementResetDialog();
+                dialog.showDialog(getContext(), this, achievementsAdapter);
                 break;
             default:
                 break;
@@ -137,27 +137,5 @@ public class AchievementsFragment extends Fragment {
 
     public void refresh(){
         getFragmentManager().beginTransaction().detach(this).attach(this).commit();
-    }
-
-    private void confirmResetDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-
-        builder
-        .setMessage("Are you sure you want to reset your achievements? All of your progress will be lost.")
-        .setPositiveButton("Yes",  new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int id) {
-                AchievementManager.getInstance(null).resetAchievements();
-                achievementsAdapter = new AchievementsAdapter(toList(AchievementManager.getInstance(null).getAchievements()), getActivity());
-                refresh();
-                achievementsAdapter.notifyDataSetChanged();
-            }
-        })
-        .setNegativeButton("No", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog,int id) {
-            }
-        })
-        .show();
     }
 }
