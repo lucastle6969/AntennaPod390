@@ -31,10 +31,10 @@ public class Achievement {
         this.hidden = hidden;
     }
 
-    public Achievement(String name, Date date, int counter, int goal, int rank, String description, int hidden){
+    public Achievement(String name, int goal, int rank, String description, int hidden){
         this.name = name;
-        this.date = date;
-        this.counter = counter;
+        this.date = null;
+        this.counter = 0;
         this.goal = goal;
         this.rank = rank;
         this.description = description;
@@ -87,7 +87,7 @@ public class Achievement {
             case 1:
             case 2:
                 if(this.date == null) {
-                    this.counter ++;
+                    this.counter++;
                     DBWriter.updateAchievement(this);
                     if(this.counter >= goal) {
                         return this.complete();
@@ -192,7 +192,16 @@ public class Achievement {
 
     public int getIconResource(){
         if(date==null){
-            return R.drawable.ic_achievement_locked;
+            switch(rank) {
+                case 1:
+                    return R.drawable.ic_achievement_locked_1;
+                case 2:
+                    return R.drawable.ic_achievement_locked_2;
+                case 3:
+                    return R.drawable.ic_achievement_locked_3;
+                default:
+                    return R.drawable.ic_achievement_locked_1;
+            }
         }
         switch(rank){
             case 1:

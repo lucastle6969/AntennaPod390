@@ -24,6 +24,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
@@ -31,6 +32,9 @@ import de.danoeh.antennapod.R;
 import de.danoeh.antennapod.activity.OnlineFeedViewActivity;
 import de.danoeh.antennapod.adapter.itunes.ItunesAdapter;
 import de.danoeh.antennapod.core.ClientConfig;
+import de.danoeh.antennapod.core.achievements.AchievementBuilder;
+import de.danoeh.antennapod.core.achievements.AchievementManager;
+import de.danoeh.antennapod.core.achievements.AchievementUnlocked;
 import de.danoeh.antennapod.core.service.OKHttpUtils;
 import de.danoeh.antennapod.core.service.download.AntennapodHttpClient;
 import okhttp3.OkHttpClient;
@@ -185,6 +189,11 @@ public class ItunesSearchFragment extends Fragment {
             public boolean onQueryTextSubmit(String s) {
                 searchView.clearFocus();
                 search(s);
+                AchievementManager.getInstance(new AchievementUnlocked(getContext()))
+                        .increment(new ArrayList<>(Arrays.asList(
+                                AchievementBuilder.SEARCH_ITUNES_ACHIEVEMENT,
+                                AchievementBuilder.SEARCH_ACHIEVEMENT
+                        )), getContext().getApplicationContext());
                 return true;
             }
             @Override

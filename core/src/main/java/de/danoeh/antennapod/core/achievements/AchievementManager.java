@@ -113,6 +113,10 @@ public class AchievementManager {
     public boolean checkCombinations(){
         if(checkCreator())
             return true;
+        if(checkModify())
+            return true;
+        if(checkSearch())
+            return true;
         return false;
     }
 
@@ -143,6 +147,7 @@ public class AchievementManager {
         return data;
     }
 
+    // Icons that come up in the unlocking animations
     private Drawable iconFactory(int rank, Context context) {
         ImageView iv = new ImageView(context);
         switch (rank) {
@@ -200,9 +205,24 @@ public class AchievementManager {
     }
 
     private boolean checkCreator(){
-        if(achievements.get(AchievementBuilder.CAT_ACHIEVEMENT).getDate()!= null && achievements.get(AchievementBuilder.BKMK_ACHIEVEMENT).getDate()!= null)
-            return true;
-        return false;
+        return (achievements.get(AchievementBuilder.CAT_ACHIEVEMENT).getDate()!= null
+                && achievements.get(AchievementBuilder.BKMK_ACHIEVEMENT).getDate()!= null
+                && achievements.get(AchievementBuilder.CREATE_ACHIEVEMENT).getDate()==null);
+    }
+
+    private boolean checkModify(){
+        return (achievements.get(AchievementBuilder.MOD_BKMK_ACHIEVEMENT).getDate()!= null
+                && achievements.get(AchievementBuilder.MOD_CAT_ACHIEVEMENT).getDate()!= null
+                && achievements.get(AchievementBuilder.MODIFY_ACHIEVEMENT).getDate()==null);
+    }
+
+    private boolean checkSearch(){
+        return (achievements.get(AchievementBuilder.SEARCH_CAT_ACHIEVEMENT).getDate()!= null
+                && achievements.get(AchievementBuilder.SEARCH_ITUNES_ACHIEVEMENT).getDate()!= null
+                && achievements.get(AchievementBuilder.SEARCH_GPOD_ACHIEVEMENT).getDate()!= null
+                && achievements.get(AchievementBuilder.SEARCH_FYYD_ACHIEVEMENT).getDate()!= null
+                && achievements.get(AchievementBuilder.SEARCH_BY_URL_ACHIEVEMENT).getDate()!=null
+                && achievements.get(AchievementBuilder.SEARCH_ACHIEVEMENT).getDate()==null);
     }
 
 }
