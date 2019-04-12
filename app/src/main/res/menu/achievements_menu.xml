@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/enableAchievements"
+        android:icon="@drawable/ic_new_releases_grey600_24dp"
+        android:title="Enable/Disable Achievements"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/resetAchievements"
+        android:icon="@drawable/ic_history_grey600_24dp"
+        android:title="Reset Achievements"
+        app:showAsAction="always" />
+</menu>

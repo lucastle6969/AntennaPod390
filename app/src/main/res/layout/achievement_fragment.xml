@@ -11,12 +11,16 @@
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:gravity="center"
+        android:paddingRight="30dp"
+        android:paddingTop="5dp"
         android:layout_alignParentTop="true">
 
-        <ImageView
-            android:id="@+id/achievement_total_rank_image"
+        <TextView
+            android:id="@+id/achievement_total_rank_icon"
             android:layout_width="50dp"
-            android:layout_height="50dp" />
+            android:layout_height="50dp"
+            android:gravity="center"/>
 
         <TextView
 
@@ -24,7 +28,8 @@
             android:layout_width="wrap_content"
             android:layout_height="30dp"
             android:layout_alignParentTop="true"
-            android:layout_gravity="center_horizontal"
+            android:gravity="center"
+            android:paddingLeft="20dp"
             style="@style/AntennaPod.TextView.Heading"
             tools:text="Achievements" />
     </LinearLayout>
