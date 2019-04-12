@@ -777,6 +777,19 @@ public class DBWriter {
     }
 
     /**
+     * Reset all achievements.
+     *
+     */
+    public static Future<?> resetAchievements(){
+        return dbExec.submit(()-> {
+            PodDBAdapter adapter = PodDBAdapter.getInstance();
+            adapter.open();
+            adapter.resetAchievementsTransaction();
+            adapter.close();
+        });
+    }
+
+    /**
      * Saves Bookmark object in the database. This method will save all attributes of Bookmark object.
      *
      * @param bookmark  The Bookmark object.

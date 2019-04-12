@@ -668,6 +668,20 @@ public class PodDBAdapter {
         return result;
     }
 
+    public long resetAchievementsTransaction() {
+        long result = 0;
+        try {
+            db.beginTransactionNonExclusive();
+            result = resetAchievements();
+            db.setTransactionSuccessful();
+        } catch (SQLException e) {
+            Log.e(TAG, Log.getStackTraceString(e));
+        } finally {
+            db.endTransaction();
+        }
+        return result;
+    }
+
     public long setSingleBookmark(Bookmark bookmark) {
         long result = 0;
         try {
@@ -937,6 +951,14 @@ public class PodDBAdapter {
         achievementValues.put(KEY_ACHIEVEMENT_HIDDEN, achievement.getHidden());
         achievement.setId(db.insert(TABLE_NAME_ACHIEVEMENTS, null, achievementValues));
         return achievement.getId();
+    }
+
+    private long resetAchievements() {
+        ContentValues values = new ContentValues();
+        values.putNull(KEY_ACHIEVEMENT_DATE);
+        values.put(KEY_ACHIEVEMENT_COUNTER, 0);
+        db.update(TABLE_NAME_ACHIEVEMENTS, values, null, null);
+        return 0;
     }
 
     /**
