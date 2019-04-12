@@ -112,6 +112,9 @@ public class UserPreferences {
     // Categories
     public static final String PREF_CATEGORY_TOGGLE = "prefCategoryToggle";
 
+    // Categories
+    public static final String PREF_ACHIEVEMENTS_TOGGLE = "prefAchievementsToggle";
+
     // Experimental
     private static final String PREF_STEREO_TO_MONO = "PrefStereoToMono";
     public static final String PREF_CAST_ENABLED = "prefCast"; //Used for enabling Chromecast support
@@ -226,6 +229,10 @@ public class UserPreferences {
 
     public static boolean getCategoryToggle(){
         return prefs.getBoolean(PREF_CATEGORY_TOGGLE, false);
+    }
+
+    public static boolean getAchievementsToggle(){
+        return prefs.getBoolean(PREF_ACHIEVEMENTS_TOGGLE, true);
     }
     /**
      * Returns notification priority.
@@ -532,6 +539,12 @@ public class UserPreferences {
     public static void setCategoryToggle(boolean categoryToggle){
         prefs.edit()
                 .putBoolean(PREF_CATEGORY_TOGGLE, categoryToggle)
+                .apply();
+    }
+
+    public static void setAchievementsToggle(boolean achievementsToggle){
+        prefs.edit()
+                .putBoolean(PREF_ACHIEVEMENTS_TOGGLE, achievementsToggle)
                 .apply();
     }
 
