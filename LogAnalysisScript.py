@@ -1,9 +1,9 @@
 import os
+import datetime
 from pathlib import Path
 
-
+now = datetime.datetime.now()
 scriptDirectory = os.path.dirname(os.path.realpath(__file__))
-
 
 # Returns a list of all .xml files in the given directory
 def getListOfLogFiles(dirName):
@@ -43,14 +43,10 @@ def getUnitTestData(logLine):
                     print("Class name: " + getData(info))
             if("tests=" in info):
                 print("# of tests: " + getData(info))
-            if("skipped=" in info):
-                print("# of skipped tests: " + getData(info))
             if("failures=" in info):
-                print("# of failured tests: " + getData(info))
+                print("# of failed tests: " + getData(info))
             if("errors=" in info):
                 print("# of errors in tests: " + getData(info))
-            if("time=" in info):
-                print("Time: " + getData(info))
 
 
 def getData(logLine):
@@ -114,11 +110,19 @@ def getCoreLintingLogs():
     filename = Path(scriptDirectory + "/core/build/reports/lint-results-freeDebug.html")
 
 
+def writeToFile(logAnalysisResultLine):
+    result = write(logAnalysisResultLine + "\n")
+
 def main():
+    path = Path(scriptDirectory + "/logAnalysis/")
+    if not os.path.exists(path):
+        os.makedirs(path)
+    result = open("logAnalysisResult-" + str(now) + ".txt", "w+")
     getAppUnitTestLogs()
     getCoreUnitTestLogs()
     # getAppLintingLogs()
     # getCoreLintingLogs()
+    result.close()
 
 
 if __name__ == '__main__':
