@@ -112,7 +112,7 @@ public class UserPreferences {
     // Categories
     public static final String PREF_CATEGORY_TOGGLE = "prefCategoryToggle";
 
-    // Categories
+    // Achievements
     public static final String PREF_ACHIEVEMENTS_TOGGLE = "prefAchievementsToggle";
 
     // Experimental
