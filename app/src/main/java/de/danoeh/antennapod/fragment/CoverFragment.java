@@ -1,5 +1,7 @@
 package de.danoeh.antennapod.fragment;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -11,6 +13,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.twitter.sdk.android.core.Callback;
+import com.twitter.sdk.android.core.Result;
+import com.twitter.sdk.android.core.TwitterAuthToken;
+import com.twitter.sdk.android.core.TwitterCore;
+import com.twitter.sdk.android.core.TwitterException;
+import com.twitter.sdk.android.core.TwitterSession;
+import com.twitter.sdk.android.core.identity.TwitterLoginButton;
+import com.twitter.sdk.android.tweetcomposer.ComposerActivity;
 import com.facebook.share.model.ShareLinkContent;
 import com.facebook.share.widget.ShareButton;
 
@@ -33,6 +43,10 @@ public class CoverFragment extends Fragment implements MediaplayerInfoContentFra
     private TextView txtvPodcastTitle;
     private TextView txtvEpisodeTitle;
     private ImageView imgvCover;
+    private TwitterLoginButton twitterLoginButton;
+    private String sessionToken;
+    private String sessionSecret;
+    private Activity context;
 
     public static CoverFragment newInstance(Playable item) {
         CoverFragment f = new CoverFragment();
@@ -69,15 +83,74 @@ public class CoverFragment extends Fragment implements MediaplayerInfoContentFra
                     .dontAnimate()
                     .fitCenter()
                     .into(imgvCover);
+
+            twitterLogin();
+            if(sessionToken != null){
+                View twitterLoginButtonView = getActivity().findViewById(R.id.login_button);
+                twitterLoginButtonView.setVisibility(View.GONE);
+                View twitterTweetButtonView = getActivity().findViewById(R.id.tweet_button);
+                twitterTweetButtonView.setVisibility(View.VISIBLE);
+                twitterTweetButtonView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        twitterComposeTweet();
+                    }
+                });
+            }
+
             ShareLinkContent content = new ShareLinkContent.Builder()
                     .setContentUrl(Uri.parse(media.getStreamUrl()))
                     .build();
 
             ShareButton shareButton = (ShareButton) root.findViewById(R.id.fb_share_button);
             shareButton.setShareContent(content);
+
         } else {
             Log.w(TAG, "loadMediaInfo was called while media was null");
         }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        // Pass the activity result to the login button.
+        twitterLoginButton.onActivityResult(requestCode, resultCode, data);
+    }
+
+    private void twitterLogin() {
+        twitterLoginButton = root.findViewById(R.id.login_button);
+        twitterLoginButton.setCallback(new Callback<TwitterSession>() {
+            @Override
+            public void success(Result<TwitterSession> result) {
+                TwitterSession session = TwitterCore.getInstance().getSessionManager().getActiveSession();
+                TwitterAuthToken authToken = session.getAuthToken();
+                sessionToken = authToken.token;
+                sessionSecret = authToken.secret;
+                twitterComposeTweet();
+            }
+
+            @Override
+            public void failure(TwitterException exception) {
+                Log.v(TAG, getString(R.string.twitter_login_error));
+            }
+        });
+    }
+
+    public void twitterComposeTweet() {
+        String title = media.getFeedTitle();
+        String episode = media.getEpisodeTitle();
+        String url = media.getStreamUrl();
+        String imageLocation = media.getImageLocation();
+
+        final TwitterSession session = TwitterCore.getInstance().getSessionManager()
+                .getActiveSession();
+        final Intent intent = new ComposerActivity.Builder(getActivity())
+                .session(session)
+                .text("Go listen to the '" + episode + "' episode from the '" + title + "' podcast! " + url)
+                .hashtags("#AntennaPod390")
+                .createIntent();
+        startActivity(intent);
     }
 
     @Override
