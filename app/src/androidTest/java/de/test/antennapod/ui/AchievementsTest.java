@@ -2,6 +2,7 @@ package de.test.antennapod.ui;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.test.ActivityInstrumentationTestCase2;
 import android.util.Log;
@@ -38,7 +39,7 @@ public class AchievementsTest extends ActivityInstrumentationTestCase2<MainActiv
         PodDBAdapter adapter = PodDBAdapter.getInstance();
         adapter.open();
         adapter.close();
-        AchievementBuilder.buildAchievements();
+        AchievementBuilder.buildAchievementsForTesting();
 
         // override first launch preference
         // do this BEFORE calling getActivity()!
@@ -70,6 +71,19 @@ public class AchievementsTest extends ActivityInstrumentationTestCase2<MainActiv
         return ((MainActivity) solo.getCurrentActivity()).getSupportActionBar().getTitle().toString();
     }
 
+    private void goingToSubscriptionPage() {
+        openNavDrawer();
+        solo.clickOnText(solo.getString(R.string.subscriptions_label));
+        solo.waitForView(android.R.id.list);
+        assertEquals(solo.getString(R.string.subscriptions_label), getActionbarTitle());
+    }
+
+    private void goingToAchievementsPage(){
+        openNavDrawer();
+        solo.clickOnText(solo.getString(R.string.achievements));
+        solo.waitForView(R.id.achievementList);
+    }
+
     public void testAchievementsFragment() {
         openNavDrawer();
         solo.clickOnText(solo.getString(R.string.achievements));
@@ -78,18 +92,35 @@ public class AchievementsTest extends ActivityInstrumentationTestCase2<MainActiv
     }
 
     public void testUnlockAchievement() {
-        openNavDrawer();
-        solo.clickOnText(solo.getString(R.string.achievements));
-        solo.waitForView(R.id.achievementList);
+        goingToAchievementsPage();
         RecyclerView achievementList = (RecyclerView) solo.getView(R.id.achievementList);
         int size = achievementList.getAdapter().getItemCount();
         for(int i =0; i<size; i++){
-            TextView name = solo.clickInRecyclerView(i).get(1);
+            TextView name = solo.clickInRecyclerView(i).get(2);
+            TextView date = solo.clickInRecyclerView(i).get(0);
             System.out.println(String.valueOf(name.getText()));
-            if(name.getText().equals("? ? ?")){
-                Log.d("ACHIEVEMENTS", "True");
+            if(name.getText().equals(AchievementBuilder.CAT_ACHIEVEMENT)){
+                assertEquals(date.getText(), "Achievement  incomplete");
             }
+        }
+        goingToSubscriptionPage();
 
+        // Create new category
+        String testCategoryName = "Test";
+        solo.clickOnView(solo.getView(R.id.addCategory));
+        solo.clickOnText(solo.getString(R.string.category_hint));
+        solo.enterText(0, testCategoryName);
+        solo.clickOnText(solo.getString(R.string.confirm_label));
+
+        goingToAchievementsPage();
+
+        for(int i =0; i<size; i++){
+            TextView name = solo.clickInRecyclerView(i).get(2);
+            TextView date = solo.clickInRecyclerView(i).get(0);
+            System.out.println(String.valueOf(name.getText()));
+            if(name.getText().equals(AchievementBuilder.CAT_ACHIEVEMENT)){
+                assertNotSame(date.getText(), "Achievement  incomplete");
+            }
         }
 
     }
