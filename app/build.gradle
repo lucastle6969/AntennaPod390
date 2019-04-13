@@ -50,10 +50,6 @@ android {
         generatedDensities = []
     }
 
-    testOptions {
-        unitTests.returnDefaultValues = true
-    }
-
     signingConfigs {
         releaseConfig {
             if (project.hasProperty("releaseStoreFile")) {

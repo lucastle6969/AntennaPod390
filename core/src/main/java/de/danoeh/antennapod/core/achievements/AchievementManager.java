@@ -109,7 +109,7 @@ public class AchievementManager {
             m.setLooping(false);
             m.start();
         } catch (IOException | NullPointerException e) {
-            Log.d("A", "No achievement tune found, canceling sound.");
+            //This is to stop a hard crash, instead playing no tune in case the file becomes unreadable.
         }
     }
 
@@ -142,13 +142,13 @@ public class AchievementManager {
         AchievementData data = new AchievementData();
         data.setTitle(achv.getName());
         data.setSubtitle(achv.getDescription());
-        data.setIcon(iconFactory(achv.getRank(), context));
         data.setTextColor(Color.BLACK);
         Resources resources = context.getResources();
         if (resources != null) {
             data.setIconBackgroundColor(resources.getColor(android.R.color.holo_blue_light));
             data.setBackgroundColor(resources.getColor(android.R.color.holo_blue_dark));
             animator.setRounded(false).setLarge(true).setTopAligned(true).setDismissible(true);
+            data.setIcon(iconFactory(achv.getRank(), context));
         }
         return data;
     }
