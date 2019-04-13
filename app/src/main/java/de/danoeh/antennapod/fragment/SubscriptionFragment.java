@@ -3,7 +3,6 @@ package de.danoeh.antennapod.fragment;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.DialogInterface;
-import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -34,7 +33,6 @@ import java.util.List;
 
 import de.danoeh.antennapod.R;
 import de.danoeh.antennapod.core.achievements.AchievementBuilder;
-import de.danoeh.antennapod.core.achievements.AchievementData;
 import de.danoeh.antennapod.core.achievements.AchievementManager;
 import de.danoeh.antennapod.core.achievements.AchievementUnlocked;
 import de.danoeh.antennapod.activity.MainActivity;

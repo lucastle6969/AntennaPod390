@@ -120,10 +120,17 @@ public class Achievement {
         return name;
     }
 
+    public void setCounter(int counter) {
+        this.counter = counter;
+    }
+
     public int getCounter(){
         return counter;
     }
 
+    public void setDate(Date date) {
+        this.date = date;
+    }
     public Date getDate(){
         return date;
     }

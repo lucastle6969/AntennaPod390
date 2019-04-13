@@ -2,16 +2,13 @@ package de.danoeh.antennapod.adapter;
 
 import android.app.Activity;
 import android.support.v7.widget.RecyclerView;
-import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
 
 import de.danoeh.antennapod.R;
 import de.danoeh.antennapod.core.achievements.Achievement;
@@ -38,6 +35,10 @@ public class AchievementsAdapter extends RecyclerView.Adapter<AchievementsAdapte
             achievementIcon = view.findViewById(R.id.achievement_rank_image);
         }
 
+    }
+
+    public void setAchievementList(List<Achievement> achievementList) {
+        this.achievementList = achievementList;
     }
 
     public void setContext(Activity context) {context = context;}
