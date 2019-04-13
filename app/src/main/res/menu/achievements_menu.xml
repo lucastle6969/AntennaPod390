@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/enableAchievements"
-        android:icon="@drawable/ic_new_releases_grey600_24dp"
+        android:icon="@drawable/ic_check_box_outline_blank_grey600_24dp"
         android:title="Enable/Disable Achievements"
         app:showAsAction="always" />
     <item

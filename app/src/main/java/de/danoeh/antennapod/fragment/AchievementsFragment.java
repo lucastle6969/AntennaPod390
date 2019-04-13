@@ -106,17 +106,30 @@ public class AchievementsFragment extends Fragment {
     }
 
     @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        MenuItem enableAchievements = menu.findItem(R.id.enableAchievements);
+        if(UserPreferences.getAchievementsToggle()) {
+            enableAchievements.setIcon(R.drawable.ic_check_box_grey600_24dp);
+        } else {
+            enableAchievements.setIcon(R.drawable.ic_check_box_outline_blank_grey600_24dp);
+        }
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
+        MenuItem enableAchievements = item;
         switch(id) {
             case R.id.enableAchievements:
                 UserPreferences.setAchievementsToggle(!UserPreferences.getAchievementsToggle());
                 if(UserPreferences.getAchievementsToggle()) {
                     Toast.makeText(getActivity(), R.string.achievements_enabled,
                             Toast.LENGTH_LONG).show();
+                    enableAchievements.setIcon(R.drawable.ic_check_box_grey600_24dp);
                 } else {
                     Toast.makeText(getActivity(), R.string.achievements_disabled,
                             Toast.LENGTH_LONG).show();
+                    enableAchievements.setIcon(R.drawable.ic_check_box_outline_blank_grey600_24dp);
                 }
                 break;
             case R.id.resetAchievements:
