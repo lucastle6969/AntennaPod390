@@ -41,6 +41,7 @@ import de.danoeh.antennapod.fragment.EpisodesFragment;
 import de.danoeh.antennapod.fragment.NewEpisodesFragment;
 import de.danoeh.antennapod.fragment.PlaybackHistoryFragment;
 import de.danoeh.antennapod.fragment.QueueFragment;
+import de.danoeh.antennapod.fragment.RadioStationFragment;
 import de.danoeh.antennapod.fragment.SubscriptionFragment;
 
 /**
@@ -130,6 +131,9 @@ public class NavListAdapter extends BaseAdapter
                 break;
             case PodcastOfTheDayFragment.TAG:
                 icon = R.attr.type_video;
+                break;
+            case RadioStationFragment.TAG:
+                icon = R.attr.radio_stream;
                 break;
             case DownloadsFragment.TAG:
                 icon = R.attr.av_download;

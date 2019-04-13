@@ -20,11 +20,14 @@ import de.danoeh.antennapod.core.feed.Category;
 import de.danoeh.antennapod.core.feed.Feed;
 import de.danoeh.antennapod.core.feed.FeedItem;
 import de.danoeh.antennapod.core.feed.FeedMedia;
+import de.danoeh.antennapod.core.feed.RadioStream;
 import de.danoeh.antennapod.core.storage.DBReader;
 import de.danoeh.antennapod.core.storage.DBWriter;
 import de.danoeh.antennapod.core.storage.PodDBAdapter;
 
 import static java.lang.Thread.sleep;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * Test class for DBWriter
@@ -36,6 +39,9 @@ public class DBWriterTest extends InstrumentationTestCase {
     private static final long TIMEOUT = 5L;
     private List<Category> categoriesFromDb = null;
     private Category testingCategory;
+
+    private List<RadioStream> radioStreamsFromDb = null;
+    private RadioStream testingRadioStream;
 
     @Override
     protected void tearDown() throws Exception {
@@ -303,6 +309,86 @@ public class DBWriterTest extends InstrumentationTestCase {
         }
         Category uncategorized = categoriesFromDb.get(0);
         assertFalse(uncategorized.getFeedIds().contains(feedToUnsubscribe.getId()));
+    }
+
+    private RadioStream addTestRadioStream(String title, String url) {
+        RadioStream testingRadioStream = new RadioStream(-1, title, url);
+        synchronized (this) {
+            try {
+                DBWriter.setRadioStream(testingRadioStream);
+                sleep(100);
+                radioStreamsFromDb = DBReader.getAllUserRadioStreams();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        this.testingRadioStream = testingRadioStream;
+        return testingRadioStream;
+    }
+
+    public void testCreateRadioStream() {
+        final String expectedTitle = "radioTitle";
+        final String expectedUrl = "http://bbcmedia.ic.llnwd.net/stream/bbcmedia_radio2_mf_p";
+
+        addTestRadioStream(expectedTitle, expectedUrl);
+        RadioStream retrievedRadioStream = radioStreamsFromDb.get(0);
+
+        assertNotNull(retrievedRadioStream);
+        assertEquals(expectedTitle, retrievedRadioStream.getTitle());
+        assertEquals(expectedUrl, retrievedRadioStream.getUrl());
+    }
+
+    public void testEditRadioStream() {
+        addTestRadioStream("Old title", "http://bbcmedia.ic.llnwd.net/stream/bbcmedia_radio2_mf_p");
+        final String newRadioTitle = "New title";
+        final String newRadioUrl = "http://17833.live.streamtheworld.com/XLTNFM_SC";
+        testingRadioStream.setTitle(newRadioTitle);
+        testingRadioStream.setUrl(newRadioUrl);
+
+        synchronized (this) {
+            try {
+                DBWriter.updateRadioStream(testingRadioStream);
+                sleep(100);
+                radioStreamsFromDb = DBReader.getAllUserRadioStreams();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        RadioStream retrievedRadioStream = radioStreamsFromDb.get(0);
+        assertEquals(newRadioTitle, retrievedRadioStream.getTitle());
+        assertEquals(newRadioUrl, retrievedRadioStream.getUrl());
+    }
+
+    public void testDeleteUserRadioStream() {
+        addTestRadioStream("Old title", "http://bbcmedia.ic.llnwd.net/stream/bbcmedia_radio2_mf_p");
+        synchronized (this) {
+            try {
+                DBWriter.deleteRadioStream(testingRadioStream);
+                sleep(100);
+                radioStreamsFromDb = DBReader.getAllUserRadioStreams();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        assertEquals(0, radioStreamsFromDb.size());
+    }
+
+    public void testGetAllRecommendedRadioStream() {
+        RadioStream radioStream = new RadioStream(-1, "radioTitle","http://bbcmedia.ic.llnwd.net/stream/bbcmedia_radio2_mf_p");
+
+        synchronized (this) {
+            try {
+                DBWriter.setRecommendedRadioStreamTest(radioStream);
+                sleep(100);
+                radioStreamsFromDb = DBReader.getAllRecommendedRadioStreams();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        assertEquals(1, radioStreamsFromDb.size());
     }
 
     public void testDeleteFeedMediaOfItemFileExists()
