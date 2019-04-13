@@ -50,6 +50,10 @@ android {
         generatedDensities = []
     }
 
+    testOptions {
+        unitTests.returnDefaultValues = true
+    }
+
     signingConfigs {
         releaseConfig {
             if (project.hasProperty("releaseStoreFile")) {
@@ -205,7 +209,7 @@ dependencies {
     testImplementation 'org.robolectric:robolectric:4.2'
 
     // required if you want to use Mockito for unit tests
-    testImplementation  "org.mockito:mockito-core:2.24.5"
+    testImplementation  "org.mockito:mockito-core:1.9.5"
     testImplementation 'org.powermock:powermock-api-mockito:1.6.2'
     testImplementation 'org.powermock:powermock-module-junit4-rule-agent:1.6.2'
     testImplementation 'org.powermock:powermock-module-junit4-rule:1.6.2'
