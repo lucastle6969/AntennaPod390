@@ -31,6 +31,8 @@ import android.widget.ListView;
 import com.bumptech.glide.Glide;
 
 import de.danoeh.antennapod.core.event.ServiceEvent;
+import de.danoeh.antennapod.core.feed.RadioStream;
+import de.danoeh.antennapod.core.service.playback.PlayerStatus;
 import de.danoeh.antennapod.core.util.IntentUtils;
 import de.danoeh.antennapod.core.util.gui.NotificationUtils;
 import org.apache.commons.lang3.ArrayUtils;
@@ -56,6 +58,7 @@ import de.danoeh.antennapod.core.storage.DBWriter;
 import de.danoeh.antennapod.core.util.FeedItemUtil;
 import de.danoeh.antennapod.core.util.Flavors;
 import de.danoeh.antennapod.core.util.StorageUtils;
+import de.danoeh.antennapod.core.util.playback.PlaybackController;
 import de.danoeh.antennapod.dialog.RatingDialog;
 import de.danoeh.antennapod.dialog.RenameFeedDialog;
 import de.danoeh.antennapod.fragment.AddFeedFragment;
@@ -66,6 +69,8 @@ import de.danoeh.antennapod.fragment.ItemlistFragment;
 import de.danoeh.antennapod.fragment.PlaybackHistoryFragment;
 import de.danoeh.antennapod.fragment.PodcastOfTheDayFragment;
 import de.danoeh.antennapod.fragment.QueueFragment;
+import de.danoeh.antennapod.fragment.RadioStationFragment;
+import de.danoeh.antennapod.fragment.RadioStreamFragment;
 import de.danoeh.antennapod.fragment.SubscriptionFragment;
 import de.danoeh.antennapod.menuhandler.NavDrawerActivity;
 import de.greenrobot.event.EventBus;
@@ -77,7 +82,7 @@ import rx.schedulers.Schedulers;
 /**
  * The activity that is shown when the user launches the app.
  */
-public class MainActivity extends CastEnabledActivity implements NavDrawerActivity {
+public class MainActivity extends CastEnabledActivity implements NavDrawerActivity, RadioStreamFragment.RadioStreamListener {
 
     private static final String TAG = "MainActivity";
 
@@ -104,6 +109,7 @@ public class MainActivity extends CastEnabledActivity implements NavDrawerActivi
             SubscriptionFragment.TAG,
             AddFeedFragment.TAG,
             PodcastOfTheDayFragment.TAG,
+            RadioStationFragment.TAG,
             DownloadsFragment.TAG,
             NavListAdapter.SUBSCRIPTION_LIST_TAG
     };
@@ -120,6 +126,8 @@ public class MainActivity extends CastEnabledActivity implements NavDrawerActivi
     private ActionBarDrawerToggle drawerToggle;
 
     private CharSequence currentTitle;
+
+    private Fragment currentFragment;
 
     private ProgressDialog pd;
 
@@ -300,6 +308,9 @@ public class MainActivity extends CastEnabledActivity implements NavDrawerActivi
             case PodcastOfTheDayFragment.TAG:
                 fragment = new PodcastOfTheDayFragment();
                 break;
+            case RadioStationFragment.TAG:
+                fragment = new RadioStationFragment();
+                break;
             case DownloadsFragment.TAG:
                 fragment = new DownloadsFragment();
                 break;
@@ -310,8 +321,7 @@ public class MainActivity extends CastEnabledActivity implements NavDrawerActivi
                 fragment = new AddFeedFragment();
                 break;
             case SubscriptionFragment.TAG:
-                SubscriptionFragment subscriptionFragment = new SubscriptionFragment();
-                fragment = subscriptionFragment;
+                fragment = new SubscriptionFragment();
                 break;
             default:
                 // default to the queue
@@ -326,6 +336,28 @@ public class MainActivity extends CastEnabledActivity implements NavDrawerActivi
         if (args != null) {
             fragment.setArguments(args);
         }
+
+        final FragmentManager fm = getSupportFragmentManager();
+        FragmentTransaction transaction = fm.beginTransaction();
+
+        // If loading the RadioStationFragment, then remove the external player from view
+        // and pause the playback controller if it is playing
+        if (externalPlayerFragment != null && tag.equalsIgnoreCase(RadioStationFragment.TAG)) {
+            PlaybackController controller = externalPlayerFragment.getController();
+            if (controller != null && controller.getStatus() == PlayerStatus.PLAYING) {
+                controller.init();
+                controller.playPause();
+            }
+            transaction.remove(externalPlayerFragment);
+        } else {
+            // This is used to add the external player back into the view if it had been
+            // removed when the user loaded the radio station fragment
+            externalPlayerFragment = new ExternalPlayerFragment();
+            transaction.replace(R.id.playerFragment, externalPlayerFragment, ExternalPlayerFragment.TAG);
+        }
+        transaction.commit();
+
+        currentFragment = fragment;
         loadFragment(fragment);
     }
 
@@ -432,7 +464,6 @@ public class MainActivity extends CastEnabledActivity implements NavDrawerActivi
         }
     };
 
-
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
@@ -525,6 +556,7 @@ public class MainActivity extends CastEnabledActivity implements NavDrawerActivi
                     requestCastButton(MenuItem.SHOW_AS_ACTION_IF_ROOM);
                     return retVal;
                 case PodcastOfTheDayFragment.TAG:
+                case RadioStationFragment.TAG:
                 case DownloadsFragment.TAG:
                 case PlaybackHistoryFragment.TAG:
                 case AddFeedFragment.TAG:
@@ -822,5 +854,19 @@ public class MainActivity extends CastEnabledActivity implements NavDrawerActivi
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         setIntent(intent);
+    }
+
+    @Override
+    public void onRadioStreamSelected(RadioStream radioStream) {
+        RadioStationFragment radioStationFragment = (RadioStationFragment) currentFragment;
+        radioStationFragment.updateRadioStream(radioStream);
+    }
+
+    public ExternalPlayerFragment getExternalPlayerFragment() {
+        return externalPlayerFragment;
+    }
+
+    public Fragment getCurrentFragment(){
+        return currentFragment;
     }
 }
