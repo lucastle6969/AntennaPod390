@@ -200,6 +200,8 @@ dependencies {
 
     implementation 'com.google.firebase:firebase-core:16.0.8'
     implementation 'com.google.firebase:firebase-perf:16.2.4'
+    implementation 'com.facebook.android:facebook-android-sdk:4.41.0'
+    implementation 'com.facebook.android:facebook-share:4.41.0'
 
     testImplementation  'junit:junit:4.12'
     testImplementation 'org.robolectric:robolectric:4.2'
@@ -211,6 +213,12 @@ dependencies {
     androidTestImplementation 'org.mockito:mockito-android:2.7.22'
     androidTestImplementation 'com.android.support:support-annotations:27.0.0'
     androidTestImplementation "com.jayway.android.robotium:robotium-solo:$robotiumSoloVersion"
+
+    // dependencies to share on Twitter
+    compile 'com.twitter.sdk.android:twitter-core:3.1.1'
+    compile 'com.twitter.sdk.android:tweet-ui:3.1.1'
+    compile 'com.twitter.sdk.android:tweet-composer:3.1.1'
+    compile 'com.twitter.sdk.android:twitter-mopub:3.1.1'
 }
 
 play {
@@ -265,3 +273,15 @@ allprojects {
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'com.google.firebase.firebase-perf'
 com.google.gms.googleservices.GoogleServicesPlugin.config.disableVersionCheck = true
+
+configurations.all {
+    resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+        def requested = details.requested
+        if (requested.group == 'com.android.support') {
+            if (!requested.name.startsWith("multidex")) {
+                details.useVersion '27.0.2'
+            }
+        }
+
+    }
+}
