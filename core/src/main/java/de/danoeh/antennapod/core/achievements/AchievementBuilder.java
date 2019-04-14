@@ -23,6 +23,8 @@ public class AchievementBuilder {
     public static final String SEARCH_GPOD_ACHIEVEMENT = "Turn a New Leaf Over";
     public static final String SEARCH_FYYD_ACHIEVEMENT = "Into The Abyss";
     public static final String SEARCH_BY_URL_ACHIEVEMENT = "Enter the Matrix";
+    public static final String RADIO_ACHIEVEMENT = "Tune-In";
+    public static final String SHARE_ACHIEVEMENT = "Social Butterfly";
     public static final String SEARCH_ACHIEVEMENT = "Sleuth";
     public static final String CREATE_ACHIEVEMENT = "The Creator";
     public static final String MODIFY_ACHIEVEMENT = "Director's Cut";
@@ -182,6 +184,24 @@ public class AchievementBuilder {
                 1,
                 2,
                 "Search for a podcast by URL",
+                0
+        );
+        achievements.add(achievement);
+
+        achievement = new Achievement(
+                RADIO_ACHIEVEMENT,
+                1,
+                1,
+                "Add a radio station",
+                0
+        );
+        achievements.add(achievement);
+
+        achievement = new Achievement(
+                SHARE_ACHIEVEMENT,
+                1,
+                1,
+                "Tweet a podcast",
                 0
         );
         achievements.add(achievement);

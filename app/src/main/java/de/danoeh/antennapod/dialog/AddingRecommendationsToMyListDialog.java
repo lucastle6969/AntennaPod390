@@ -7,8 +7,14 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 import de.danoeh.antennapod.R;
 import de.danoeh.antennapod.activity.MainActivity;
+import de.danoeh.antennapod.core.achievements.AchievementBuilder;
+import de.danoeh.antennapod.core.achievements.AchievementManager;
+import de.danoeh.antennapod.core.achievements.AchievementUnlocked;
 import de.danoeh.antennapod.core.feed.RadioStream;
 import de.danoeh.antennapod.core.storage.DBWriter;
 import de.danoeh.antennapod.fragment.RadioStationFragment;
@@ -50,6 +56,10 @@ public class AddingRecommendationsToMyListDialog {
                 DBWriter.setRadioStream(radioStream);
                 Toast.makeText(activity, activity.getString(R.string.successfully_added_recommended_radio_stream), Toast.LENGTH_LONG).show();
                 fragment.refresh();
+                AchievementManager.getInstance(new AchievementUnlocked(activity))
+                        .increment(new ArrayList<>(Arrays.asList(
+                                AchievementBuilder.RADIO_ACHIEVEMENT
+                        )), activity.getApplicationContext());
             }
         });
 
