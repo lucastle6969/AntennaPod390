@@ -1,0 +1,211 @@
+***************************************************************************
+                        Unit Tests in App
+***************************************************************************
+==================
+  Testsuite
+==================
+Name: "de.danoeh.antennapod.app.adapter.AddFeedFragmentAdapterTest"
+# of tests: "2"
+# of failed tests: "0"
+# of errors in tests: "0"
+----------------
+  Testcase
+----------------
+Name: "testGetItemFragment"
+Class name: "de.danoeh.antennapod.app.adapter.AddFeedFragmentAdapterTest"
+----------------
+  Testcase
+----------------
+Name: "testGetPageTitle"
+Class name: "de.danoeh.antennapod.app.adapter.AddFeedFragmentAdapterTest"
+==================
+  Testsuite
+==================
+Name: "de.danoeh.antennapod.fragment.AchievementsTest"
+# of tests: "3"
+# of failed tests: "0"
+# of errors in tests: "0"
+----------------
+  Testcase
+----------------
+Name: "testAchievementCompletion"
+Class name: "de.danoeh.antennapod.fragment.AchievementsTest"
+----------------
+  Testcase
+----------------
+Name: "testApplicationTestCaseSetUpProperly"
+Class name: "de.danoeh.antennapod.fragment.AchievementsTest"
+----------------
+  Testcase
+----------------
+Name: "testAndroidTestCaseSetupProperly"
+Class name: "de.danoeh.antennapod.fragment.AchievementsTest"
+==================
+  Testsuite
+==================
+Name: "de.danoeh.antennapod.fragment.CategoryTest"
+# of tests: "1"
+# of failed tests: "0"
+# of errors in tests: "0"
+----------------
+  Testcase
+----------------
+Name: "testFeedSearch"
+Class name: "de.danoeh.antennapod.fragment.CategoryTest"
+==================
+  Testsuite
+==================
+Name: "de.danoeh.antennapod.fragment.PodcastOfTheDayTest"
+# of tests: "2"
+# of failed tests: "0"
+# of errors in tests: "0"
+----------------
+  Testcase
+----------------
+Name: "testGetDailyPodcast"
+Class name: "de.danoeh.antennapod.fragment.PodcastOfTheDayTest"
+----------------
+  Testcase
+----------------
+Name: "testPopulate"
+Class name: "de.danoeh.antennapod.fragment.PodcastOfTheDayTest"
+***************************************************************************
+                        Unit Tests in Core
+***************************************************************************
+==================
+  Testsuite
+==================
+Name: "de.danoeh.antennapod.core.feed.FeedItemTest"
+# of tests: "3"
+# of failed tests: "0"
+# of errors in tests: "0"
+----------------
+  Testcase
+----------------
+Name: "testUpdateFromOther_feedItemImageAdded"
+Class name: "de.danoeh.antennapod.core.feed.FeedItemTest"
+----------------
+  Testcase
+----------------
+Name: "testUpdateFromOther_feedItemImageRemoved"
+Class name: "de.danoeh.antennapod.core.feed.FeedItemTest"
+----------------
+  Testcase
+----------------
+Name: "testUpdateFromOther_feedItemImageDownloadUrlChanged"
+Class name: "de.danoeh.antennapod.core.feed.FeedItemTest"
+==================
+  Testsuite
+==================
+Name: "de.danoeh.antennapod.core.feed.FeedTest"
+# of tests: "6"
+# of failed tests: "0"
+# of errors in tests: "0"
+----------------
+  Testcase
+----------------
+Name: "testCompareWithOther_feedImageRemoved"
+Class name: "de.danoeh.antennapod.core.feed.FeedTest"
+----------------
+  Testcase
+----------------
+Name: "testCompareWithOther_sameFeedImage"
+Class name: "de.danoeh.antennapod.core.feed.FeedTest"
+----------------
+  Testcase
+----------------
+Name: "testUpdateFromOther_feedImageRemoved"
+Class name: "de.danoeh.antennapod.core.feed.FeedTest"
+----------------
+  Testcase
+----------------
+Name: "testUpdateFromOther_feedImageAdded"
+Class name: "de.danoeh.antennapod.core.feed.FeedTest"
+----------------
+  Testcase
+----------------
+Name: "testCompareWithOther_feedImageDownloadUrlChanged"
+Class name: "de.danoeh.antennapod.core.feed.FeedTest"
+----------------
+  Testcase
+----------------
+Name: "testUpdateFromOther_feedImageDownloadUrlChanged"
+Class name: "de.danoeh.antennapod.core.feed.FeedTest"
+==================
+  Testsuite
+==================
+Name: "de.danoeh.antennapod.core.util.LongLongMapTest"
+# of tests: "4"
+# of failed tests: "0"
+# of errors in tests: "0"
+----------------
+  Testcase
+----------------
+Name: "testSingleElement"
+Class name: "de.danoeh.antennapod.core.util.LongLongMapTest"
+----------------
+  Testcase
+----------------
+Name: "testOverwrite"
+Class name: "de.danoeh.antennapod.core.util.LongLongMapTest"
+----------------
+  Testcase
+----------------
+Name: "testAddAndDelete"
+Class name: "de.danoeh.antennapod.core.util.LongLongMapTest"
+----------------
+  Testcase
+----------------
+Name: "testEmptyMap"
+Class name: "de.danoeh.antennapod.core.util.LongLongMapTest"
+***************************************************************************
+                        Lint Logs from App
+***************************************************************************
+ 1 error and 487 warnings
+Error: MissingMediaBrowserServiceIntentFilter
+***************************************************************************
+                        Lint Logs from Core
+***************************************************************************
+ 652 errors and 291 warnings
+Error: LintError
+Error: GradleCompatible
+Error: ReferenceType
+Error: DuplicateDefinition
+Error: InvalidPackage
+Error: MissingDefaultResource
+Error: MissingTranslation
+Error: ExtraTranslation
+Error: ImpliedQuantity
+***************************************************************************
+                        Coverage Report
+***************************************************************************
+----------------
+  Lines
+----------------
+Missed: 0
+Covered: 0
+Percent coverage: 0 %
+----------------
+  Methods
+----------------
+Missed: 0
+Covered: 0
+Percent coverage: 0 %
+----------------
+  Classes
+----------------
+Missed: 0
+Covered: 0
+Percent coverage: 0 %
+----------------
+  Branches
+----------------
+Missed: 0
+Covered: 0
+Percent coverage: 0 %
+----------------
+  Complexity
+----------------
+Missed: 0
+Covered: 0
+Percent coverage: 0 %
