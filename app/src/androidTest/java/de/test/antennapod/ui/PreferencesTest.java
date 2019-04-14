@@ -205,22 +205,30 @@ public class PreferencesTest extends ActivityInstrumentationTestCase2<Preference
         solo.clickOnText(solo.getString(R.string.pref_automaticRewind_title));
         solo.waitForDialogToOpen(3000);
         String[] values = res.getStringArray(R.array.automatic_rewind_values);
-        String[] entries = new String[values.length];
+        String[] entries = new String[values.length - 1]; // See below for explanation about the -1.
         entries[0] = res.getString(R.string.automatic_rewind_disabled);
-        entries[1] = res.getString(R.string.automatic_rewind_variable);
+
+//      This is disabled due to an issue with solo.searchText not working for multi-line text.
+//      entries[1] = res.getString(R.string.automatic_rewind_variable);
+//      Because we are skipping this entry, we need to save entries to "index - 1".
+
         for (int index = 2; index < values.length; index++) {
             int value = Integer.parseInt(values[index]);
             if(value < 60) {
-                entries[index] = res.getQuantityString(R.plurals.time_seconds_quantified, value, value);
+                entries[index - 1] = res.getQuantityString(R.plurals.time_seconds_quantified, value, value);
             } else {
                 value /= 60;
-                entries[index] = res.getQuantityString(R.plurals.time_minutes_quantified, value, value);
+                entries[index - 1] = res.getQuantityString(R.plurals.time_minutes_quantified, value, value);
             }
         }
 
         for (String entry : entries){
             assertTrue(solo.searchText(entry));
         }
+
+        solo.clickOnText(entries[2]);   // Due to the current index shift, this represents 10 seconds.
+        final int expectedRewindSeconds = 10;
+        assertTrue(solo.waitForCondition(() -> UserPreferences.getAutomaticRewindSecs() == expectedRewindSeconds, Timeout.getLargeTimeout()));
 
     }
 
