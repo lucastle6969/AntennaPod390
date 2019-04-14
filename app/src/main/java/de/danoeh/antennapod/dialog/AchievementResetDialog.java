@@ -11,8 +11,7 @@ import de.danoeh.antennapod.fragment.AchievementsFragment;
 public class AchievementResetDialog {
     public void showDialog(Context context, AchievementsFragment fragment, AchievementsAdapter adapter) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder
-            .setMessage(R.string.achievement_reset_label)
+        builder.setMessage(R.string.achievement_reset_label)
             .setPositiveButton(R.string.confirm_label, (dialog, id) -> {
                 AchievementManager.getInstance(null).resetAchievements();
                 adapter.setAchievementList(AchievementsFragment.toList(AchievementManager.getInstance().getAchievements()));

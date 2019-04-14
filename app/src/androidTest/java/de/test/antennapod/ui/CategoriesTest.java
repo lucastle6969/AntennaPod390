@@ -74,7 +74,7 @@ public class CategoriesTest extends ActivityInstrumentationTestCase2<MainActivit
         getInstrumentation().waitForIdleSync();
     }
 
-    private String getActionbarTitle() {
+    private String getActionBarTitle() {
         return ((MainActivity) solo.getCurrentActivity()).getSupportActionBar().getTitle().toString();
     }
 
@@ -96,7 +96,7 @@ public class CategoriesTest extends ActivityInstrumentationTestCase2<MainActivit
         openNavDrawer();
         solo.clickOnText(solo.getString(R.string.subscriptions_label));
         solo.waitForView(android.R.id.list);
-        assertEquals(solo.getString(R.string.subscriptions_label), getActionbarTitle());
+        assertEquals(solo.getString(R.string.subscriptions_label), getActionBarTitle());
     }
 
     public void testCategories() throws Exception{

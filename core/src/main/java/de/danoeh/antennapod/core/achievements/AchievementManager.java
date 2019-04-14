@@ -113,6 +113,7 @@ public class AchievementManager {
         }
     }
 
+    // check if special combination achievements have been unlocked
     public boolean checkCombinations(){
         if(checkCreator())
             return true;
@@ -210,25 +211,28 @@ public class AchievementManager {
         }
     }
 
+    // check if all achievements related to the Creator achievement have been unlocked
     private boolean checkCreator(){
-        return (achievements.get(AchievementBuilder.CAT_ACHIEVEMENT).getDate()!= null
-                && achievements.get(AchievementBuilder.BKMK_ACHIEVEMENT).getDate()!= null
-                && achievements.get(AchievementBuilder.CREATE_ACHIEVEMENT).getDate()==null);
+        return (achievements.get(AchievementBuilder.CAT_ACHIEVEMENT).getDate() != null
+                && achievements.get(AchievementBuilder.BKMK_ACHIEVEMENT).getDate() != null
+                && achievements.get(AchievementBuilder.CREATE_ACHIEVEMENT).getDate() == null);
     }
 
+    // check if all achievements related to the Modify achievement have been unlocked
     private boolean checkModify(){
-        return (achievements.get(AchievementBuilder.MOD_BKMK_ACHIEVEMENT).getDate()!= null
-                && achievements.get(AchievementBuilder.MOD_CAT_ACHIEVEMENT).getDate()!= null
-                && achievements.get(AchievementBuilder.MODIFY_ACHIEVEMENT).getDate()==null);
+        return (achievements.get(AchievementBuilder.MOD_BKMK_ACHIEVEMENT).getDate() != null
+                && achievements.get(AchievementBuilder.MOD_CAT_ACHIEVEMENT).getDate() != null
+                && achievements.get(AchievementBuilder.MODIFY_ACHIEVEMENT).getDate() == null);
     }
 
+    // check if all achievements related to the Search achievement have been unlocked
     private boolean checkSearch(){
-        return (achievements.get(AchievementBuilder.SEARCH_CAT_ACHIEVEMENT).getDate()!= null
-                && achievements.get(AchievementBuilder.SEARCH_ITUNES_ACHIEVEMENT).getDate()!= null
-                && achievements.get(AchievementBuilder.SEARCH_GPOD_ACHIEVEMENT).getDate()!= null
-                && achievements.get(AchievementBuilder.SEARCH_FYYD_ACHIEVEMENT).getDate()!= null
-                && achievements.get(AchievementBuilder.SEARCH_BY_URL_ACHIEVEMENT).getDate()!=null
-                && achievements.get(AchievementBuilder.SEARCH_ACHIEVEMENT).getDate()==null);
+        return (achievements.get(AchievementBuilder.SEARCH_CAT_ACHIEVEMENT).getDate() != null
+                && achievements.get(AchievementBuilder.SEARCH_ITUNES_ACHIEVEMENT).getDate() != null
+                && achievements.get(AchievementBuilder.SEARCH_GPOD_ACHIEVEMENT).getDate() != null
+                && achievements.get(AchievementBuilder.SEARCH_FYYD_ACHIEVEMENT).getDate() != null
+                && achievements.get(AchievementBuilder.SEARCH_BY_URL_ACHIEVEMENT).getDate() != null
+                && achievements.get(AchievementBuilder.SEARCH_ACHIEVEMENT).getDate() == null);
     }
 
 }

@@ -67,7 +67,7 @@ public class AchievementsTest extends ActivityInstrumentationTestCase2<MainActiv
         getInstrumentation().waitForIdleSync();
     }
 
-    private String getActionbarTitle() {
+    private String getActionBarTitle() {
         return ((MainActivity) solo.getCurrentActivity()).getSupportActionBar().getTitle().toString();
     }
 
@@ -75,7 +75,7 @@ public class AchievementsTest extends ActivityInstrumentationTestCase2<MainActiv
         openNavDrawer();
         solo.clickOnText(solo.getString(R.string.subscriptions_label));
         solo.waitForView(android.R.id.list);
-        assertEquals(solo.getString(R.string.subscriptions_label), getActionbarTitle());
+        assertEquals(solo.getString(R.string.subscriptions_label), getActionBarTitle());
     }
 
     private void goingToAchievementsPage(){
@@ -88,7 +88,7 @@ public class AchievementsTest extends ActivityInstrumentationTestCase2<MainActiv
         openNavDrawer();
         solo.clickOnText(solo.getString(R.string.achievements));
         solo.waitForView(R.id.achievementList);
-        assertEquals(solo.getString(R.string.achievements), getActionbarTitle());
+        assertEquals(solo.getString(R.string.achievements), getActionBarTitle());
     }
 
     public void testUnlockAchievement() {

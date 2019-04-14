@@ -144,7 +144,7 @@ public class Achievement {
     }
 
     public String getDateText(){
-        if(date!=null){
+        if(date != null){
             return date.toString();
         }else return "Achievement  incomplete";
     }
@@ -177,21 +177,25 @@ public class Achievement {
     }
 
     public String getDisplayDescription() {
-        if(date==null && getIsHidden()){
+        if(date == null && getIsHidden()){
             return "? ? ?";
         }
-        else return getDescription();
+        else {
+            return getDescription();
+        }
     }
 
     public String getDisplayName() {
-        if(date==null && getIsHidden()){
+        if(date == null && getIsHidden()){
             return "? ? ?";
         }
-        else return getName();
+        else {
+            return getName();
+        }
     }
 
     public int getIconResource(){
-        if(date==null){
+        if(date == null){
             switch(rank) {
                 case 1:
                     return R.drawable.ic_achievement_locked_1;
@@ -216,9 +220,12 @@ public class Achievement {
     }
 
     public int getBackgroundColor(){
-        if(date!=null){
+        if(date != null){
             return Color.GREEN;
-        }else return Color.LTGRAY;
+        }
+        else {
+            return Color.LTGRAY;
+        }
     }
 }
 

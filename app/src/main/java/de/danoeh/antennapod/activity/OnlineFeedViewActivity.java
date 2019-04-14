@@ -432,7 +432,11 @@ public class OnlineFeedViewActivity extends AppCompatActivity {
                     DownloadRequestErrorDialogCreator.newRequestErrorDialog(this, e.getMessage());
                 }
                 setSubscribeButtonState(feed);
-                AchievementManager.getInstance(new AchievementUnlocked(this)).increment(new ArrayList<>(Arrays.asList(AchievementBuilder.SUBSCRIBE_ACHIEVEMENT, AchievementBuilder.SUBSCRIBE_10_ACHIEVEMENT)), this.getApplicationContext());
+                AchievementManager.getInstance(new AchievementUnlocked(this))
+                        .increment(new ArrayList<>(Arrays.asList(
+                                AchievementBuilder.SUBSCRIBE_ACHIEVEMENT,
+                                AchievementBuilder.SUBSCRIBE_10_ACHIEVEMENT
+                        )), this.getApplicationContext());
 
             }
         });
