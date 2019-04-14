@@ -61,6 +61,7 @@ import de.danoeh.antennapod.core.util.StorageUtils;
 import de.danoeh.antennapod.core.util.playback.PlaybackController;
 import de.danoeh.antennapod.dialog.RatingDialog;
 import de.danoeh.antennapod.dialog.RenameFeedDialog;
+import de.danoeh.antennapod.fragment.AchievementsFragment;
 import de.danoeh.antennapod.fragment.AddFeedFragment;
 import de.danoeh.antennapod.fragment.DownloadsFragment;
 import de.danoeh.antennapod.fragment.EpisodesFragment;
@@ -109,6 +110,7 @@ public class MainActivity extends CastEnabledActivity implements NavDrawerActivi
             SubscriptionFragment.TAG,
             AddFeedFragment.TAG,
             PodcastOfTheDayFragment.TAG,
+            AchievementsFragment.TAG,
             RadioStationFragment.TAG,
             DownloadsFragment.TAG,
             NavListAdapter.SUBSCRIPTION_LIST_TAG
@@ -319,6 +321,9 @@ public class MainActivity extends CastEnabledActivity implements NavDrawerActivi
                 break;
             case AddFeedFragment.TAG:
                 fragment = new AddFeedFragment();
+                break;
+            case AchievementsFragment.TAG:
+                fragment = new AchievementsFragment();
                 break;
             case SubscriptionFragment.TAG:
                 fragment = new SubscriptionFragment();
@@ -556,6 +561,7 @@ public class MainActivity extends CastEnabledActivity implements NavDrawerActivi
                     requestCastButton(MenuItem.SHOW_AS_ACTION_IF_ROOM);
                     return retVal;
                 case PodcastOfTheDayFragment.TAG:
+                case AchievementsFragment.TAG:
                 case RadioStationFragment.TAG:
                 case DownloadsFragment.TAG:
                 case PlaybackHistoryFragment.TAG:

@@ -13,10 +13,15 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Future;
 
 import de.danoeh.antennapod.R;
+import de.danoeh.antennapod.core.achievements.AchievementBuilder;
+import de.danoeh.antennapod.core.achievements.AchievementManager;
+import de.danoeh.antennapod.core.achievements.AchievementUnlocked;
 import de.danoeh.antennapod.core.feed.RadioStream;
 import de.danoeh.antennapod.core.storage.DBReader;
 import de.danoeh.antennapod.core.storage.DBWriter;
@@ -112,6 +117,10 @@ public class CreateRadioStreamDialog {
                         while(!task.isDone()) { /* Wait for radio stream to be inserted */}
                         Toast.makeText(activity, activity.getString(R.string.added_radio_stream), Toast.LENGTH_LONG).show();
                         fragment.refresh();
+                        AchievementManager.getInstance(new AchievementUnlocked(activity))
+                                .increment(new ArrayList<>(Arrays.asList(
+                                        AchievementBuilder.RADIO_ACHIEVEMENT
+                                )), activity.getApplicationContext());
                     }
                 });
             }

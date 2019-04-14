@@ -24,8 +24,14 @@ import com.twitter.sdk.android.tweetcomposer.ComposerActivity;
 import com.facebook.share.model.ShareLinkContent;
 import com.facebook.share.widget.ShareButton;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 import de.danoeh.antennapod.R;
 import de.danoeh.antennapod.activity.MediaplayerInfoActivity.MediaplayerInfoContentFragment;
+import de.danoeh.antennapod.core.achievements.AchievementBuilder;
+import de.danoeh.antennapod.core.achievements.AchievementManager;
+import de.danoeh.antennapod.core.achievements.AchievementUnlocked;
 import de.danoeh.antennapod.core.glide.ApGlideSettings;
 import de.danoeh.antennapod.core.util.playback.Playable;
 
@@ -94,6 +100,10 @@ public class CoverFragment extends Fragment implements MediaplayerInfoContentFra
                     @Override
                     public void onClick(View view) {
                         twitterComposeTweet();
+                        AchievementManager.getInstance(new AchievementUnlocked(getContext()))
+                                .increment(new ArrayList<>(Arrays.asList(
+                                        AchievementBuilder.SHARE_ACHIEVEMENT
+                                )), getContext().getApplicationContext());
                     }
                 });
             }

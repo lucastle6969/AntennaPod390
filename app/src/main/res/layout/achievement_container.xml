@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/achievement_list_item"
+    android:layout_width="match_parent"
+    android:layout_height="90dp"
+    android:layout_marginBottom="3dip">
+
+    <ImageView
+        android:id="@+id/achievement_rank_image"
+        android:layout_width="90dp"
+        android:layout_height="90dp"
+        android:padding="5dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginRight="3dip"/>
+
+    <TextView
+        android:id="@+id/achievement_date"
+        android:layout_width="fill_parent"
+        android:layout_height="26dip"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:gravity="center_horizontal"
+        android:layout_toRightOf="@+id/achievement_rank_image"
+        android:maxLines="1"/>
+
+    <TextView
+        android:id="@+id/achievement_description"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/achievement_date"
+        android:layout_centerHorizontal="true"
+        android:gravity="center_horizontal"
+
+        android:layout_toRightOf="@+id/achievement_rank_image"/>
+
+    <TextView
+        android:id="@+id/achievement_name"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/achievement_description"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:textSize="25dp"
+        android:gravity="center_horizontal"
+        android:layout_toRightOf="@+id/achievement_rank_image"
+        style="@style/AntennaPod.TextView.ListItemPrimaryTitle"/>
+
+</RelativeLayout>

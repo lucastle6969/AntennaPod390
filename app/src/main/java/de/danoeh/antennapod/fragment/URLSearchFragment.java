@@ -11,8 +11,14 @@ import android.widget.Button;
 import android.widget.EditText;
 
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 import de.danoeh.antennapod.R;
 import de.danoeh.antennapod.activity.OnlineFeedViewActivity;
+import de.danoeh.antennapod.core.achievements.AchievementBuilder;
+import de.danoeh.antennapod.core.achievements.AchievementManager;
+import de.danoeh.antennapod.core.achievements.AchievementUnlocked;
 import de.danoeh.antennapod.core.util.URLChecker;
 
 public class URLSearchFragment extends Fragment {
@@ -55,6 +61,11 @@ public class URLSearchFragment extends Fragment {
             intent.putExtra(OnlineFeedViewActivity.ARG_FEEDURL, urlSearchBox.getText().toString());
             intent.putExtra(OnlineFeedViewActivity.ARG_TITLE, getString(R.string.add_feed_label));
             startActivity(intent);
+            AchievementManager.getInstance(new AchievementUnlocked(getContext()))
+                    .increment(new ArrayList<>(Arrays.asList(
+                            AchievementBuilder.SEARCH_BY_URL_ACHIEVEMENT,
+                            AchievementBuilder.SEARCH_ACHIEVEMENT
+                    )), getContext().getApplicationContext());
         }
         else{
             urlSearchBox.setError(getString(R.string.url_search_error_invalid));
