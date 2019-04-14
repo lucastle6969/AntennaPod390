@@ -58,7 +58,6 @@ public class ExternalPlayerFragment extends Fragment {
         butPlay = (ImageButton) root.findViewById(R.id.butPlay);
         mFeedName = (TextView) root.findViewById(R.id.txtvAuthor);
         mProgressBar = (ProgressBar) root.findViewById(R.id.episodeProgress);
-
         fragmentLayout.setOnClickListener(v -> {
             Log.d(TAG, "layoutInfo was clicked");
 
@@ -228,5 +227,9 @@ public class ExternalPlayerFragment extends Fragment {
         }
         mProgressBar.setProgress((int)
                 ((double) controller.getPosition() / controller.getDuration() * 100));
+    }
+
+    public PlaybackController getController() {
+        return controller;
     }
 }

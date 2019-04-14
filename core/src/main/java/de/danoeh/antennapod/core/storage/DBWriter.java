@@ -38,6 +38,7 @@ import de.danoeh.antennapod.core.feed.FeedEvent;
 import de.danoeh.antennapod.core.feed.FeedItem;
 import de.danoeh.antennapod.core.feed.FeedMedia;
 import de.danoeh.antennapod.core.feed.FeedPreferences;
+import de.danoeh.antennapod.core.feed.RadioStream;
 import de.danoeh.antennapod.core.gpoddernet.model.GpodnetEpisodeAction;
 import de.danoeh.antennapod.core.preferences.GpodnetPreferences;
 import de.danoeh.antennapod.core.preferences.PlaybackPreferences;
@@ -857,6 +858,63 @@ public class DBWriter {
             PodDBAdapter adapter = PodDBAdapter.getInstance();
             adapter.open();
             adapter.deleteACategory(category);
+            adapter.close();
+        });
+    }
+
+    /**
+     * Saves RadioStream object in the database. This method will save all attributes of RadioStream object.
+     *
+     * @param radioStream
+     */
+    public static Future<?> setRadioStream(final RadioStream radioStream){
+        return dbExec.submit(()-> {
+            PodDBAdapter adapter = PodDBAdapter.getInstance();
+            adapter.open();
+            adapter.setSingleRadioStream(radioStream);
+            adapter.close();
+        });
+    }
+
+    /**
+     * Saves RadioStream object in the recommended radio stream table for unit testing purposes.
+     * This method will save all attributes of RadioStream object.
+     *
+     * @param radioStream
+     */
+    public static Future<?> setRecommendedRadioStreamTest(final RadioStream radioStream){
+        return dbExec.submit(()-> {
+            PodDBAdapter adapter = PodDBAdapter.getInstance();
+            adapter.open();
+            adapter.setSingleRecommendedRadioStreamsTest(radioStream);
+            adapter.close();
+        });
+    }
+
+    /**
+     * Updates RadioStream object in the database by overwriting all changed and unchanged attribute
+     * values using the passed RadioStream object.
+     * @param radioStream The RadioStream object used to overwrite the previous one.
+     */
+    public static Future<?> updateRadioStream(final RadioStream radioStream) {
+        return dbExec.submit(() -> {
+            PodDBAdapter adapter = PodDBAdapter.getInstance();
+            adapter.open();
+            adapter.updateSingleRadioStream(radioStream);
+            adapter.close();
+        });
+    }
+
+    /**
+     * Delete a RadioStream from a category in db
+     *
+     * @param radioStream RadioStream object to delete
+     */
+    public static Future<?> deleteRadioStream(final RadioStream radioStream){
+        return dbExec.submit(()-> {
+            PodDBAdapter adapter = PodDBAdapter.getInstance();
+            adapter.open();
+            adapter.deleteUserRadioStream(radioStream);
             adapter.close();
         });
     }
