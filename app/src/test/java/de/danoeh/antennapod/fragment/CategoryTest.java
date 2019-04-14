@@ -14,7 +14,6 @@ import java.util.List;
 
 import de.danoeh.antennapod.core.feed.Feed;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;

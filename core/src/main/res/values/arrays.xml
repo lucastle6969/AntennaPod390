@@ -152,6 +152,7 @@
         <item>@string/subscriptions_label</item>
         <item>@string/add_feed_label</item>
         <item>@string/podcast_of_the_day</item>
+        <item>@string/achievements</item>
         <item>@string/radio_stream_label</item>
         <item>@string/downloads_label</item>
         <item>@string/subscriptions_list_label</item>

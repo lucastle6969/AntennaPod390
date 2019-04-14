@@ -21,8 +21,8 @@ Version 1.7.0.2
 
 Version 1.7.0.3
 -------------
-* Categories
-* Rewind on play
-* Radio Streaming
-* Podcast Sharing
-* Achievements
+* Subscriptions can now be organized into Categories [#101](https://github.com/lucastle6969/AntennaPod390/issues/101)
+* Rewind on play [#100](https://github.com/lucastle6969/AntennaPod390/issues/100) 
+* Radio Streaming is now available through URL input or from recommended URLs [#105](https://github.com/lucastle6969/AntennaPod390/issues/105)
+* Podcast Sharing is now available with support for Facebook and Twitter [#169](https://github.com/lucastle6969/AntennaPod390/issues/169)
+* Users can now unlock Achievements for exploring all the new features provided by the dev team [#103](https://github.com/lucastle6969/AntennaPod390/issues/103)

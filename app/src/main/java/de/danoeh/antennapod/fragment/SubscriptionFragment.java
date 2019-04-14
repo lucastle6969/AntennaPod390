@@ -27,10 +27,14 @@ import android.widget.TableRow;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
 import de.danoeh.antennapod.R;
+import de.danoeh.antennapod.core.achievements.AchievementBuilder;
+import de.danoeh.antennapod.core.achievements.AchievementManager;
+import de.danoeh.antennapod.core.achievements.AchievementUnlocked;
 import de.danoeh.antennapod.activity.MainActivity;
 import de.danoeh.antennapod.adapter.SubscriptionsAdapter;
 import de.danoeh.antennapod.adapter.SubscriptionsAdapterAdd;
@@ -125,6 +129,11 @@ public class SubscriptionFragment extends Fragment {
                 table.removeAllViews();
                 tableGridRow[0] = addGridRowSimple(query);
                 table.addView(tableGridRow[0]);
+                AchievementManager.getInstance(new AchievementUnlocked(getContext()))
+                        .increment(new ArrayList<>(Arrays.asList(
+                                AchievementBuilder.SEARCH_CAT_ACHIEVEMENT,
+                                AchievementBuilder.SEARCH_ACHIEVEMENT
+                        )), getContext().getApplicationContext());
                 return false;
             }
 

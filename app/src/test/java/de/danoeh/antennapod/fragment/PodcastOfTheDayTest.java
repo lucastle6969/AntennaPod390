@@ -12,9 +12,9 @@ import android.widget.TextView;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.robolectric.RobolectricTestRunner;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -91,7 +91,7 @@ public class PodcastOfTheDayTest extends ApplicationTestCase<Application> {
                 " format. Hear thought-provoking ideas on every subject imaginable -- from Artificial Intelligence to Zoology, " +
                 "and everything in between -- given by the world's leading thinkers and doers. This collection of talks, given at" +
                 " TED and TEDx conferences around the globe, is also available in video format.");
-        verify(potdFragment.butGoToPodcast).setOnClickListener(any());
+        verify(potdFragment.butGoToPodcast).setOnClickListener(Mockito.any());
 
     }
 

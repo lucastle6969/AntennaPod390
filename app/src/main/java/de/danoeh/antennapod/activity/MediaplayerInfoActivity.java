@@ -29,14 +29,23 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.twitter.sdk.android.core.DefaultLogger;
+import com.twitter.sdk.android.core.Twitter;
+import com.twitter.sdk.android.core.TwitterAuthConfig;
+import com.twitter.sdk.android.core.TwitterConfig;
 import com.viewpagerindicator.CirclePageIndicator;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Future;
 
 import de.danoeh.antennapod.R;
 import de.danoeh.antennapod.adapter.ChaptersListAdapter;
 import de.danoeh.antennapod.adapter.NavListAdapter;
+import de.danoeh.antennapod.core.achievements.AchievementBuilder;
+import de.danoeh.antennapod.core.achievements.AchievementManager;
+import de.danoeh.antennapod.core.achievements.AchievementUnlocked;
 import de.danoeh.antennapod.core.asynctask.FeedRemover;
 import de.danoeh.antennapod.core.dialog.ConfirmationDialog;
 import de.danoeh.antennapod.core.event.MessageEvent;
@@ -122,6 +131,19 @@ public abstract class MediaplayerInfoActivity extends MediaplayerActivity implem
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         supportPostponeEnterTransition();
+
+        //Initialize and configure Twitter
+        twitterConfigAndInit();
+    }
+
+    private void twitterConfigAndInit() {
+        TwitterAuthConfig authConfig = new TwitterAuthConfig(getResources().getString(R.string.twitter_consumer_key), getResources().getString(R.string.twitter_consumer_secret));
+        TwitterConfig config = new TwitterConfig.Builder(this)
+                .logger(new DefaultLogger(Log.DEBUG))
+                .twitterAuthConfig(authConfig)
+                .debug(true)
+                .build();
+        Twitter.initialize(config);
     }
 
     @Override
@@ -150,6 +172,18 @@ public abstract class MediaplayerInfoActivity extends MediaplayerActivity implem
         drawerToggle = null;
         pager = null;
         pagerAdapter = null;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        // Pass the activity result to the fragment, which will then pass the result to the login
+        // button.
+        Fragment fragment = pagerAdapter.getCoverFragment();
+        if (fragment != null) {
+            fragment.onActivityResult(requestCode, resultCode, data);
+        }
     }
 
     @Override
@@ -299,6 +333,13 @@ public abstract class MediaplayerInfoActivity extends MediaplayerActivity implem
         while(!task.isDone()) { /* Wait until the bookmark has been inserted into DB before updating adapter */ }
         BookmarkFragment bookmarkFragment = (BookmarkFragment) pagerAdapter.getItem(POS_BOOKMARKS);
         bookmarkFragment.updateAdapter();
+        AchievementManager.getInstance(new AchievementUnlocked(this))
+                .increment(new ArrayList<>(Arrays.asList(
+                        AchievementBuilder.BKMK_ACHIEVEMENT,
+                        AchievementBuilder.BKMK_10_ACHIEVEMENT,
+                        AchievementBuilder.CREATE_ACHIEVEMENT
+                )), this.getApplicationContext());
+
     }
 
     @Override
@@ -628,6 +669,11 @@ public abstract class MediaplayerInfoActivity extends MediaplayerActivity implem
             return chaptersFragment;
         }
 
+        @Nullable
+        public CoverFragment getCoverFragment() {
+            return coverFragment;
+        }
+
         @Override
         public Fragment getItem(int position) {
             Log.d(TAG, "getItem(" + position + ")");
@@ -663,5 +709,6 @@ public abstract class MediaplayerInfoActivity extends MediaplayerActivity implem
         public int getCount() {
             return NUM_CONTENT_FRAGMENTS;
         }
+
     }
 }

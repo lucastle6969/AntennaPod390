@@ -13,6 +13,7 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
 
     <supports-screens
         android:anyDensity="true"
@@ -41,9 +42,24 @@
         android:logo="@mipmap/ic_launcher">
         <meta-data android:name="com.google.android.gms.car.notification.SmallIcon"
                     android:resource="@drawable/ic_notification" />
+
+        <meta-data
+            android:name="com.twitter.sdk.android.CONSUMER_KEY"
+            android:value="@string/twitter_consumer_key"/>
+
+        <meta-data
+            android:name="com.twitter.sdk.android.CONSUMER_SECRET"
+            android:value="@string/twitter_consumer_secret"/>
+
         <meta-data
             android:name="com.google.android.backup.api_key"
             android:value="AEdPqrEAAAAI3a05VToCTlqBymJrbFGaKQMvF-bBAuLsOdavBA"/>
+
+        <meta-data android:name="com.facebook.sdk.ApplicationId" android:value="@string/facebook_app_id"/>
+
+        <provider android:authorities="com.facebook.app.FacebookContentProvider{457848604969651}"
+            android:name="com.facebook.FacebookContentProvider"
+            android:exported="true"/>
 
         <activity
             android:name=".activity.SplashActivity"
