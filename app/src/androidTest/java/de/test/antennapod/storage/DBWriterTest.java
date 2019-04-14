@@ -10,11 +10,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import de.danoeh.antennapod.core.achievements.Achievement;
 import de.danoeh.antennapod.core.feed.Bookmark;
 import de.danoeh.antennapod.core.feed.Category;
 import de.danoeh.antennapod.core.feed.Feed;
@@ -154,6 +156,86 @@ public class DBWriterTest extends InstrumentationTestCase {
         }
         assertEquals(0, bookmarksFromDb.size());
 
+    }
+
+
+    public void testSetAchievement() {
+        Achievement achievement = new Achievement("Testing DB Achievement", 1, 1, "Testing DB Achievement Description", 0);
+        ConcurrentHashMap<String, Achievement> achievements = new ConcurrentHashMap<>();
+        synchronized (this) {
+            try {
+                DBWriter.setAchievement(achievement);
+                sleep(100);
+                achievements = DBReader.getAchievements();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        Achievement achvDB = achievements.get("Testing DB Achievement");
+        assertNotNull(achvDB);
+        assertEquals(achievement.getName(), achvDB.getName());
+        assertEquals(achievement.getGoal(), achvDB.getGoal());
+        assertEquals(achievement.getRank(), achvDB.getRank());
+        assertEquals(achievement.getDescription(), achvDB.getDescription());
+        assertEquals(achievement.getHidden(), achvDB.getHidden());
+    }
+
+    public void testUpdateAchievement() {
+        Achievement achievement = new Achievement("Testing Update DB Achievement", 1, 1, "Testing Update DB Achievement Description", 0);
+        ConcurrentHashMap<String, Achievement> achievements = new ConcurrentHashMap<>();
+        synchronized (this) {
+            try {
+                DBWriter.setAchievement(achievement);
+                sleep(100);
+                achievements = DBReader.getAchievements();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        Achievement achvDB = achievements.get("Testing Update DB Achievement");
+        achvDB.setDate(new Date());
+        achvDB.setCounter(1);
+        synchronized (this) {
+            try {
+                DBWriter.updateAchievement(achvDB);
+                sleep(100);
+                achievements = DBReader.getAchievements();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        Achievement achvUpdateDB = achievements.get("Testing Update DB Achievement");
+        assertNotSame(achvDB, achvUpdateDB);
+    }
+
+    public void testResetAchievements() {
+        Achievement achievement1 = new Achievement("Testing Reset Achievement 1", 1, 1, "Testing Reset Achievement 1 Description", 0);
+        achievement1.setCounter(1);
+        achievement1.setDate(new Date());
+        Achievement achievement2 = new Achievement("Testing Reset Achievement 2", 1, 1, "Testing Reset Achievement 2 Description", 0);
+        achievement2.setCounter(1);
+        achievement2.setDate(new Date());
+        Achievement achievement3 = new Achievement("Testing Reset Achievement 3", 1, 1, "Testing Reset Achievement 3 Description", 0);
+        achievement3.setCounter(1);
+        achievement3.setDate(new Date());
+        ConcurrentHashMap<String, Achievement> achievements = new ConcurrentHashMap<>();
+        synchronized (this) {
+            try {
+                DBWriter.setAchievement(achievement1);
+                DBWriter.setAchievement(achievement2);
+                DBWriter.setAchievement(achievement3);
+                sleep(100);
+                DBWriter.resetAchievements();;
+                sleep(100);
+                achievements = DBReader.getAchievements();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        for(Achievement achv: achievements.values()) {
+            assertNull(achv.getDate());
+            assertEquals(0, achv.getCounter());
+        }
     }
 
     private void insertUncategorized() {

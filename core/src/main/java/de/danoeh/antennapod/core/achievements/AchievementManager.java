@@ -2,9 +2,11 @@ package de.danoeh.antennapod.core.achievements;
 
 import android.content.Context;
 import android.content.res.AssetFileDescriptor;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
+import android.util.Log;
 import android.widget.ImageView;
 
 import java.io.IOException;
@@ -106,8 +108,8 @@ public class AchievementManager {
             m.setVolume(1f, 1f);
             m.setLooping(false);
             m.start();
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException | NullPointerException e) {
+            //This is to stop a hard crash, instead playing no tune in case the file becomes unreadable.
         }
     }
 
@@ -140,11 +142,14 @@ public class AchievementManager {
         AchievementData data = new AchievementData();
         data.setTitle(achv.getName());
         data.setSubtitle(achv.getDescription());
-        data.setIcon(iconFactory(achv.getRank(), context));
         data.setTextColor(Color.BLACK);
-        data.setIconBackgroundColor(context.getResources().getColor(android.R.color.holo_blue_light));
-        data.setBackgroundColor(context.getResources().getColor(android.R.color.holo_blue_dark));
-        animator.setRounded(false).setLarge(true).setTopAligned(true).setDismissible(true);
+        Resources resources = context.getResources();
+        if (resources != null) {
+            data.setIconBackgroundColor(resources.getColor(android.R.color.holo_blue_light));
+            data.setBackgroundColor(resources.getColor(android.R.color.holo_blue_dark));
+            animator.setRounded(false).setLarge(true).setTopAligned(true).setDismissible(true);
+            data.setIcon(iconFactory(achv.getRank(), context));
+        }
         return data;
     }
 
