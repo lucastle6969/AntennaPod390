@@ -20,7 +20,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import de.danoeh.antennapod.core.R;
@@ -32,6 +34,7 @@ import de.danoeh.antennapod.core.feed.Feed;
 import de.danoeh.antennapod.core.feed.FeedItem;
 import de.danoeh.antennapod.core.feed.FeedMedia;
 import de.danoeh.antennapod.core.feed.FeedPreferences;
+import de.danoeh.antennapod.core.feed.RadioStream;
 import de.danoeh.antennapod.core.preferences.UserPreferences;
 import de.danoeh.antennapod.core.service.download.DownloadStatus;
 import de.danoeh.antennapod.core.util.LongIntMap;
@@ -120,6 +123,8 @@ public class PodDBAdapter {
     public static final String KEY_BOOKMARK_PODCAST = "podcast_title";
     public static final String KEY_CATEGORY_NAME = "category_name";
     public static final String KEY_CATEGORY_FK = "category_fk";
+    public static final String KEY_RADIO_TITLE = "radio_title";
+    public static final String KEY_RADIO_URL = "radio_url";
 
     // Table names
     static final String TABLE_NAME_FEEDS = "Feeds";
@@ -133,10 +138,38 @@ public class PodDBAdapter {
     static final String TABLE_NAME_BOOKMARKS = "Bookmarks";
     static final String TABLE_NAME_CATEGORIES = "Categories";
     static final String TABLE_NAME_ASSOCIATION_FOR_CATEGORIES = "AssociationForCategories";
+    static final String TABLE_NAME_RADIO_STREAMS = "RadioStreams";
+    static final String TABLE_NAME_RECOMMENDED_RADIO_STREAMS = "RecommendedRadioStreams";
 
-    // Default values
+    // Uncategorized category data
     public static final int UNCATEGORIZED_CATEGORY_ID = 1;
     public static final String UNCATEGORIZED_CATEGORY_NAME = "Uncategorized Section";
+
+    // Recommended RadioStreams
+    public static final Map<String, String> RECOMMENDED_RADIO_STATIONS = new HashMap<String, String>() {
+        {
+            put("BBC media", "http://bbcmedia.ic.llnwd.net/stream/bbcmedia_radio2_mf_p");
+            put("Radio Sandiego Mantilla", "http://5.135.183.124:8047/stream");
+            put("Radio Via Montenapoleone", "http://eu9.fastcast4u.com:5068/;");
+            put("Radio Rinteln", "http://rs1.weserweb.net:14220/");
+            put("CKBD 98.1 FM Lethbridge, AB", "http://listenlive.vistaradio.ca/CKBD");
+            put("Jammin Vibez Radio", "http://ample-zeno-23.radiojar.com/whffggvsyxquv?rj-ttl=5&rj-token=AAABaeoOvGShnIjN5bHSqFBjvBTQ-DX26IrrJAEAPOciNPSauff04w");
+            put("Calm Radio - Antonín Dvořák", "http://streams.calmradio.com:10528/;");
+            put("Prog Frog", "http://192.227.116.104:8197/stream");
+            put("RDN Italia", "http://agnes.torontocast.com:8135/stream2");
+            put("RDN Rock", "http://agnes.torontocast.com:8135/stream");
+            put("RDN Evergreen", "http://agnes.torontocast.com:8167/stream2");
+            put("RDN House", "http://agnes.torontocast.com:8167/stream3");
+            put("RDN Dance", "http://agnes.torontocast.com:8167/stream");
+            put("Atlantide internet radio station", "http://cristina.torontocast.com:8033/stream");
+            put("ABC 50s", "http://144.217.253.136:8582/stream");
+            put("ABC 60s", "http://cristina.torontocast.com:8173/stream");
+            put("Boom 95.3", "http://newcap.leanstream.co/CJXKFM-MP3?args=3rdparty_02");
+            put("Canadian Pinoy Radio – Montreal", "http://s5.voscast.com:8050/;stream.mp3");
+            put("CBC Radio - British Columbia 91.5 FM", "http://2.18.214.236/7/966/451661/v1/rc.akacast.akamaistream.net/cbc_r1_prg");
+            put("CBC Radio - Québec/Montreal 88.5 FM", "http://2.18.214.245/7/35/451661/v1/rc.akacast.akamaistream.net/cbc_r1_mtl");
+        }
+    };
 
     // SQL Statements for creating new tables
     private static final String TABLE_PRIMARY_KEY = KEY_ID
@@ -155,6 +188,14 @@ public class PodDBAdapter {
             + TABLE_NAME_ASSOCIATION_FOR_CATEGORIES + " (" + KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
             + KEY_FEED + " INTEGER," + KEY_CATEGORY_ID + " INTEGER," + " CONSTRAINT " + KEY_CATEGORY_FK
             + " FOREIGN KEY (" + KEY_CATEGORY_ID + ") REFERENCES " + TABLE_NAME_CATEGORIES + "(" + KEY_ID + "))";
+
+    private static final String CREATE_TABLE_RADIO_STREAMS = "CREATE TABLE "
+            + TABLE_NAME_RADIO_STREAMS + " (" + KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+            + KEY_RADIO_TITLE + " VARCHAR," + KEY_RADIO_URL + " VARCHAR)";
+
+    private static final String CREATE_TABLE_RECOMMENDED_RADIO_STREAMS = "CREATE TABLE "
+            + TABLE_NAME_RECOMMENDED_RADIO_STREAMS + " (" + KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+            + KEY_RADIO_TITLE + " VARCHAR," + KEY_RADIO_URL + " VARCHAR)";
 
     private static final String CREATE_TABLE_FEEDS = "CREATE TABLE "
             + TABLE_NAME_FEEDS + " (" + TABLE_PRIMARY_KEY + KEY_TITLE
@@ -244,7 +285,7 @@ public class PodDBAdapter {
             + KEY_FEEDITEM + " INTEGER," + KEY_FEED + " INTEGER)";
 
 
-    // Additional sql statements
+    // Default SQL Statements for inserting data
     private static final String INSERT_UNCATEGORIZED_CATEGORY = "INSERT INTO " + TABLE_NAME_CATEGORIES
             + " (" + KEY_ID + ", " + KEY_CATEGORY_NAME + ") VALUES (" + UNCATEGORIZED_CATEGORY_ID
             + ", '" + UNCATEGORIZED_CATEGORY_NAME + "')";
@@ -315,7 +356,9 @@ public class PodDBAdapter {
             TABLE_NAME_FAVORITES,
             TABLE_NAME_BOOKMARKS,
             TABLE_NAME_CATEGORIES,
-            TABLE_NAME_ASSOCIATION_FOR_CATEGORIES
+            TABLE_NAME_ASSOCIATION_FOR_CATEGORIES,
+            TABLE_NAME_RADIO_STREAMS,
+            TABLE_NAME_RECOMMENDED_RADIO_STREAMS
     };
 
     /**
@@ -691,6 +734,62 @@ public class PodDBAdapter {
         return result;
     }
 
+    public long setSingleRadioStream(RadioStream radioStream) {
+        long result = 0;
+        try {
+            db.beginTransactionNonExclusive();
+            result = setRadioStream(radioStream);
+            db.setTransactionSuccessful();
+        } catch (SQLException e) {
+            Log.e(TAG, Log.getStackTraceString(e));
+        } finally {
+            db.endTransaction();
+        }
+        return result;
+    }
+
+    public long setSingleRecommendedRadioStreamsTest(RadioStream radioStream) {
+        long result = 0;
+        try {
+            db.beginTransactionNonExclusive();
+            result = setRecommendedRadioStream(radioStream);
+            db.setTransactionSuccessful();
+        } catch (SQLException e) {
+            Log.e(TAG, Log.getStackTraceString(e));
+        } finally {
+            db.endTransaction();
+        }
+        return result;
+    }
+
+    public long updateSingleRadioStream(RadioStream radioStream) {
+        long result = 0;
+        try {
+            db.beginTransactionNonExclusive();
+            result = updateRadioStream(radioStream);
+            db.setTransactionSuccessful();
+        } catch (SQLException e) {
+            Log.e(TAG, Log.getStackTraceString(e));
+        } finally {
+            db.endTransaction();
+        }
+        return result;
+    }
+
+    public long deleteUserRadioStream(RadioStream radioStream) {
+        long result = 0;
+        try {
+            db.beginTransactionNonExclusive();
+            result = deleteRadioStream(radioStream);
+            db.setTransactionSuccessful();
+        } catch (SQLException e) {
+            Log.e(TAG, Log.getStackTraceString(e));
+        } finally {
+            db.endTransaction();
+        }
+        return result;
+    }
+
     public long removeAFeed(Feed feed) {
         long result = 0;
         try {
@@ -928,6 +1027,57 @@ public class PodDBAdapter {
         db.delete(TABLE_NAME_CATEGORIES, KEY_ID + "=?",
                 new String[]{String.valueOf(category.getId())});
         return category.getId();
+    }
+
+    /**
+     * Insert RadioStream object into the TABLE_NAME_RADIO_STREAMS table of the database
+     * @param radioStream
+     * @return returns id of newly inserted RadioStream
+     */
+    private long setRadioStream(RadioStream radioStream) {
+        ContentValues values = new ContentValues();
+        values.put(KEY_RADIO_TITLE, radioStream.getTitle());
+        values.put(KEY_RADIO_URL, radioStream.getUrl());
+        radioStream.setId(db.insert(TABLE_NAME_RADIO_STREAMS, null, values));
+        return radioStream.getId();
+    }
+
+    /**
+     * Insert RadioStream object into the TABLE_NAME_RECOMMENDED_RADIO_STREAMS table of the database
+     * @param radioStream
+     * @return returns id of newly inserted RadioStream
+     */
+    private static long setRecommendedRadioStream(RadioStream radioStream) {
+        ContentValues values = new ContentValues();
+        values.put(KEY_RADIO_TITLE, radioStream.getTitle());
+        values.put(KEY_RADIO_URL, radioStream.getUrl());
+        radioStream.setId(db.insert(TABLE_NAME_RECOMMENDED_RADIO_STREAMS, null, values));
+        return radioStream.getId();
+    }
+
+    /**
+     * Update a RadioStream object in the TABLE_NAME_RADIO_STREAMS table of the database
+     * @param radioStream The modified RadioStream object
+     * @return returns id of the modified RadioStream object
+     */
+    private long updateRadioStream(RadioStream radioStream) {
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(KEY_RADIO_TITLE, radioStream.getTitle());
+        contentValues.put(KEY_RADIO_URL, radioStream.getUrl());
+        db.update(TABLE_NAME_RADIO_STREAMS, contentValues, KEY_ID + "=?",
+                new String[]{String.valueOf(radioStream.getId())});
+        return radioStream.getId();
+    }
+
+    /**
+     * Delete RadioStream object in the TABLE_NAME_RADIO_STREAMS table of the database
+     * @param radioStream  The RadioStream object to delete
+     * @return the id of the entry
+     */
+    private long deleteRadioStream(RadioStream radioStream) {
+        db.delete(TABLE_NAME_RADIO_STREAMS, KEY_ID + "=?",
+                new String[]{String.valueOf(radioStream.getId())});
+        return radioStream.getId();
     }
 
     /**
@@ -1665,6 +1815,11 @@ public class PodDBAdapter {
         return db.rawQuery(query, null);
     }
 
+    public final Cursor getRadioStreams(String tableName) {
+        final String query = "SELECT * FROM " + tableName;
+        return  db.rawQuery(query, null);
+    }
+
     /**
      * Uses DatabaseUtils to escape a search query and removes ' at the
      * beginning and the end of the string returned by the escape method.
@@ -1895,9 +2050,9 @@ public class PodDBAdapter {
             db.execSQL(CREATE_TABLE_FAVORITES);
             db.execSQL(CREATE_TABLE_BOOKMARKS);
             db.execSQL(CREATE_TABLE_CATEGORIES);
-            db.execSQL(INSERT_UNCATEGORIZED_CATEGORY);
-
             db.execSQL(CREATE_TABLE_ASSOCIATION_FOR_CATEGORIES);
+            db.execSQL(CREATE_TABLE_RADIO_STREAMS);
+            db.execSQL(CREATE_TABLE_RECOMMENDED_RADIO_STREAMS);
 
             db.execSQL(CREATE_INDEX_FEEDITEMS_FEED);
             db.execSQL(CREATE_INDEX_FEEDITEMS_PUBDATE);
@@ -1906,6 +2061,24 @@ public class PodDBAdapter {
             db.execSQL(CREATE_INDEX_QUEUE_FEEDITEM);
             db.execSQL(CREATE_INDEX_SIMPLECHAPTERS_FEEDITEM);
 
+            insertDefaultData(db);
+        }
+
+        private void insertDefaultData(final SQLiteDatabase db) {
+            // Insert uncategorized category
+            db.execSQL(INSERT_UNCATEGORIZED_CATEGORY);
+
+            // Insert all recommended radio stations
+            for (Map.Entry<String, String> entry: RECOMMENDED_RADIO_STATIONS.entrySet()) {
+                String insertQuery = getInsertRecommendedRadioStreamQuery(entry.getKey(), entry.getValue());
+                db.execSQL(insertQuery);
+            }
+        }
+
+        private String getInsertRecommendedRadioStreamQuery(String title, String url) {
+            return "INSERT INTO " + TABLE_NAME_RECOMMENDED_RADIO_STREAMS
+                    + " (" + KEY_ID + ", " + KEY_RADIO_TITLE + ", " + KEY_RADIO_URL + ") VALUES (NULL, '"
+                    + title + "', '" + url + "')";
         }
 
         @Override

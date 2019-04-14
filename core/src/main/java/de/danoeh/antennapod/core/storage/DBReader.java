@@ -19,6 +19,7 @@ import de.danoeh.antennapod.core.feed.Feed;
 import de.danoeh.antennapod.core.feed.FeedItem;
 import de.danoeh.antennapod.core.feed.FeedMedia;
 import de.danoeh.antennapod.core.feed.FeedPreferences;
+import de.danoeh.antennapod.core.feed.RadioStream;
 import de.danoeh.antennapod.core.preferences.UserPreferences;
 import de.danoeh.antennapod.core.service.download.DownloadStatus;
 import de.danoeh.antennapod.core.util.LongIntMap;
@@ -880,6 +881,71 @@ public final class DBReader {
             adapter.close();
         }
         return result;
+    }
+
+    /**
+     * Returns all user created RadioStreams
+     * @return List of RadioStreams created by user
+     */
+    public static List<RadioStream> getAllUserRadioStreams() {
+        List<RadioStream> results = new ArrayList<>();
+        PodDBAdapter adapter = PodDBAdapter.getInstance();
+        adapter.open();
+        Cursor cursor;
+        try {
+            cursor = adapter.getRadioStreams(PodDBAdapter.TABLE_NAME_RADIO_STREAMS);
+            if (cursor.moveToFirst()) {
+                do {
+                    results.add(RadioStream.fromCursor(cursor));
+                } while (cursor.moveToNext());
+            }
+            cursor.close();
+
+        } finally {
+            adapter.close();
+        }
+
+        return results;
+    }
+
+    /**
+     * Returns all recommended RadioStreams
+     * @return List of recommended RadioStreams
+     */
+    public static List<RadioStream> getAllRecommendedRadioStreams() {
+        List<RadioStream> results = new ArrayList<>();
+        PodDBAdapter adapter = PodDBAdapter.getInstance();
+        adapter.open();
+        Cursor cursor;
+        try {
+            cursor = adapter.getRadioStreams(PodDBAdapter.TABLE_NAME_RECOMMENDED_RADIO_STREAMS);
+            if (cursor.moveToFirst()) {
+                do {
+                    results.add(RadioStream.fromCursor(cursor));
+                } while (cursor.moveToNext());
+            }
+            cursor.close();
+
+        } finally {
+            adapter.close();
+        }
+
+        return results;
+    }
+
+    /**
+     * This method is used to check whether a radio stream already exists with a certain url
+     * @param url Name to check if it already exists
+     * @return Returns true if parameter name is a duplicate category name. False otherwise
+     */
+    public static boolean isDuplicateRadioStreamUrl(String url) {
+        List<RadioStream> radioStreamsInDb = getAllUserRadioStreams();
+        for (RadioStream radioStream : radioStreamsInDb) {
+            if (radioStream.getUrl().equalsIgnoreCase(url)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
