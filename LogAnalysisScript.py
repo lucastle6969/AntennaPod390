@@ -1,6 +1,32 @@
 import os
 import datetime
+from datetime import date
 from pathlib import Path
+
+analysis = list()
+scriptDirectory = os.path.dirname(os.path.realpath(__file__))
+
+
+# Different headers for the analysis report output
+def header1(title):
+    global analysis
+    analysis.append("***************************************************************************")
+    analysis.append("                        " + title)
+    analysis.append("***************************************************************************")
+
+
+def header2(title):
+    global analysis
+    analysis.append("==================")
+    analysis.append("  " + title)
+    analysis.append("==================")
+
+
+def header3(title):
+    global analysis
+    analysis.append("----------------")
+    analysis.append("  " + title)
+    analysis.append("----------------")
 
 
 # Returns a list of all .xml files in the given directory
@@ -16,45 +42,10 @@ def getListOfLogFiles(dirName):
     return allLogFiles
 
 
-def getUnitTestData(logLine):
-    data = None
+# # # Unit Test Reports
 
-    if("testsuite" in logLine):
-        data = logLine.split()
-        if not("/testsuite" in logLine):
-            header2("Testsuite")
-            
-    if("testcase" in logLine):
-        data = logLine.split()
-        header3("Testcase")
-
-    if(data is not None):
-        for info in data:
-            if("name=" in info):
-                if not ("hostname=" in info) and not ("classname=" in info):
-                    print("Name: " + getData(info))
-                if("classname=" in info):
-                    print("Class name: " + getData(info))
-            if("tests=" in info):
-                print("# of tests: " + getData(info))
-            if("failures=" in info):
-                print("# of failed tests: " + getData(info))
-            if("errors=" in info):
-                print("# of errors in tests: " + getData(info))
-    
-    if("failure" in logLine):
-        data = logLine.split()
-        for info in data:
-            if("message=" in info):
-                print("Reason of failure: " + getData(info))
-
-
-def getData(logLine):
-    info = logLine.split("=")
-    return info[1]
-
-
-def getAppUnitTestLogs(scriptDirectory):
+def getAppUnitTestLogs():
+    global scriptDirectory
 
     header1("Unit Tests in App")
 
@@ -70,7 +61,8 @@ def getAppUnitTestLogs(scriptDirectory):
         file.close()
 
 
-def getCoreUnitTestLogs(scriptDirectory):
+def getCoreUnitTestLogs():
+    global scriptDirectory
 
     header1("Unit Tests in Core")
 
@@ -86,7 +78,49 @@ def getCoreUnitTestLogs(scriptDirectory):
         file.close()
 
 
-def getAppLintingLogs(scriptDirectory):
+def getUnitTestData(logLine):
+    global analysis
+    data = None
+
+    if("testsuite" in logLine):
+        data = logLine.split()
+        if not("/testsuite" in logLine):
+            header2("Testsuite")
+ 
+    if("testcase" in logLine):
+        data = logLine.split()
+        header3("Testcase")
+
+    if(data is not None):
+        for info in data:
+            if("name=" in info):
+                if not ("hostname=" in info) and not ("classname=" in info):
+                    analysis.append("Name: " + getData(info))
+                if("classname=" in info):
+                    analysis.append("Class name: " + getData(info))
+            if("tests=" in info):
+                analysis.append("# of tests: " + getData(info))
+            if("failures=" in info):
+                analysis.append("# of failed tests: " + getData(info))
+            if("errors=" in info):
+                analysis.append("# of errors in tests: " + getData(info))
+
+    if("failure" in logLine):
+        data = logLine.split()
+        for info in data:
+            if("message=" in info):
+                analysis.append("Reason of failure: " + getData(info))
+
+
+def getData(logLine):
+    info = logLine.split("=")
+    return info[1]
+
+
+# # # Linting Reports
+
+def getAppLintingLogs():
+    global scriptDirectory
 
     header1("Lint Logs from App")
 
@@ -95,24 +129,42 @@ def getAppLintingLogs(scriptDirectory):
 
     report = open(filename, "r")
     for line in report:
-        if("mdl-layout-title" and "Lint Report:" in line):
-            print(line)
+        getLintReportData(line)
 
 
-def getCoreLintingLogs(scriptDirectory):
+def getCoreLintingLogs():
+    global scriptDirectory
 
     header1("Lint Logs from Core")
 
     # Logs for core linting
     filename = Path(scriptDirectory + "/core/build/reports/lint-results-freeDebug.html")
 
-    report = open(filename, "r")
+    report = open(filename, "r", encoding="utf8")
     for line in report:
-        if("mdl-layout-title" and "Lint Report:" in line):
-            print(line)
+        getLintReportData(line)
 
 
-def getCoverageReport(scriptDirectory):
+def getLintReportData(line):
+    if("mdl-layout-title" and "Lint Report:" in line):
+            info = line.split(":")
+            data = info[1]
+            result = data[0:(len(data) - 8)]
+            analysis.append(result)
+
+    if("material-icons error-icon" in line):
+        if("countColumn" not in line):
+            info = line.split()
+            href = info[2]
+            data = href[7:(len(href) - 4)]
+            analysis.append("Error: " + data)
+
+
+# # # Coverage Reports
+
+def getCoverageReport():
+    global scriptDirectory
+
     missedLines = 0
     missedClasses = 0
     missedMethods = 0
@@ -191,39 +243,18 @@ def getCoverageReport(scriptDirectory):
 
 
 def writeMissedCoverage(missed):
-    print("Missed: " + str(missed))
+    analysis.append("Missed: " + str(missed))
 
 
 def writeCoveredCoverage(covered):
-    print("Covered: " + str(covered))
+    analysis.append("Covered: " + str(covered))
 
 
 def writePercentCoverage(missed, covered):
     percentage = 0
     if(missed != 0):
         percentage = (covered / missed) * 100
-    print("Percent coverage: " + str(percentage) + " % \n")
-
-
-def header1(title):
-    print("***************************************************************************")
-    print("                        " + title)
-    print("***************************************************************************")
-
-
-def header2(title):
-    print("==================")
-    print("  " + title)
-    print("==================")
-
-
-def header3(title):
-    print("----------------")
-    print("  " + title)
-    print("----------------")
-
-# def writeToFile(logAnalysisResultLine):
-#     result = write(logAnalysisResultLine + "\n")
+    analysis.append("Percent coverage: " + str(percentage) + " %")
 
 
 def getCoverageData(info):
@@ -254,20 +285,32 @@ def getCoverageData(info):
     return stats
 
 
-def main(now, scriptDirectory):
-    # path = Path(scriptDirectory + "/logAnalysis/")
-    # if not os.path.exists(path):
-    #     os.makedirs(path)
-    # result = open("logAnalysisResult-" + str(now) + ".txt", "w+")
-    # getAppUnitTestLogs()
-    # getCoreUnitTestLogs()
-    # getAppLintingLogs()
-    # getCoreLintingLogs()
-    getCoverageReport(scriptDirectory)
-    # result.close()
+def main():
+    global analysis
+    global scriptDirectory
+
+    path = Path(scriptDirectory + "/logAnalysis/")
+    if not os.path.exists(path):
+        os.makedirs(path)
+
+    getAppUnitTestLogs()
+    getCoreUnitTestLogs()
+    getAppLintingLogs()
+    getCoreLintingLogs()
+    getCoverageReport()
+
+    os.chdir(path)
+
+    now = datetime.datetime.now()
+    today = date.today()
+    time = now.strftime("%H-%M")
+    result = open("logAnalysisResult-" + str(today) + "-at-" + time + ".txt", "w+")
+
+    for line in analysis:
+        result.write(line + "\n")
+
+    result.close()
 
 
 if __name__ == '__main__':
-    now = datetime.datetime.now()
-    scriptDirectory = os.path.dirname(os.path.realpath(__file__))
-    main(now, scriptDirectory)
+    main()
