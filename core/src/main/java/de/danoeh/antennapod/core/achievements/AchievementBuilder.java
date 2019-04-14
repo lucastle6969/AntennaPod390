@@ -212,4 +212,40 @@ public class AchievementBuilder {
 
     }
 
+    public static void buildAchievementsForTesting(){
+        List<Achievement> achievements = new ArrayList<>();
+
+        Achievement achievement = new Achievement(
+                SEARCH_CAT_ACHIEVEMENT, // Achievement name  (static final defined above).
+                1, // goal: represents the number the counter should reach before unlocking achievement
+                1, // rank of the achievement (1: low, 2: medium, 3: high)
+                "Search for a podcast on the subscription page", // short description of the achievement
+                0 // if the achievement should remain hidden until unlocked (1: hidden , 0: not hidden)
+        );
+        achievements.add(achievement);
+
+        achievement = new Achievement(
+                CAT_ACHIEVEMENT,
+                1,
+                1,
+                "Create a category in subscriptions",
+                0
+        );
+        achievements.add(achievement);
+
+        achievement = new Achievement(
+                ALL_ACHIEVEMENTS_COMPLETE,
+                1,
+                3,
+                "Unlock all achievements",
+                0
+        );
+        achievements.add(achievement);
+
+        for(Achievement achv: achievements){
+            DBWriter.setAchievement(achv);
+        }
+
+    }
+
 }
