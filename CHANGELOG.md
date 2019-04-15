@@ -21,6 +21,7 @@ Version 1.7.0.2
 
 Version 1.7.0.3
 -------------
+[Release3](https://github.com/lucastle6969/AntennaPod390/releases/tag/release3)
 * Subscriptions can now be organized into Categories [#101](https://github.com/lucastle6969/AntennaPod390/issues/101)
 * Rewind on play [#100](https://github.com/lucastle6969/AntennaPod390/issues/100) 
 * Radio Streaming is now available through URL input or from recommended URLs [#105](https://github.com/lucastle6969/AntennaPod390/issues/105)
