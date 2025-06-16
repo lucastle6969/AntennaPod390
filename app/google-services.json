@@ -8,20 +8,20 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:642017191444:android:14d3fa20cbdc0e4a",
+        "mobilesdk_app_id": "",
         "android_client_info": {
           "package_name": "de.danoeh.antennapod"
         }
       },
       "oauth_client": [
         {
-          "client_id": "642017191444-67ivk17f6o35jq742bdvfevl4b8s5us2.apps.googleusercontent.com",
+          "client_id": "",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyAVEZ23egLao7ncqNXSy_oTgE_93zEmq30"
+          "current_key": ""
         }
       ],
       "services": {
@@ -39,28 +39,28 @@
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:642017191444:android:54d114f1c24a149b",
+        "mobilesdk_app_id": "",
         "android_client_info": {
           "package_name": "de.danoeh.antennapod.debug"
         }
       },
       "oauth_client": [
         {
-          "client_id": "642017191444-0jl1fi55tgq3ua7qs0qlp8nlij9484kb.apps.googleusercontent.com",
+          "client_id": "",
           "client_type": 1,
           "android_info": {
             "package_name": "de.danoeh.antennapod.debug",
-            "certificate_hash": "c72f5a6844eb818a205b7d436d124388885818d3"
+            "certificate_hash": ""
           }
         },
         {
-          "client_id": "642017191444-67ivk17f6o35jq742bdvfevl4b8s5us2.apps.googleusercontent.com",
+          "client_id": "",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyAVEZ23egLao7ncqNXSy_oTgE_93zEmq30"
+          "current_key": ""
         }
       ],
       "services": {
@@ -71,7 +71,7 @@
           "status": 2,
           "other_platform_oauth_client": [
             {
-            "client_id": "642017191444-67ivk17f6o35jq742bdvfevl4b8s5us2.apps.googleusercontent.com",
+            "client_id": "",
             "client_type": 3
           }
           ]
